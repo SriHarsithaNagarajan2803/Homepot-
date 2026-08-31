@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepot Partner - Payout Screen</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0e7a3f',
+                        primaryDark: '#094d26',
+                        accentGreen: '#10b981',
+                        brandBg: '#f8fafc',
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Mobile Device Frame */
+        .phone-mockup {
+            width: 100%;
+            max-width: 412px;
+            height: 870px;
+            background-color: #ffffff;
+            border-radius: 44px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 10px #1e293b;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Organic Dynamic Header Waves */
+        .green-header-wave {
+            background: linear-gradient(145deg, #094d26 0%, #0d6b38 45%, #15803d 100%);
+            position: relative;
+            height: 145px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .green-header-wave::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.35) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .header-curve-svg {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 42px;
+        }
+
+        /* Custom Scrollbar */
+        .content-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .content-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Chart bar animation */
+        .bar-col {
+            transition: all 0.25s ease;
+        }
+        .bar-col:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Phone Mockup Container -->
+    <div class="phone-mockup">
+        
+        <!-- Top Status Bar & Dark Green Header with Curve -->
+        <header class="green-header-wave text-white flex flex-col justify-between px-6 pt-3 pb-6 relative z-10">
+            <!-- Simulated Mobile Status Bar -->
+            <div class="flex justify-between items-center text-xs opacity-90 font-medium tracking-wide">
+                <span>9:41</span>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-signal text-[11px]"></i>
+                    <i class="fa-solid fa-wifi text-[11px]"></i>
+                    <i class="fa-solid fa-battery-full text-[13px]"></i>
+                </div>
+            </div>
+
+            <!-- App Bar with Back, Title & Help -->
+            <div class="flex items-center justify-between mt-2 z-10">
+                <button class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all text-white active:scale-95">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </button>
+                <h1 class="text-xl font-heading font-bold tracking-tight text-white flex items-center gap-2">
+                    Payout
+                </h1>
+                <button class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all text-white active:scale-95">
+                    <i class="fa-regular fa-circle-question text-base"></i>
+                </button>
+            </div>
+
+            <!-- Organic Curve Bottom Shape -->
+            <svg class="header-curve-svg" viewBox="0 0 412 42" fill="none" preserveAspectRatio="none">
+                <path d="M0,20 C110,42 280,0 412,24 L412,42 L0,42 Z" fill="#f8fafc"></path>
+            </svg>
+        </header>
+
+        <!-- Segmented Control (Daily / Weekly) -->
+        <div class="bg-[#f8fafc] px-6 pt-2 pb-3 flex-shrink-0">
+            <div class="flex bg-slate-200/80 p-1 rounded-xl shadow-inner text-sm font-semibold">
+                <button class="flex-1 py-2 rounded-lg bg-white text-primary font-bold shadow-sm flex items-center justify-center gap-1.5 transition-all border-b-2 border-primary">
+                    <i class="fa-regular fa-calendar-day text-xs"></i>
+                    Daily
+                </button>
+                <button class="flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 transition-all">
+                    <i class="fa-regular fa-calendar-week text-xs"></i>
+                    Weekly
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Body Content -->
+        <main class="content-scroll flex-1 overflow-y-auto bg-[#f8fafc] px-5 pb-20 space-y-4">
+            
+            <!-- Main Performance & Bar Chart Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                
+                <!-- Card Header -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <h2 class="font-heading font-bold text-slate-800 text-base tracking-tight">Performance for the day</h2>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">Today</span>
+                </div>
+
+                <!-- Total Earnings Highlight -->
+                <div class="flex items-baseline justify-between mt-4 mb-2">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Net Earnings</p>
+                        <h3 class="text-3xl font-heading font-extrabold text-slate-900 tracking-tight mt-0.5">₹1,000<span class="text-sm font-semibold text-slate-500">.00</span></h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                            <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> +18.4%
+                        </span>
+                        <p class="text-[11px] text-slate-400 mt-1">vs yesterday</p>
+                    </div>
+                </div>
+
+                <!-- Vertical Bar Chart (Mon - Sun) -->
+                <div class="mt-5 pt-3 border-t border-slate-50">
+                    <div class="h-44 flex items-end justify-between gap-2 px-1 relative">
+                        <!-- Horizontal Gridlines -->
+                        <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-40">
+                            <div class="border-b border-dashed border-slate-200 w-full"></div>
+                            <div class="border-b border-dashed border-slate-200 w-full"></div>
+                            <div class="border-b border-dashed border-slate-200 w-full"></div>
+                            <div class="border-b border-slate-200 w-full"></div>
+                        </div>
+
+                        <!-- Mon -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹620</span>
+                            <div class="w-full bg-emerald-100 rounded-t-lg h-24 hover:bg-emerald-200 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Mon</span>
+                        </div>
+
+                        <!-- Tue -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹750</span>
+                            <div class="w-full bg-emerald-200 rounded-t-lg h-28 hover:bg-emerald-300 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Tue</span>
+                        </div>
+
+                        <!-- Wed -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹540</span>
+                            <div class="w-full bg-emerald-100 rounded-t-lg h-20 hover:bg-emerald-200 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Wed</span>
+                        </div>
+
+                        <!-- Thu -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹890</span>
+                            <div class="w-full bg-emerald-300 rounded-t-lg h-32 hover:bg-emerald-400 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Thu</span>
+                        </div>
+
+                        <!-- Fri -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹950</span>
+                            <div class="w-full bg-emerald-400 rounded-t-lg h-36 hover:bg-emerald-500 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Fri</span>
+                        </div>
+
+                        <!-- Sat -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-semibold text-slate-400">₹1.2k</span>
+                            <div class="w-full bg-emerald-500 rounded-t-lg h-40 hover:bg-emerald-600 transition-colors"></div>
+                            <span class="text-[11px] font-medium text-slate-500">Sat</span>
+                        </div>
+
+                        <!-- Sun (Active Today) -->
+                        <div class="bar-col flex-1 flex flex-col items-center gap-1.5 z-10 cursor-pointer">
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1 rounded shadow-sm">₹850</span>
+                            <div class="w-full bg-gradient-to-t from-primary to-emerald-500 rounded-t-lg h-32 shadow-md relative ring-2 ring-emerald-400/40"></div>
+                            <span class="text-[11px] font-bold text-emerald-800">Sun</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Data List Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                <h3 class="font-heading font-bold text-slate-800 text-sm mb-3 flex items-center justify-between">
+                    <span>Breakdown & Metrics</span>
+                    <span class="text-xs font-normal text-slate-400">25-Oct-2023</span>
+                </h3>
+
+                <div class="divide-y divide-slate-100">
+                    
+                    <!-- 1. Order Earning (Blue) -->
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+                                <i class="fa-solid fa-utensils text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Order Earning</p>
+                                <p class="text-[11px] text-slate-400">Base delivery pay</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-lg">₹850</span>
+                    </div>
+
+                    <!-- 2. Tips (Red) -->
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 shadow-sm">
+                                <i class="fa-solid fa-heart text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Tips</p>
+                                <p class="text-[11px] text-slate-400">Customer appreciation</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-rose-600 bg-rose-50/80 px-2.5 py-1 rounded-lg">₹150</span>
+                    </div>
+
+                    <!-- 3. Active Hours (Green) -->
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+                                <i class="fa-regular fa-clock text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Active Hours</p>
+                                <p class="text-[11px] text-slate-400">Online on road</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg">03 hrs</span>
+                    </div>
+
+                    <!-- 4. Total KM (Orange) -->
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-sm">
+                                <i class="fa-solid fa-motorcycle text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Total KM</p>
+                                <p class="text-[11px] text-slate-400">Riding distance</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">30 km</span>
+                    </div>
+
+                    <!-- 5. Total Orders (Brown/Slate) -->
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-amber-900/10 border border-amber-900/20 flex items-center justify-center text-amber-900 shadow-sm">
+                                <i class="fa-solid fa-box-open text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Total Orders</p>
+                                <p class="text-[11px] text-slate-400">Completed deliveries</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-amber-900 bg-amber-100/60 px-2.5 py-1 rounded-lg">6 Orders</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Terms & Privacy Notice -->
+            <p class="text-[10px] text-center text-slate-400 px-4 pt-1 pb-4 leading-relaxed">
+                Terms and Privacy under the terms and Privacy list below. Earnings are credited weekly directly to your registered bank account.
+            </p>
+
+        </main>
+
+        <!-- Fixed Bottom Navigation Bar -->
+        <nav class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-6 py-2 flex items-center justify-around z-30 shadow-lg">
+            
+            <!-- Home Tab -->
+            <a href="#" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors py-1">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[11px] font-semibold">Home</span>
+            </a>
+
+            <!-- Payout Tab (Active) -->
+            <a href="#" class="flex flex-col items-center gap-1 text-primary font-bold py-1 relative">
+                <span class="absolute -top-2 w-8 h-1 bg-primary rounded-full"></span>
+                <i class="fa-solid fa-wallet text-xl"></i>
+                <span class="text-[11px]">Payout</span>
+            </a>
+
+            <!-- Profile Tab -->
+            <a href="#" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors py-1">
+                <i class="fa-regular fa-user text-lg"></i>
+                <span class="text-[11px] font-semibold">Profile</span>
+            </a>
+        </nav>
+
+    </div>
+
+</body>
+</html>

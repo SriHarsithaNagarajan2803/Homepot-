@@ -1,0 +1,62 @@
+export const DISHES = [
+  {
+    id: 'dish-1',
+    name: 'Authentic Chettinad Chicken Curry + 3 Flaky Parottas',
+    chef: 'Radha Amma',
+    rating: 4.9,
+    reviews: 128,
+    price: 180,
+    portionsLeft: 4,
+    isVeg: false,
+    mealType: 'Lunch',
+    prepTime: '25 mins',
+    image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80',
+    description: 'Slow-cooked country chicken cooked in freshly roasted and ground spices, fennel, and cold-pressed gingelly oil.',
+    hygieneVerified: true
+  },
+  {
+    id: 'dish-2',
+    name: 'Kalyana Veetu Sambar Rice + Potato Roast + Appalam',
+    chef: 'Meenakshi Mami',
+    rating: 4.8,
+    reviews: 94,
+    price: 120,
+    portionsLeft: 7,
+    isVeg: true,
+    mealType: 'Lunch',
+    prepTime: '20 mins',
+    image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&auto=format&fit=crop&q=80',
+    description: 'Made with small shallots, fresh drumsticks, hand-pounded sambar powder and topped with aromatic cow ghee.',
+    hygieneVerified: true
+  },
+  {
+    id: 'dish-3',
+    name: 'Traditional Curd Rice with Mor Milagai & Mango Thokku',
+    chef: 'Saraswathi Aunty',
+    rating: 4.9,
+    reviews: 62,
+    price: 90,
+    portionsLeft: 5,
+    isVeg: true,
+    mealType: 'Lunch',
+    prepTime: '15 mins',
+    image: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?w=600&auto=format&fit=crop&q=80',
+    description: 'Fresh set thick curd seasoned with mustard, ginger, green chilies, curry leaves, and pomegranate arils.',
+    hygieneVerified: true
+  },
+  {
+    id: 'dish-4',
+    name: 'Nattu Kozhi Biryani + Boiled Egg + Onion Raita',
+    chef: 'Fatima Bi',
+    rating: 5.0,
+    reviews: 210,
+    price: 220,
+    portionsLeft: 3,
+    isVeg: false,
+    mealType: 'Dinner',
+    prepTime: '35 mins',
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80',
+    description: 'Authentic seeraga samba rice dum biryani cooked on firewood with tender country chicken pieces.',
+    hygieneVerified: true
+  }
+];
