@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-terracotta: #9C4A28;
+  --dark-charcoal: #333C3E;
+  --warm-cream: #FAF6EE;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--warm-cream);
+  color: #2D241E;
+  font-family: 'Outfit', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #EADBCC;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D7A68E;
+}
+
+/* Organic wavy curve effect */
+.wavy-header-bg {
+  background: radial-gradient(circle at 50% -20%, #F5E5DC 0%, #FAF6EE 70%);
+}
+
+/* Floating animation for badge / scooter */
+@keyframes soft-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-soft-float {
+  animation: soft-float 3s ease-in-out infinite;
+}
+
+/* Input focus styles */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #9C4A28;
+  box-shadow: 0 0 0 3px rgba(156, 74, 40, 0.15);
+}
