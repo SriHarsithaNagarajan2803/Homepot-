@@ -1,22 +1,48 @@
-import React, { useState } from "react";
-import { HomePotLogin } from "./components/login.jsx";
-import { HomePotKitchenRegistration } from "./components/kitchenregistration.jsx";
-export default function App() {
-  const [currentView, setCurrentView] = useState('login');
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePotLogin from './login';
+import ChefDashboard from './ChefDashboard';
+
+function AppRoutes() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   return (
-    <div className="min-h-screen bg-[#fbf7f0] font-sans">
-      {currentView === 'login' ? (
-        <HomePotLogin 
-          onNavigateToRegister={() => setCurrentView('register')} 
+    <Routes>
+      {!isAuthenticated ? (
+        <Route 
+          path="*" 
+          element={
+            <HomePotLogin 
+              onLoginSuccess={(data) => {
+                setUserData(data);
+                setIsAuthenticated(true);
+              }} 
+            />
+          } 
         />
       ) : (
-        <HomePotKitchenRegistration 
-          onBackToLogin={() => setCurrentView('login')} 
+        <Route 
+          path="/*" 
+          element={
+            <ChefDashboard 
+              userData={userData} 
+              onLogout={() => {
+                setIsAuthenticated(false);
+                setUserData(null);
+              }}
+            />
+          } 
         />
       )}
-    </div>
+    </Routes>
   );
 }
 
-
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
