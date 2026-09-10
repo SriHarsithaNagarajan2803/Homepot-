@@ -9,11 +9,14 @@ import Profile from './components/profile';
 
 // Import your logo from the assets folder
 import logoImg from './assets/logo.jpeg'; 
+import { useLanguage } from './context/LanguageContext';
+import LanguageSelector from './components/LanguageSelector'; 
 
 // ==========================================
 // Persistent Bottom Navigation Component
 // ==========================================
 function BottomNav() {
+  const { t } = useLanguage();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -24,7 +27,7 @@ function BottomNav() {
         className={`flex flex-col items-center transition ${currentPath === '/' ? 'text-amber-100 scale-105 font-bold' : 'hover:text-amber-100 font-medium'}`}
       >
         <i className="fa-solid fa-clipboard-list text-xl mb-0.5"></i>
-        <span className="text-[10px]">Live Orders</span>
+        <span className="text-[10px]">{t('live_orders')}</span>
       </Link>
       
       <Link 
@@ -32,7 +35,7 @@ function BottomNav() {
         className={`flex flex-col items-center transition ${currentPath === '/menu' ? 'text-amber-100 scale-105 font-bold' : 'hover:text-amber-100 font-medium'}`}
       >
         <i className="fa-solid fa-book-open text-lg mb-0.5"></i>
-        <span className="text-[10px]">Menu</span>
+        <span className="text-[10px]">{t('menu')}</span>
       </Link>
       
       <Link 
@@ -40,7 +43,7 @@ function BottomNav() {
         className={`flex flex-col items-center transition ${currentPath === '/bankings' ? 'text-amber-100 scale-105 font-bold' : 'hover:text-amber-100 font-medium'}`}
       >
         <i className="fa-solid fa-wallet text-lg mb-0.5"></i>
-        <span className="text-[10px]">Bankings</span>
+        <span className="text-[10px]">{t('bankings')}</span>
       </Link>
       
       <Link 
@@ -48,7 +51,7 @@ function BottomNav() {
         className={`flex flex-col items-center transition ${currentPath === '/profile' ? 'text-amber-100 scale-105 font-bold' : 'hover:text-amber-100 font-medium'}`}
       >
         <i className="fa-solid fa-user text-lg mb-0.5"></i>
-        <span className="text-[10px]">Profile</span>
+        <span className="text-[10px]">{t('profile')}</span>
       </Link>
     </div>
   );
@@ -58,6 +61,7 @@ function BottomNav() {
 // Central Chef Dashboard Hub
 // ==========================================
 export default function ChefDashboard({ userData, onLogout }) {
+  const { t } = useLanguage();
   // Load dynamic profile details from localStorage so header syncs with Profile changes
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem('homepot_chef_profile');
@@ -72,8 +76,8 @@ export default function ChefDashboard({ userData, onLogout }) {
       }
     }
     return {
-      chefName: userData?.name || userData?.kitchenName || 'Chef Varun',
-      handle: '_lyf_of_mr_v_20'
+      chefName: userData?.chefName || userData?.kitchenName || userData?.ownerName || userData?.name || 'Home Chef',
+      handle: userData?.handle || 'homepot_chef'
     };
   });
 
@@ -101,6 +105,17 @@ export default function ChefDashboard({ userData, onLogout }) {
       clearInterval(interval);
     };
   }, []);
+
+  // Kitchen Open / Closed state synced with profile
+  const isKitchenOpen = profile.isOpen !== false;
+
+  const toggleKitchenStatus = () => {
+    const nextStatus = !isKitchenOpen;
+    const updated = { ...profile, isOpen: nextStatus };
+    setProfile(updated);
+    localStorage.setItem('homepot_chef_profile', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+  };
 
   // Main Modals State
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -212,15 +227,32 @@ export default function ChefDashboard({ userData, onLogout }) {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#f4eee6] p-0 sm:p-4">
-      <div className="w-full max-w-md bg-[#FAF6F0] min-h-screen sm:min-h-[850px] sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative pb-24">
+    <div 
+      className="flex justify-center items-center min-h-screen py-4 px-2 sm:px-4"
+      style={{ backgroundColor: '#EFE9DF', colorScheme: 'light' }}
+    >
+      <div 
+        className="w-full max-w-md h-[92vh] max-h-[850px] border border-[#E8DEC8] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative pb-20 text-stone-900"
+        style={{ backgroundColor: '#FFFFFF', colorScheme: 'light' }}
+      >
+        {/* Soft Grey Dot Pattern Overlay */}
+        <div 
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(#D6C7B2 1.2px, transparent 1.2px)',
+            backgroundSize: '20px 20px'
+          }}
+        ></div>
 
         {/* Top Header Section */}
-        <div className="bg-[#8C4A32] text-white pt-6 pb-12 px-6 rounded-b-[40px] relative shadow-lg">
+        <div className="bg-[#8C4A32] text-white pt-5 pb-10 px-6 rounded-b-[36px] relative shadow-md z-10">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold tracking-tight">HomePot <span className="font-normal text-orange-200">Chef</span></h1>
             
             <div className="flex items-center space-x-2 text-lg">
+              {/* Native Language Selector (Tamil, English, Hindi, Telugu, Kannada, Malayalam) */}
+              <LanguageSelector variant="round" />
+
               <button 
                 onClick={handleOpenNotifications}
                 className="w-9 h-9 rounded-full bg-[#A85E45] flex items-center justify-center hover:bg-[#783D29] transition relative cursor-pointer"
@@ -251,13 +283,70 @@ export default function ChefDashboard({ userData, onLogout }) {
           </div>
 
           <div className="flex flex-col items-center justify-center mt-2">
-            <div className="w-16 h-16 bg-[#A85E45] rounded-full flex items-center justify-center shadow-inner relative border-2 border-[#C27357] overflow-hidden">
-              <img src={logoImg} alt="HomePot Logo" className="w-full h-full object-cover rounded-full" />
+            {/* Profile Avatar with Bright Status Light Dot */}
+            <div className="relative">
+              <div className="w-16 h-16 bg-[#A85E45] rounded-full flex items-center justify-center shadow-inner relative border-2 border-[#C27357] overflow-hidden">
+                <img 
+                  src={profile.profileImg || profile.photoPreview || logoImg} 
+                  alt="HomePot Logo" 
+                  className="w-full h-full object-cover rounded-full" 
+                />
+              </div>
+
+              {/* Bright Green Light Dot (Open) / Red Light Dot (Closed) */}
+              <button
+                type="button"
+                onClick={toggleKitchenStatus}
+                title={isKitchenOpen ? "Kitchen is OPEN (Accepting Orders). Click to close." : "Kitchen is CLOSED. Click to open."}
+                className="absolute bottom-0 right-0 cursor-pointer group focus:outline-none"
+              >
+                <span className="relative flex h-4 w-4">
+                  {isKitchenOpen && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  )}
+                  <span className={`relative inline-flex rounded-full h-4 w-4 border-2 border-[#8C4A32] shadow-md transition-all ${
+                    isKitchenOpen 
+                      ? 'bg-[#10B981] shadow-[0_0_10px_#10B981]' 
+                      : 'bg-[#EF4444] shadow-[0_0_10px_#EF4444]'
+                  }`}></span>
+                </span>
+              </button>
             </div>
             
-            <p className="text-xs text-orange-100 font-bold mt-1.5">
-              {profile.chefName} <span className="font-normal text-orange-200/80">(@{profile.handle})</span>
-            </p>
+            {/* Chef Name with Bright Light Dot */}
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <p className="text-xs text-orange-100 font-bold">
+                {profile.chefName} <span className="font-normal text-orange-200/80">(@{profile.handle})</span>
+              </p>
+              <span 
+                className={`w-2.5 h-2.5 rounded-full border border-[#8C4A32] shrink-0 transition-colors ${
+                  isKitchenOpen 
+                    ? 'bg-[#10B981] shadow-[0_0_8px_#10B981] animate-pulse' 
+                    : 'bg-[#EF4444] shadow-[0_0_8px_#EF4444]'
+                }`}
+                title={isKitchenOpen ? "Kitchen Open" : "Kitchen Closed"}
+              />
+            </div>
+
+            {/* Quick Kitchen Open / Closed Status Pill */}
+            <button
+              type="button"
+              onClick={toggleKitchenStatus}
+              className={`mt-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 cursor-pointer transition-all border shadow-xs active:scale-95 ${
+                isKitchenOpen 
+                  ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/50' 
+                  : 'bg-rose-950/40 text-rose-300 border-rose-500/40 hover:bg-rose-900/50'
+              }`}
+              title="Click to toggle Kitchen Status"
+            >
+              <span className={`w-2 h-2 rounded-full ${
+                isKitchenOpen 
+                  ? 'bg-[#10B981] shadow-[0_0_6px_#10B981] animate-pulse' 
+                  : 'bg-[#EF4444] shadow-[0_0_6px_#EF4444]'
+              }`} />
+              <span>{isKitchenOpen ? t('kitchen_open') : t('kitchen_closed')}</span>
+              <span className="text-[8px] opacity-75 font-normal ml-0.5">({t('tap_to_change')})</span>
+            </button>
           </div>
         </div>
 
