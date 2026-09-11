@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: light !important;
+}
+
+html, body {
+  color-scheme: light !important;
+  background-color: #EFE9DF !important;
+  color: #2C1D14 !important;
+}
+
+/* Force Light Mode regardless of Dark Reader or system dark preference */
+html[data-darkreader-scheme="dark"],
+html[data-darkreader-mode] {
+  filter: none !important;
+}

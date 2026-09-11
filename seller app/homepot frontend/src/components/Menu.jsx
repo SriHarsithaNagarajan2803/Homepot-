@@ -86,7 +86,7 @@ export default function Menu() {
     setDishName('');
     setDishCategory('Lunch');
     setDishPrice('');
-    setDishPortions('15');
+    setDishPortions('');
     setDishIsVeg(true);
     setDishDescription('');
     setDishPhoto(null);
@@ -571,14 +571,19 @@ export default function Menu() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-0.5">
                   <label className="font-bold text-[#593222] text-[10px] uppercase">{t('price_per_plate')}</label>
-                  <input 
-                    type="number" 
-                    placeholder="120" 
-                    value={dishPrice}
-                    onChange={(e) => setDishPrice(e.target.value)}
-                    className="px-3 py-2 border border-[#E2D5BE] rounded-xl focus:outline-none focus:border-[#A0523D] text-xs text-[#2C1D14]"
-                    required
-                  />
+                  <div className="relative flex items-center">
+                    <span className="absolute left-2.5 text-xs font-bold text-[#8C4A32] pointer-events-none">
+                      ₹
+                    </span>
+                    <input 
+                      type="number" 
+                      placeholder="₹ 120" 
+                      value={dishPrice}
+                      onChange={(e) => setDishPrice(e.target.value)}
+                      className="w-full pl-6 pr-3 py-2 border border-[#E2D5BE] rounded-xl focus:outline-none focus:border-[#A0523D] text-xs text-[#2C1D14]"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-0.5">

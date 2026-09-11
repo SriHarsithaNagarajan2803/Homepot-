@@ -3,13 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="darkreader-lock" content="darkreader-lock" />
+    <meta name="theme-color" content="#EFE9DF" />
     <title>HomePot Chef</title>
+    <!-- Force Light Theme Only (Immune to Dark Reader & System Dark Mode) -->
+    <style>
+      :root, html, body {
+        color-scheme: light !important;
+      }
+      html[data-darkreader-scheme="dark"],
+      html[data-darkreader-mode] {
+        filter: none !important;
+      }
+    </style>
     <!-- Tailwind CDN (or use your local PostCSS setup) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   </head>
-  <body class="bg-[#f4eee6]">
+  <body class="bg-[#EFE9DF] text-[#2C1D14]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
