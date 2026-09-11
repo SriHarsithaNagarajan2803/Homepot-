@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Globe, Check, X } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '../context/LanguageContext';
 
@@ -32,11 +33,16 @@ export default function LanguageSelector({ variant = 'pill' }) {
         </button>
       )}
 
-      {/* Language Selection Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl p-5 w-full max-w-xs shadow-2xl border border-[#E2D5BE] flex flex-col gap-3 text-stone-900">
-            
+      {/* Language Selection Modal rendered via Portal to escape all stacking contexts */}
+      {isOpen && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setIsOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-3xl p-5 w-full max-w-xs shadow-2xl border border-[#E2D5BE] flex flex-col gap-3 text-stone-900"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center border-b border-[#F4EFE6] pb-2.5">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-full bg-[#FAF6F0] text-[#A0523D] border border-[#E8DEC8]">
@@ -50,6 +56,7 @@ export default function LanguageSelector({ variant = 'pill' }) {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 cursor-pointer"
               >
@@ -91,7 +98,8 @@ export default function LanguageSelector({ variant = 'pill' }) {
               அம்மாக்கள் மற்றும் இல்லத்தரசிகளுக்கு எளிதான மொழி ஆதரவு
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
