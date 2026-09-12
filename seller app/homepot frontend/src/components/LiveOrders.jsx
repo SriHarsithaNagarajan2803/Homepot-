@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
+  const { t } = useLanguage();
   // Starts completely empty — no static or sample cards!
   const [orders, setOrders] = useState([]);
 
@@ -30,7 +32,6 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
       );
     }
 
-    // Dispatch custom event to notify ChefDashboard notification bell
     window.dispatchEvent(
       new CustomEvent('homepotOrderAction', {
         detail: {
@@ -44,7 +45,7 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
 
   // Handle Reject Order
   const handleReject = (orderId) => {
-    const reason = prompt('Please enter reason for rejection (e.g. Sold out / Kitchen closing):');
+    const reason = prompt(t('enter_rejection_reason'));
     if (reason === null) return; // Cancelled prompt
 
     if (onUpdateOrderStatus) {
@@ -57,7 +58,6 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
       );
     }
 
-    // Dispatch custom event to notify ChefDashboard notification bell
     window.dispatchEvent(
       new CustomEvent('homepotOrderAction', {
         detail: {
@@ -87,11 +87,11 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
       {/* Header */}
       <div className="flex justify-between items-center mt-2 px-1">
         <div>
-          <h2 className="text-lg font-bold text-stone-800">Live Orders</h2>
-          <p className="text-[11px] text-stone-500">Manage incoming customer requests in real-time</p>
+          <h2 className="text-lg font-bold text-stone-800">{t('live_orders')}</h2>
+          <p className="text-[11px] text-stone-500">{t('live_orders_subtitle')}</p>
         </div>
         <span className="bg-orange-100 text-[#8C4A32] text-xs font-bold px-2.5 py-1 rounded-full">
-          {activeOrders.filter((o) => o.status === 'PENDING' || o.status === 'PREPARING').length} Active
+          {activeOrders.filter((o) => o.status === 'PENDING' || o.status === 'PREPARING').length} {t('active')}
         </span>
       </div>
 
@@ -100,7 +100,7 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
         {activeOrders.length === 0 ? (
           <div className="bg-white rounded-2xl p-8 text-center border border-stone-200 text-stone-400 text-xs mt-4 shadow-sm">
             <i className="fa-solid fa-bell text-3xl mb-2 text-stone-300 animate-bounce"></i>
-            No new orders queued right now. Incoming customer orders will appear here automatically!
+            {t('no_orders_queued')}
           </div>
         ) : (
           activeOrders.map((ord) => (
@@ -112,33 +112,33 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
               <div className="flex justify-between items-center border-b border-stone-100 pb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-stone-900 text-sm">#{ord.id}</span>
-                  <span className="text-[10px] text-stone-400">• {ord.time || 'Just now'}</span>
+                  <span className="text-[10px] text-stone-400">• {ord.time || t('just_now')}</span>
                 </div>
 
                 {/* Status Badges */}
                 {ord.status === 'PENDING' && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-800 border border-amber-200 animate-pulse">
-                    New Order
+                    {t('status_new_order')}
                   </span>
                 )}
                 {ord.status === 'PREPARING' && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                    Preparing
+                    {t('status_preparing')}
                   </span>
                 )}
                 {ord.status === 'READY' && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Ready for Pickup
+                    {t('status_ready')}
                   </span>
                 )}
                 {ord.status === 'COMPLETED' && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-stone-100 text-stone-600">
-                    Completed
+                    {t('status_completed')}
                   </span>
                 )}
                 {ord.status === 'REJECTED' && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-rose-50 text-rose-600 border border-rose-200">
-                    Rejected
+                    {t('status_rejected')}
                   </span>
                 )}
               </div>
@@ -160,7 +160,7 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
 
               {/* Items ordered */}
               <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-100 text-xs text-stone-700">
-                <p className="font-semibold text-[11px] text-stone-500 mb-0.5">Dishes:</p>
+                <p className="font-semibold text-[11px] text-stone-500 mb-0.5">{t('dishes_label')}</p>
                 <p>{ord.items}</p>
               </div>
 
@@ -172,13 +172,13 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
                       onClick={() => handleAccept(ord.id)}
                       className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
                     >
-                      <i className="fa-solid fa-check mr-1"></i> Accept Order
+                      <i className="fa-solid fa-check mr-1"></i> {t('accept_order_btn')}
                     </button>
                     <button 
                       onClick={() => handleReject(ord.id)}
                       className="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
                     >
-                      <i className="fa-solid fa-xmark mr-1"></i> Reject
+                      <i className="fa-solid fa-xmark mr-1"></i> {t('reject_order_btn')}
                     </button>
                   </div>
                 )}
@@ -188,7 +188,7 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
                     onClick={() => handleUpdateStatus(ord.id, 'READY')}
                     className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
                   >
-                    <i className="fa-solid fa-box-open mr-1"></i> Mark as Ready for Pickup
+                    <i className="fa-solid fa-box-open mr-1"></i> {t('mark_ready_btn')}
                   </button>
                 )}
 
@@ -197,7 +197,7 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
                     onClick={() => handleUpdateStatus(ord.id, 'COMPLETED')}
                     className="w-full bg-stone-800 hover:bg-stone-900 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
                   >
-                    <i className="fa-solid fa-flag-checkered mr-1"></i> Complete Order
+                    <i className="fa-solid fa-flag-checkered mr-1"></i> {t('complete_order_btn')}
                   </button>
                 )}
               </div>

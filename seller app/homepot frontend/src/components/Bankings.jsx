@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function BankingPage() {
+  const { t } = useLanguage();
   // Financial state initialized to zero
   const [balance, setBalance] = useState(0.00);
   const [totalEarnings, setTotalEarnings] = useState(0.00);
@@ -68,7 +70,7 @@ export default function BankingPage() {
       
       const newTxn = {
         id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
-        date: 'Today, Just now',
+        date: t('just_now'),
         desc: `Instant Payout to ${destination}`,
         amount: `-${withdrawnAmount.toFixed(2)}`,
         type: 'debit'
@@ -82,19 +84,17 @@ export default function BankingPage() {
   return (
     <div className="flex flex-col gap-4 pb-6 animate-fadeIn font-sans antialiased text-stone-800">
       
-      {/* ========================================== */}
       {/* HEADER CARD: Total Balance & Instant Withdraw */}
-      {/* ========================================== */}
       <div className="bg-gradient-to-br from-[#8C4A32] via-[#783D29] to-[#5c3020] text-white rounded-3xl p-6 shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full pointer-events-none"></div>
 
         <div className="flex justify-between items-start">
           <div>
-            <span className="text-orange-200 text-xs font-bold uppercase tracking-wider block">Available Balance</span>
+            <span className="text-orange-200 text-xs font-bold uppercase tracking-wider block">{t('available_balance')}</span>
             <h2 className="text-3xl font-serif font-bold mt-1 tracking-tight">₹{balance.toFixed(2)}</h2>
           </div>
           <span className="bg-white/10 text-orange-100 px-3 py-1 rounded-xl text-[10px] font-bold tracking-wider uppercase border border-white/10">
-            Secure Payouts
+            {t('secure_payouts')}
           </span>
         </div>
 
@@ -107,8 +107,8 @@ export default function BankingPage() {
 
         <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-[11px] text-orange-200">Pending settlement: <strong className="text-white">₹{pendingPayout.toFixed(2)}</strong></span>
-            <span className="text-[10px] text-orange-300/80">Available in 24 hours</span>
+            <span className="text-[11px] text-orange-200">{t('pending_settlement')}: <strong className="text-white">₹{pendingPayout.toFixed(2)}</strong></span>
+            <span className="text-[10px] text-orange-300/80">{t('available_in_24h')}</span>
           </div>
           
           <button 
@@ -123,56 +123,52 @@ export default function BankingPage() {
             {isWithdrawing ? (
               <>
                 <i className="fa-solid fa-spinner animate-spin text-xs"></i>
-                <span>Transferring...</span>
+                <span>{t('transferring')}</span>
               </>
             ) : (
               <>
                 <i className="fa-solid fa-bolt text-xs"></i>
-                <span>Withdraw Instantly</span>
+                <span>{t('withdraw_instantly')}</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* ========================================== */}
       {/* METRICS ROW */}
-      {/* ========================================== */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white rounded-3xl p-4 shadow-sm border border-stone-100 flex flex-col justify-between">
           <div className="flex items-center justify-between text-stone-400">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Total Earnings</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">{t('total_earnings')}</span>
             <i className="fa-solid fa-wallet text-[#8C4A32] bg-orange-50 p-2 rounded-xl text-xs"></i>
           </div>
           <div className="mt-3">
             <h3 className="text-base font-bold text-stone-900">₹{totalEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h3>
-            <p className="text-[10px] text-stone-400 font-medium mt-0.5">Lifetime revenue</p>
+            <p className="text-[10px] text-stone-400 font-medium mt-0.5">{t('lifetime_revenue')}</p>
           </div>
         </div>
 
         <div className="bg-white rounded-3xl p-4 shadow-sm border border-stone-100 flex flex-col justify-between">
           <div className="flex items-center justify-between text-stone-400">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Active Mode</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">{t('active_mode')}</span>
             <i className="fa-solid fa-shield-halved text-emerald-600 bg-emerald-50 p-2 rounded-xl text-xs"></i>
           </div>
           <div className="mt-3 truncate">
             <h3 className="text-xs font-bold text-stone-900 capitalize">
-              {(payoutMethod === 'upi' && upiId) || (payoutMethod === 'bank' && bankDetails.accountNumber) ? 'Linked' : 'Not Linked'}
+              {(payoutMethod === 'upi' && upiId) || (payoutMethod === 'bank' && bankDetails.accountNumber) ? t('linked') : t('not_linked')}
             </h3>
             <p className="text-[10px] text-stone-400 font-medium mt-0.5">
-              {payoutMethod === 'upi' ? (upiId ? 'UPI Active' : 'Setup Required') : (bankDetails.accountNumber ? 'Bank Active' : 'Setup Required')}
+              {payoutMethod === 'upi' ? (upiId ? t('upi_active') : t('setup_required')) : (bankDetails.accountNumber ? t('bank_active') : t('setup_required'))}
             </p>
           </div>
         </div>
       </div>
 
-      {/* ========================================== */}
       {/* PAYOUT METHOD SELECTOR & DETAILS CARD */}
-      {/* ========================================== */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100">
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
           <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2 font-serif">
-            <i className="fa-solid fa-building-columns text-[#8C4A32]"></i> Payout Destination
+            <i className="fa-solid fa-building-columns text-[#8C4A32]"></i> {t('payout_destination')}
           </h3>
           
           {/* Method Selector Tabs */}
@@ -181,13 +177,13 @@ export default function BankingPage() {
               onClick={() => { setPayoutMethod('upi'); setIsEditingMethod(!upiId); }}
               className={`px-3 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${payoutMethod === 'upi' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-800'}`}
             >
-              UPI ID
+              {t('upi_id_tab')}
             </button>
             <button 
               onClick={() => { setPayoutMethod('bank'); setIsEditingMethod(!bankDetails.accountNumber); }}
               className={`px-3 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${payoutMethod === 'bank' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-800'}`}
             >
-              Bank Account
+              {t('bank_account_tab')}
             </button>
           </div>
         </div>
@@ -202,7 +198,7 @@ export default function BankingPage() {
                     <i className="fa-solid fa-mobile-screen-button"></i>
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Primary UPI ID</span>
+                    <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('primary_upi_id')}</span>
                     <p className="font-mono font-bold text-stone-900 text-xs mt-0.5 truncate">{upiId}</p>
                   </div>
                 </div>
@@ -210,13 +206,13 @@ export default function BankingPage() {
                   onClick={() => { setTempUpi(upiId); setIsEditingMethod(true); }}
                   className="text-xs font-bold text-[#8C4A32] hover:underline cursor-pointer shrink-0 ml-2"
                 >
-                  Edit UPI
+                  {t('edit_upi')}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSaveUpi} className="flex flex-col gap-3 text-xs">
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">Enter UPI ID</label>
+                  <label className="font-bold text-stone-700 block mb-1">{t('enter_upi_id')}</label>
                   <input 
                     type="text" 
                     value={tempUpi} 
@@ -227,9 +223,9 @@ export default function BankingPage() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button type="submit" className="flex-1 bg-[#8C4A32] hover:bg-[#783D29] text-white py-2.5 rounded-xl font-bold transition cursor-pointer">Save UPI</button>
+                  <button type="submit" className="flex-1 bg-[#8C4A32] hover:bg-[#783D29] text-white py-2.5 rounded-xl font-bold transition cursor-pointer">{t('save_upi')}</button>
                   {upiId && (
-                    <button type="button" onClick={() => setIsEditingMethod(false)} className="px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 py-2.5 rounded-xl font-bold cursor-pointer">Cancel</button>
+                    <button type="button" onClick={() => setIsEditingMethod(false)} className="px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 py-2.5 rounded-xl font-bold cursor-pointer">{t('cancel')}</button>
                   )}
                 </div>
               </form>
@@ -247,7 +243,7 @@ export default function BankingPage() {
                     <i className="fa-solid fa-bank"></i>
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Account • {bankDetails.ifsc.substring(0, 4)} Bank</span>
+                    <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{bankDetails.ifsc.substring(0, 4)} Bank</span>
                     <p className="font-mono font-bold text-stone-900 text-xs mt-0.5">A/C: ****{bankDetails.accountNumber.slice(-4)} | IFSC: {bankDetails.ifsc}</p>
                   </div>
                 </div>
@@ -255,42 +251,42 @@ export default function BankingPage() {
                   onClick={() => { setTempBank(bankDetails); setIsEditingMethod(true); }}
                   className="text-xs font-bold text-[#8C4A32] hover:underline cursor-pointer shrink-0 ml-2"
                 >
-                  Change A/C
+                  {t('change_ac')}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleVerifyAndSaveBank} className="flex flex-col gap-3 text-xs">
                 <div className="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-amber-800 text-[11px] flex items-center gap-2">
                   <i className="fa-solid fa-circle-info"></i>
-                  <span>Account details are verified instantly via penny-drop against banking gateways.</span>
+                  <span>{t('penny_drop_note')}</span>
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">Account Holder Name</label>
+                  <label className="font-bold text-stone-700 block mb-1">{t('account_holder')}</label>
                   <input 
                     type="text" 
                     value={tempBank.holderName} 
                     onChange={(e) => setTempBank({ ...tempBank, holderName: e.target.value })}
-                    placeholder="Name as per bank records"
+                    placeholder={t('name_as_per_bank')}
                     className="w-full px-3 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:border-[#8C4A32]"
                     required 
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">Bank Account Number</label>
+                  <label className="font-bold text-stone-700 block mb-1">{t('account_number')}</label>
                   <input 
                     type="text" 
                     value={tempBank.accountNumber} 
                     onChange={(e) => setTempBank({ ...tempBank, accountNumber: e.target.value })}
-                    placeholder="Enter 9 to 18 digit account number"
+                    placeholder={t('enter_ac_digits')}
                     className="w-full px-3 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:border-[#8C4A32] font-mono"
                     required 
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">IFSC Code</label>
+                  <label className="font-bold text-stone-700 block mb-1">{t('ifsc_code')}</label>
                   <input 
                     type="text" 
                     value={tempBank.ifsc} 
@@ -310,17 +306,17 @@ export default function BankingPage() {
                     {isVerifying ? (
                       <>
                         <i className="fa-solid fa-spinner animate-spin"></i>
-                        <span>Verifying with Bank...</span>
+                        <span>{t('verifying_bank')}</span>
                       </>
                     ) : (
                       <>
                         <i className="fa-solid fa-shield-check"></i>
-                        <span>Verify & Save Account</span>
+                        <span>{t('verify_save_ac')}</span>
                       </>
                     )}
                   </button>
                   {bankDetails.accountNumber && (
-                    <button type="button" onClick={() => setIsEditingMethod(false)} className="px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 py-2.5 rounded-xl font-bold cursor-pointer">Cancel</button>
+                    <button type="button" onClick={() => setIsEditingMethod(false)} className="px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 py-2.5 rounded-xl font-bold cursor-pointer">{t('cancel')}</button>
                   )}
                 </div>
               </form>
@@ -329,16 +325,14 @@ export default function BankingPage() {
         )}
       </div>
 
-      {/* ========================================== */}
       {/* TRANSACTION HISTORY */}
-      {/* ========================================== */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100">
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
           <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2 font-serif">
-            <i className="fa-solid fa-receipt text-stone-600"></i> Recent Payouts & Orders
+            <i className="fa-solid fa-receipt text-stone-600"></i> {t('recent_payouts_orders')}
           </h3>
           <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">
-            Last 30 Days
+            {t('last_30_days')}
           </span>
         </div>
 
@@ -347,8 +341,8 @@ export default function BankingPage() {
             <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center mb-2 text-stone-300 text-lg">
               <i className="fa-solid fa-file-invoice"></i>
             </div>
-            <p className="text-xs font-semibold text-stone-600">No transactions yet</p>
-            <p className="text-[10px] text-stone-400 mt-0.5">Your orders and withdrawals will appear here.</p>
+            <p className="text-xs font-semibold text-stone-600">{t('no_transactions_yet')}</p>
+            <p className="text-[10px] text-stone-400 mt-0.5">{t('transactions_desc')}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2.5">

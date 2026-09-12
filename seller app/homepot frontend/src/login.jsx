@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone, CheckCircle2, ShieldCheck } from 'lucide-react';
 import tiffinArt from './assets/tiffin-box.jpeg';
 import logoImg from './assets/HomePot-logo.jpeg';
 import { HomePotKitchenRegistration } from './components/kitchenregistration';
@@ -104,7 +104,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
       setLoading(false);
       setOtpStep('otp_sent');
       setMessage({ 
-        text: `✅ Real OTP sent to ${regEmail}! Please check your Inbox (or Spam folder).`, 
+        text: `Real OTP sent to ${regEmail}! Please check your Inbox (or Spam folder).`, 
         type: 'green' 
       });
     } catch (err) {
@@ -118,7 +118,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
     }
   };
 
-  // Verify OTP & Proceed directly to Kitchen Registration (INSTANT REDIRECT!)
+  // Verify OTP & Proceed directly to Kitchen Registration
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     if (otp !== generatedOtp && otp !== '1234') {
@@ -134,8 +134,6 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
     };
 
     setRegistrationData(regData);
-
-    // Instant switch to Step 2! (No timeout lag!)
     setOnboardingStep('kitchen_details');
     if (onStartRegistration) {
       onStartRegistration(regData);
@@ -202,7 +200,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
         {/* Content Container */}
         <div className="flex flex-col justify-between h-full p-6 sm:p-7 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           
-          {/* Top Branding & Inputs Container */}
+          {/* Top Branding Container */}
           <div className="flex flex-col items-center text-center pt-1">
             <div className="w-full flex justify-end mb-1">
               <LanguageSelector variant="pill" />
@@ -219,53 +217,26 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
             
             {/* Serif Title Matching Buyer App */}
             <h1 className="font-serif font-bold text-3xl sm:text-4xl text-[#2C1D14] tracking-tight">
-              HomePot Kitchen
+              {t('homepot_kitchen')}
             </h1>
             <p className="text-xs sm:text-sm font-semibold text-[#6B5B4F] mt-1.5 leading-relaxed">
-              Partner Portal for Home Chefs<br />
-              Manage Live Orders & Daily Menus<br />
-              Cook with Love • Earn with Pride
+              {t('partner_portal')}<br />
+              {t('manage_live_orders')}<br />
+              {t('cook_with_love')}
             </p>
 
             {/* Seamless Blended Tiffin / Culinary Artwork */}
-            <div className="my-2 sm:my-2.5 w-full flex items-center justify-center">
+            <div className="my-3 w-full flex items-center justify-center">
               <img 
                 src={tiffinArt} 
                 alt="Tiffin Art" 
-                className="w-full h-24 sm:h-28 object-contain mix-blend-multiply filter contrast-105"
+                className="w-full h-24 sm:h-28 object-contain mix-blend-multiply filter contrast-105" 
               />
             </div>
 
-            {/* Mode Switcher Pill Tabs (Sign In vs Register Kitchen) */}
-            <div className="flex w-full bg-[#EFE9DF] p-1 rounded-full mb-3 border border-[#E2D5BE]">
-              <button
-                type="button"
-                onClick={() => { setActiveTab('signin'); setMessage({ text: '', type: '' }); }}
-                className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  activeTab === 'signin' 
-                    ? 'bg-[#A0523D] text-white shadow-sm' 
-                    : 'text-[#6B5B4F] hover:text-[#2C1D14]'
-                }`}
-              >
-                {t('sign_in')}
-              </button>
-              <button
-                type="button"
-                onClick={() => { setActiveTab('signup'); setMessage({ text: '', type: '' }); }}
-                className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                  activeTab === 'signup' 
-                    ? 'bg-[#A0523D] text-white shadow-sm' 
-                    : 'text-[#6B5B4F] hover:text-[#2C1D14]'
-                }`}
-              >
-                <Sparkles className="w-3 h-3 text-amber-300" />
-                <span>{t('sign_up')}</span>
-              </button>
-            </div>
-
-            {/* TAB 1: EXISTING CHEF SIGN IN */}
-            {activeTab === 'signin' && (
-              <form onSubmit={handleLogin} className="w-full space-y-2.5 text-left" autoComplete="off">
+            {/* FORM CONTAINER: ONLY ONE PRIMARY BUTTON - NO DUPLICATE TABS */}
+            {activeTab === 'signin' ? (
+              <form onSubmit={handleLogin} className="w-full space-y-3 text-left mt-1" autoComplete="off">
                 
                 {/* Email Address Input Card */}
                 <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 flex items-center gap-3 shadow-xs transition-all focus-within:border-[#A0523D] focus-within:ring-1 focus-within:ring-[#A0523D]/30">
@@ -273,7 +244,9 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                     <Mail className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">Chef Email Address</span>
+                    <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">
+                      {t('chef_email_address')}
+                    </span>
                     <input 
                       type="email" 
                       required
@@ -291,7 +264,9 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                     <Lock className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">Password</span>
+                    <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">
+                      {t('password')}
+                    </span>
                     <input 
                       type={showPassword ? "text" : "password"}
                       required
@@ -310,27 +285,27 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                   </button>
                 </div>
 
-                {/* Action Button */}
+                {/* THE ONLY ONE SIGN IN BUTTON */}
                 <div className="pt-2 w-full">
                   <button 
                     type="submit"
                     disabled={loading}
                     className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-base py-3.5 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    {loading ? 'Signing In...' : (
+                    {loading ? (
+                      <span>{t('signing_in')}</span>
+                    ) : (
                       <>
-                        <span>Go to Dashboard</span>
+                        <span>{t('sign_in')}</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>
                 </div>
               </form>
-            )}
-
-            {/* TAB 2: NEW CHEF SIGN UP + OTP FLOW */}
-            {activeTab === 'signup' && (
-              <div className="w-full text-left">
+            ) : (
+              /* NEW CHEF REGISTRATION & OTP FORM */
+              <div className="w-full text-left mt-1">
                 {otpStep === 'form' ? (
                   <form onSubmit={handleSendOtp} className="w-full space-y-2.5">
                     {/* Email */}
@@ -339,7 +314,9 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                         <Mail className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">Email Address</span>
+                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">
+                          {t('email_address')}
+                        </span>
                         <input 
                           type="email" 
                           required
@@ -357,7 +334,9 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                         <Phone className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">Mobile / WhatsApp Number</span>
+                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">
+                          {t('mobile_number')}
+                        </span>
                         <input 
                           type="tel" 
                           required
@@ -376,7 +355,9 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                         <Lock className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">Set Password</span>
+                        <span className="text-[10px] font-bold text-[#593222] tracking-wide uppercase">
+                          {t('set_password')}
+                        </span>
                         <input 
                           type="password" 
                           required
@@ -388,12 +369,20 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                       </div>
                     </div>
 
+                    {/* THE ONLY ONE SEND OTP BUTTON */}
                     <button 
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm sm:text-base py-3 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2 mt-2"
+                      className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm sm:text-base py-3.5 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2 mt-2"
                     >
-                      {loading ? 'Sending OTP...' : <><span>Generate 4-Digit OTP</span> <ArrowRight className="w-4 h-4" /></>}
+                      {loading ? (
+                        <span>{t('sending_otp')}</span>
+                      ) : (
+                        <>
+                          <span>{t('send_otp')}</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   </form>
                 ) : (
@@ -403,8 +392,8 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                       <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center mb-1.5">
                         <ShieldCheck className="w-5 h-5" />
                       </div>
-                      <h3 className="font-serif font-bold text-base text-[#2C1D14]">Verify OTP</h3>
-                      <p className="text-[11px] text-[#6B5B4F]">Enter the 4-digit code sent to your mobile & email</p>
+                      <h3 className="font-serif font-bold text-base text-[#2C1D14]">{t('verify_otp_title')}</h3>
+                      <p className="text-[11px] text-[#6B5B4F]">{t('verify_otp_subtitle')}</p>
                     </div>
 
                     <div className="flex justify-center my-2">
@@ -414,7 +403,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                         autoFocus
                         value={otp}
                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                        placeholder="••••"
+                        placeholder="••••" 
                         className="w-36 tracking-[12px] text-center text-xl font-bold bg-white border-2 border-[#A0523D] rounded-xl py-2 text-[#2C1D14] focus:outline-none shadow-sm"
                       />
                     </div>
@@ -425,7 +414,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                       className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm py-3 rounded-full shadow-md transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>Verify & Continue to Kitchen Details</span>
+                      <span>{t('verify_and_continue')}</span>
                     </button>
 
                     <div className="text-center">
@@ -434,7 +423,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
                         onClick={() => setOtpStep('form')}
                         className="text-[11px] text-[#8C4A32] font-semibold hover:underline bg-transparent border-0 cursor-pointer"
                       >
-                        ← Change email or mobile number
+                        {t('change_email_mobile')}
                       </button>
                     </div>
                   </form>
@@ -454,10 +443,10 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
 
           </div>
 
-          {/* Bottom Branding / Helper */}
-          <div className="text-center pt-2 pb-1">
+          {/* Bottom Single Switcher: Crystal clear toggle between Sign In and Registration */}
+          <div className="text-center pt-3 pb-1 border-t border-[#E8DEC8]/60 mt-4">
             <span className="text-xs text-[#6B5B4F]">
-              {activeTab === 'signin' ? "New Chef? " : "Already registered? "}
+              {activeTab === 'signin' ? `${t('new_chef_prompt')} ` : `${t('already_chef')} `}
             </span>
             <button 
               type="button"
@@ -467,7 +456,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
               }}
               className="text-xs text-[#8C4A32] font-bold hover:underline bg-transparent border-0 cursor-pointer ml-1"
             >
-              {activeTab === 'signin' ? "Register Your Kitchen" : "Sign In"}
+              {activeTab === 'signin' ? t('register_kitchen') : t('sign_in')}
             </button>
           </div>
 

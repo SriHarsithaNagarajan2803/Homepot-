@@ -62,7 +62,6 @@ function BottomNav() {
 // ==========================================
 export default function ChefDashboard({ userData, onLogout }) {
   const { t } = useLanguage();
-  // Load dynamic profile details from localStorage so header syncs with Profile changes
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem('homepot_chef_profile');
     if (saved) {
@@ -130,7 +129,7 @@ export default function ChefDashboard({ userData, onLogout }) {
   const [pushEnabled, setPushEnabled] = useState(true);
   const [autoAcceptEnabled, setAutoAcceptEnabled] = useState(false);
 
-  // Delete Account with Apps Script OTP States
+  // Delete Account States
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteEmail, setDeleteEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -138,7 +137,6 @@ export default function ChefDashboard({ userData, onLogout }) {
   const [generatedOtp, setGeneratedOtp] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
 
-  // Your deployed Google Apps Script Web App URL
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzwfkWrJhWyX0M1TZjEylnF01rfseSNxKZ1STN3CkR1csM1LhNZ0hb5AsxlgtJNF0bN/exec';
 
   const addNotification = (title, message) => {
@@ -146,7 +144,7 @@ export default function ChefDashboard({ userData, onLogout }) {
       id: Date.now(),
       title,
       message,
-      time: 'Just now'
+      time: t('just_now')
     };
     setNotifications((prev) => [newNotif, ...prev]);
     setUnreadCount((prev) => prev + 1);
@@ -172,7 +170,7 @@ export default function ChefDashboard({ userData, onLogout }) {
   };
 
   const handleLogOut = () => {
-    const confirmLogout = window.confirm('Are you sure you want to log out of Chef?');
+    const confirmLogout = window.confirm('Are you sure you want to log out?');
     if (confirmLogout) {
       setIsSettingsOpen(false);
       if (onLogout) onLogout(); 
@@ -250,13 +248,12 @@ export default function ChefDashboard({ userData, onLogout }) {
             <h1 className="text-2xl font-bold tracking-tight">HomePot <span className="font-normal text-orange-200">Chef</span></h1>
             
             <div className="flex items-center space-x-2 text-lg">
-              {/* Native Language Selector (Tamil, English, Hindi, Telugu, Kannada, Malayalam) */}
               <LanguageSelector variant="round" />
 
               <button 
                 onClick={handleOpenNotifications}
                 className="w-9 h-9 rounded-full bg-[#A85E45] flex items-center justify-center hover:bg-[#783D29] transition relative cursor-pointer"
-                title="Notifications"
+                title={t('notifications')}
               >
                 <i className="fa-regular fa-bell"></i>
                 {unreadCount > 0 && (
@@ -267,7 +264,7 @@ export default function ChefDashboard({ userData, onLogout }) {
               <button 
                 onClick={() => setIsHelpOpen(true)}
                 className="w-9 h-9 rounded-full bg-[#A85E45] flex items-center justify-center hover:bg-[#783D29] transition cursor-pointer"
-                title="Help & Support"
+                title={t('help_support')}
               >
                 <i className="fa-regular fa-circle-question"></i>
               </button>
@@ -275,7 +272,7 @@ export default function ChefDashboard({ userData, onLogout }) {
               <button 
                 onClick={() => setIsSettingsOpen(true)}
                 className="w-9 h-9 rounded-full bg-[#A85E45] flex items-center justify-center hover:bg-[#783D29] transition cursor-pointer"
-                title="Settings"
+                title={t('settings')}
               >
                 <i className="fa-solid fa-gear"></i>
               </button>
@@ -293,11 +290,10 @@ export default function ChefDashboard({ userData, onLogout }) {
                 />
               </div>
 
-              {/* Bright Green Light Dot (Open) / Red Light Dot (Closed) */}
               <button
                 type="button"
                 onClick={toggleKitchenStatus}
-                title={isKitchenOpen ? "Kitchen is OPEN (Accepting Orders). Click to close." : "Kitchen is CLOSED. Click to open."}
+                title={isKitchenOpen ? "Kitchen Open" : "Kitchen Closed"}
                 className="absolute bottom-0 right-0 cursor-pointer group focus:outline-none"
               >
                 <span className="relative flex h-4 w-4">
@@ -324,7 +320,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                     ? 'bg-[#10B981] shadow-[0_0_8px_#10B981] animate-pulse' 
                     : 'bg-[#EF4444] shadow-[0_0_8px_#EF4444]'
                 }`}
-                title={isKitchenOpen ? "Kitchen Open" : "Kitchen Closed"}
+                title={isKitchenOpen ? t('kitchen_open') : t('kitchen_closed')}
               />
             </div>
 
@@ -337,7 +333,6 @@ export default function ChefDashboard({ userData, onLogout }) {
                   ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/50' 
                   : 'bg-rose-950/40 text-rose-300 border-rose-500/40 hover:bg-rose-900/50'
               }`}
-              title="Click to toggle Kitchen Status"
             >
               <span className={`w-2 h-2 rounded-full ${
                 isKitchenOpen 
@@ -369,7 +364,7 @@ export default function ChefDashboard({ userData, onLogout }) {
             <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-orange-100 flex flex-col gap-4">
               <div className="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 className="font-bold text-stone-800 text-lg flex items-center gap-2">
-                  <i className="fa-regular fa-bell text-[#8C4A32]"></i> Notifications
+                  <i className="fa-regular fa-bell text-[#8C4A32]"></i> {t('notifications')}
                 </h3>
                 <button 
                   onClick={() => setIsNotificationOpen(false)}
@@ -383,7 +378,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                 {notifications.length === 0 ? (
                   <div className="text-center py-8 text-stone-400 text-xs">
                     <i className="fa-regular fa-bell-slash text-2xl mb-2 block"></i>
-                    No new order notifications yet.
+                    {t('no_notifications_yet')}
                   </div>
                 ) : (
                   notifications.map((n) => (
@@ -400,7 +395,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                 onClick={() => setIsNotificationOpen(false)}
                 className="w-full bg-[#8C4A32] text-white py-2.5 rounded-xl text-xs font-bold hover:bg-[#783D29] transition shadow-sm mt-2 cursor-pointer"
               >
-                Close
+                {t('close')}
               </button>
             </div>
           </div>
@@ -412,7 +407,7 @@ export default function ChefDashboard({ userData, onLogout }) {
             <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-orange-100 flex flex-col gap-4">
               <div className="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 className="font-bold text-stone-800 text-lg flex items-center gap-2">
-                  <i className="fa-regular fa-circle-question text-[#8C4A32]"></i> Help & Support
+                  <i className="fa-regular fa-circle-question text-[#8C4A32]"></i> {t('help_support')}
                 </h3>
                 <button 
                   onClick={() => setIsHelpOpen(false)}
@@ -425,7 +420,7 @@ export default function ChefDashboard({ userData, onLogout }) {
               <div className="flex flex-col gap-3 text-xs text-stone-600 leading-relaxed">
                 <div className="bg-stone-50 p-3 rounded-2xl border border-stone-100">
                   <p className="font-bold text-stone-800 mb-1">How to accept orders?</p>
-                  <p>Go to the <b>Live Orders</b> tab, view incoming orders for your meal slot, and click the green <b>Accept Order</b> button.</p>
+                  <p>Go to the <b>{t('live_orders')}</b> tab, view incoming orders, and click the green <b>{t('accept_order_btn')}</b> button.</p>
                 </div>
                 <div className="bg-stone-50 p-3 rounded-2xl border border-stone-100">
                   <p className="font-bold text-stone-800 mb-1">Need assistance or have queries?</p>
@@ -437,7 +432,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                 onClick={() => setIsHelpOpen(false)}
                 className="w-full bg-[#8C4A32] text-white py-2.5 rounded-xl text-xs font-bold hover:bg-[#783D29] transition shadow-sm mt-2 cursor-pointer"
               >
-                Got It
+                {t('got_it')}
               </button>
             </div>
           </div>
@@ -449,7 +444,7 @@ export default function ChefDashboard({ userData, onLogout }) {
             <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-orange-100 flex flex-col gap-4">
               <div className="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 className="font-bold text-stone-800 text-lg flex items-center gap-2">
-                  <i className="fa-solid fa-gear text-[#8C4A32]"></i> Chef Settings
+                  <i className="fa-solid fa-gear text-[#8C4A32]"></i> {t('settings')}
                 </h3>
                 <button 
                   onClick={() => setIsSettingsOpen(false)}
@@ -462,8 +457,8 @@ export default function ChefDashboard({ userData, onLogout }) {
               <div className="flex flex-col gap-3 text-xs text-stone-700">
                 <div className="flex items-center justify-between bg-stone-50 p-3 rounded-2xl border border-stone-100">
                   <div>
-                    <p className="font-bold text-stone-900">Push Notifications</p>
-                    <p className="text-[10px] text-stone-500">Receive alerts for new orders</p>
+                    <p className="font-bold text-stone-900">{t('push_notifications')}</p>
+                    <p className="text-[10px] text-stone-500">{t('receive_alerts')}</p>
                   </div>
                   <input 
                     type="checkbox" 
@@ -475,8 +470,8 @@ export default function ChefDashboard({ userData, onLogout }) {
 
                 <div className="flex items-center justify-between bg-stone-50 p-3 rounded-2xl border border-stone-100">
                   <div>
-                    <p className="font-bold text-stone-900">Auto-Accept Orders</p>
-                    <p className="text-[10px] text-stone-500">Automatically accept ready slots</p>
+                    <p className="font-bold text-stone-900">{t('auto_accept_orders')}</p>
+                    <p className="text-[10px] text-stone-500">{t('auto_accept_desc')}</p>
                   </div>
                   <input 
                     type="checkbox" 
@@ -490,14 +485,14 @@ export default function ChefDashboard({ userData, onLogout }) {
                   onClick={handleLogOut} 
                   className="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-center cursor-pointer hover:bg-amber-100 transition mt-1"
                 >
-                  <p className="font-bold text-amber-800">Log Out</p>
+                  <p className="font-bold text-amber-800">{t('log_out')}</p>
                 </div>
 
                 <div 
                   onClick={() => setShowDeleteModal(true)} 
                   className="bg-rose-50 p-3 rounded-2xl border border-rose-100 text-center cursor-pointer hover:bg-rose-100 transition"
                 >
-                  <p className="font-bold text-rose-600">Delete Account</p>
+                  <p className="font-bold text-rose-600">{t('delete_account')}</p>
                 </div>
               </div>
 
@@ -505,7 +500,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                 onClick={() => setIsSettingsOpen(false)}
                 className="w-full bg-[#8C4A32] text-white py-2.5 rounded-xl text-xs font-bold hover:bg-[#783D29] transition shadow-sm mt-1 cursor-pointer"
               >
-                Save & Close
+                {t('save_close')}
               </button>
             </div>
           </div>
@@ -517,7 +512,7 @@ export default function ChefDashboard({ userData, onLogout }) {
             <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-rose-200 flex flex-col gap-4">
               <div className="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 className="font-bold text-rose-600 text-base flex items-center gap-2">
-                  <i className="fa-solid fa-triangle-exclamation"></i> Delete Account
+                  <i className="fa-solid fa-triangle-exclamation"></i> {t('delete_account')}
                 </h3>
                 <button 
                   onClick={() => { setShowDeleteModal(false); setOtpSent(false); setDeleteEmail(''); setEnteredOtp(''); }}
@@ -529,12 +524,12 @@ export default function ChefDashboard({ userData, onLogout }) {
 
               <div className="text-xs text-stone-600 space-y-3">
                 <p className="leading-relaxed">
-                  This action is permanent and will delete all your chef profile data, menu lists, and earnings history. Verify your email to proceed.
+                  {t('delete_account_warning')}
                 </p>
 
                 {!otpSent ? (
                   <div className="flex flex-col gap-2">
-                    <label className="font-bold text-stone-700 text-[11px]">Registered Email Address</label>
+                    <label className="font-bold text-stone-700 text-[11px]">{t('email_address')}</label>
                     <input 
                       type="email" 
                       placeholder="chef@example.com" 
@@ -547,13 +542,13 @@ export default function ChefDashboard({ userData, onLogout }) {
                       disabled={isSendingOtp}
                       className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-bold transition shadow-sm mt-2 cursor-pointer disabled:opacity-50"
                     >
-                      {isSendingOtp ? 'Sending Code...' : 'Send Verification OTP'}
+                      {isSendingOtp ? '...' : t('send_verification_otp')}
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
                     <p className="text-[11px] text-emerald-700 font-bold">6-digit OTP code sent to {deleteEmail}</p>
-                    <label className="font-bold text-stone-700 text-[11px]">Enter 6-Digit OTP</label>
+                    <label className="font-bold text-stone-700 text-[11px]">{t('enter_otp')}</label>
                     <input 
                       type="text" 
                       maxLength={6}
@@ -566,7 +561,7 @@ export default function ChefDashboard({ userData, onLogout }) {
                       onClick={handleVerifyAndDelete}
                       className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-bold transition shadow-sm mt-2 cursor-pointer"
                     >
-                      Verify & Permanently Delete
+                      {t('verify_permanently_delete')}
                     </button>
                   </div>
                 )}

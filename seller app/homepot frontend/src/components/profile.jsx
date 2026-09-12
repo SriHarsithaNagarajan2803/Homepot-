@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import logoImg from '../assets/logo.jpeg';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ChefProfile() {
+  const { t } = useLanguage();
   // Load initial profile from localStorage or fallback to defaults
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem('homepot_chef_profile');
@@ -64,6 +66,7 @@ export default function ChefProfile() {
     setProfile(updated);
     setFormData(updated);
     localStorage.setItem('homepot_chef_profile', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
   };
 
   // Handle Image upload via file selector
@@ -108,9 +111,7 @@ export default function ChefProfile() {
   return (
     <div className="flex flex-col gap-4 pb-6 animate-fadeIn font-sans antialiased text-stone-800">
       
-      {/* ========================================== */}
       {/* SEPARATE CARD: Chef Profile Photo Showcase */}
-      {/* ========================================== */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100 flex flex-col gap-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100/50 rounded-bl-full pointer-events-none"></div>
 
@@ -124,7 +125,7 @@ export default function ChefProfile() {
                 className="w-full h-full object-cover rounded-full border-2 border-white" 
               />
             </div>
-            <span className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${profile.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-stone-400'}`} title={profile.isOpen ? "Kitchen Open" : "Kitchen Closed"}></span>
+            <span className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${profile.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-stone-400'}`} title={profile.isOpen ? t('kitchen_open') : t('kitchen_closed')}></span>
           </div>
 
           {/* Chef Identity & Status */}
@@ -148,7 +149,7 @@ export default function ChefProfile() {
                   {profile.isOpen && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>}
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
                 </span>
-                <span>{profile.isOpen ? 'OPEN' : 'CLOSED'}</span>
+                <span>{profile.isOpen ? t('open') : t('closed')}</span>
                 <i className={`fa-solid ${profile.isOpen ? 'fa-store text-xs ml-0.5' : 'fa-store-slash text-xs ml-0.5'}`}></i>
               </button>
             </div>
@@ -164,13 +165,13 @@ export default function ChefProfile() {
 
         {/* Share Profile Link Button */}
         <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
-          <span className="text-[11px] text-stone-500 font-medium">Want customers to find your kitchen?</span>
+          <span className="text-[11px] text-stone-500 font-medium">{t('share_kitchen_prompt')}</span>
           <button 
             onClick={handleShareProfile}
             className="bg-orange-50 hover:bg-orange-100 text-[#8C4A32] border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
           >
             <i className="fa-solid fa-share-nodes text-xs"></i>
-            {shareCopied ? 'Link Copied! ✓' : 'Share Profile Link'}
+            {shareCopied ? t('link_copied') : t('share_profile_btn')}
           </button>
         </div>
       </div>
@@ -179,31 +180,29 @@ export default function ChefProfile() {
       {savedMessage && (
         <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-2xl flex items-center gap-2 animate-fadeIn font-medium">
           <i className="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
-          <span>Profile and location updated successfully!</span>
+          <span>{t('profile_updated_success')}</span>
         </div>
       )}
 
-      {/* ========================================== */}
       {/* Profile Details or Edit Form Card */}
-      {/* ========================================== */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100">
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
           <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2 font-serif">
-            <i className="fa-solid fa-user-gear text-[#8C4A32]"></i> Kitchen Profile Details
+            <i className="fa-solid fa-user-gear text-[#8C4A32]"></i> {t('kitchen_profile_details')}
           </h3>
           {!isEditing ? (
             <button 
               onClick={() => { setFormData(profile); setIsEditing(true); }}
               className="text-xs font-bold text-[#8C4A32] hover:underline flex items-center gap-1 cursor-pointer"
             >
-              <i className="fa-solid fa-pen-to-square"></i> Edit Profile
+              <i className="fa-solid fa-pen-to-square"></i> {t('edit_profile')}
             </button>
           ) : (
             <button 
               onClick={() => setIsEditing(false)}
               className="text-xs font-bold text-stone-500 hover:underline cursor-pointer"
             >
-              Cancel
+              {t('cancel')}
             </button>
           )}
         </div>
@@ -211,12 +210,12 @@ export default function ChefProfile() {
         {!isEditing ? (
           <div className="flex flex-col gap-3 text-xs text-stone-700">
             <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Kitchen Name</span>
+              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('kitchen_name')}</span>
               <p className="font-semibold text-stone-900 mt-0.5 text-sm">{profile.kitchenName}</p>
             </div>
 
             <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Location / Landmark</span>
+              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('location_landmark')}</span>
               <p className="font-semibold text-stone-900 mt-0.5 flex items-center gap-1.5">
                 <i className="fa-solid fa-map-pin text-[#8C4A32]"></i> {profile.landmark || profile.address}
               </p>
@@ -224,22 +223,22 @@ export default function ChefProfile() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Phone Number</span>
+                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('phone_number_label')}</span>
                 <p className="font-semibold text-stone-900 mt-0.5 font-mono text-[11px]">{profile.phone}</p>
               </div>
               <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Email Address</span>
+                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('email_address')}</span>
                 <p className="font-semibold text-stone-900 mt-0.5 truncate text-[11px]">{profile.email}</p>
               </div>
             </div>
 
             <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Chef Bio</span>
+              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('chef_bio')}</span>
               <p className="text-stone-600 mt-0.5 leading-relaxed font-normal">{profile.bio}</p>
             </div>
 
             <div className="bg-stone-50/80 p-3.5 rounded-2xl border border-stone-100/60">
-              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">Instagram / Social Handle</span>
+              <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">{t('instagram_handle')}</span>
               <p className="font-bold text-[#8C4A32] mt-0.5 font-mono text-xs">@{profile.handle}</p>
             </div>
           </div>
@@ -247,7 +246,7 @@ export default function ChefProfile() {
           <form onSubmit={handleSave} className="flex flex-col gap-3 text-xs">
             {/* Upload Profile Image Inside Edit */}
             <div className="bg-orange-50/60 p-3.5 rounded-2xl border border-orange-100 flex flex-col items-center gap-2">
-              <span className="font-bold text-stone-700 text-[11px]">Change Profile Picture</span>
+              <span className="font-bold text-stone-700 text-[11px]">{t('change_profile_picture')}</span>
               <div className="flex items-center gap-3">
                 <img 
                   src={formData.profileImg || logoImg} 
@@ -264,7 +263,7 @@ export default function ChefProfile() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Chef Name</label>
+              <label className="font-bold text-stone-700 block mb-1">{t('chef_name')}</label>
               <input 
                 type="text" 
                 value={formData.chefName} 
@@ -275,7 +274,7 @@ export default function ChefProfile() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Kitchen Name</label>
+              <label className="font-bold text-stone-700 block mb-1">{t('kitchen_name')}</label>
               <input 
                 type="text" 
                 value={formData.kitchenName} 
@@ -286,7 +285,7 @@ export default function ChefProfile() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Landmark / Location</label>
+              <label className="font-bold text-stone-700 block mb-1">{t('location_landmark')}</label>
               <input 
                 type="text" 
                 value={formData.landmark} 
@@ -298,7 +297,7 @@ export default function ChefProfile() {
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="font-bold text-stone-700 block mb-1">Phone</label>
+                <label className="font-bold text-stone-700 block mb-1">{t('phone_number_label')}</label>
                 <input 
                   type="text" 
                   value={formData.phone} 
@@ -307,7 +306,7 @@ export default function ChefProfile() {
                 />
               </div>
               <div>
-                <label className="font-bold text-stone-700 block mb-1">Instagram Handle</label>
+                <label className="font-bold text-stone-700 block mb-1">{t('instagram_handle')}</label>
                 <input 
                   type="text" 
                   value={formData.handle} 
@@ -318,7 +317,7 @@ export default function ChefProfile() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Specialties</label>
+              <label className="font-bold text-stone-700 block mb-1">{t('cuisine_specialties')}</label>
               <input 
                 type="text" 
                 value={formData.specialties} 
@@ -328,7 +327,7 @@ export default function ChefProfile() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Bio</label>
+              <label className="font-bold text-stone-700 block mb-1">{t('chef_bio')}</label>
               <textarea 
                 rows={3}
                 value={formData.bio} 
@@ -341,35 +340,32 @@ export default function ChefProfile() {
               type="submit"
               className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white py-2.5 rounded-xl font-bold transition shadow-sm mt-2 cursor-pointer tracking-wide"
             >
-              Save Changes
+              {t('save_changes')}
             </button>
           </form>
         )}
       </div>
 
-      {/* ========================================== */}
-      {/* CUSTOMER REVIEWS & MODERATION CARD (CHEF VIEW) */}
-      {/* ========================================== */}
+      {/* CUSTOMER REVIEWS & MODERATION CARD */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100">
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
           <div>
             <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2 font-serif">
-              <i className="fa-solid fa-star text-amber-500"></i> Customer Reviews & Ratings
+              <i className="fa-solid fa-star text-amber-500"></i> {t('customer_reviews_title')}
             </h3>
             <p className="text-[11px] text-stone-500 mt-0.5">
-              Overall Rating: <span className="font-bold text-stone-900">{averageRating} / 5.0</span> ({reviews.length} reviews)
+              {t('overall_rating')} <span className="font-bold text-stone-900">{averageRating} / 5.0</span> ({reviews.length} {t('reviews_count')})
             </p>
           </div>
           <span className="bg-stone-100 text-stone-600 px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider">
-            Chef Dashboard
+            {t('chef_dashboard_badge')}
           </span>
         </div>
 
-        {/* Reviews List (With Delete Moderation) */}
         {reviews.length === 0 ? (
           <div className="text-center py-6 bg-stone-50/50 rounded-2xl border border-dashed border-stone-200">
             <i className="fa-solid fa-comments text-stone-300 text-2xl mb-1"></i>
-            <p className="text-xs text-stone-500 font-medium">No reviews from customers yet. Share your profile link to start receiving feedback!</p>
+            <p className="text-xs text-stone-500 font-medium">{t('no_reviews_yet')}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2.5">
@@ -384,7 +380,6 @@ export default function ChefProfile() {
                       </div>
                       <span className="text-[10px] text-stone-400 font-medium ml-1">{rev.date}</span>
                     </div>
-                    {/* Delete Review Button for Moderation */}
                     <button 
                       onClick={() => handleDeleteReview(rev.id)}
                       className="text-stone-400 hover:text-rose-600 transition p-1 cursor-pointer"
