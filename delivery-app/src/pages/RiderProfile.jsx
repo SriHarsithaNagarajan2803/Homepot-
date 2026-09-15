@@ -13,24 +13,66 @@ import {
   ChevronRight,
   Phone,
   AlertTriangle,
-  X
+  X,
+  CreditCard
 } from 'lucide-react';
 import HomepotLogo from '../components/HomepotLogo';
 import DeliveryNavbar from '../components/DeliveryNavbar';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderProfile() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  // Load rider details from localStorage
+  const [profile, setProfile] = useState(() => {
+    const saved = localStorage.getItem('homepot_rider_profile');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {
+      name: localStorage.getItem('homepot_rider_name') || 'Kumar V.',
+      phone: localStorage.getItem('homepot_rider_phone') || '+91 98765 43210',
+      email: localStorage.getItem('homepot_rider_email') || 'kumar.delivery@gmail.com',
+      vehicle: 'Electric Scooter (TN 09 BX 4521)',
+      bank: {
+        accountNumber: '98765432101234',
+        ifsc: 'HDFC0001234',
+        upiId: 'kumar@okaxis'
+      }
+    };
+  });
 
   // Modals
   const [showSOS, setShowSOS] = useState(false);
-  const [showPreferences, setShowPreferences] = useState(false);
-  const [showBankDetails, setShowBankDetails] = useState(false);
-  const [showDocuments, setShowDocuments] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [showDocumentsModal, setShowDocumentsModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
-  // Preference toggles
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [language, setLanguage] = useState('English');
+  // Bank Form States
+  const [tempUpi, setTempUpi] = useState(profile.bank?.upiId || 'kumar@okaxis');
+  const [tempAc, setTempAc] = useState(profile.bank?.accountNumber || '98765432101234');
+  const [tempIfsc, setTempIfsc] = useState(profile.bank?.ifsc || 'HDFC0001234');
+
+  const handleSaveBank = (e) => {
+    e.preventDefault();
+    const updated = {
+      ...profile,
+      bank: {
+        ...profile.bank,
+        upiId: tempUpi,
+        accountNumber: tempAc,
+        ifsc: tempIfsc
+      }
+    };
+    setProfile(updated);
+    localStorage.setItem('homepot_rider_profile', JSON.stringify(updated));
+    setShowBankModal(false);
+    alert('Bank and UPI details updated successfully!');
+  };
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to log out of your rider session?')) {
@@ -39,12 +81,12 @@ export default function RiderProfile() {
   };
 
   return (
-    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24">
-      {/* Top Header Bar */}
-      <div className="w-full flex items-center justify-between px-5 pt-5 pb-2">
+    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans">
+      {/* Top Header Bar matching Image 1 */}
+      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2">
         <button
           onClick={() => navigate('/radar')}
-          className="w-9 h-9 rounded-full bg-white/70 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white transition-colors"
+          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white transition-colors cursor-pointer"
           title="Back to Orders"
         >
           <ArrowLeft size={18} />
@@ -53,306 +95,283 @@ export default function RiderProfile() {
         <HomepotLogo size="md" showText={false} />
 
         <button
-          onClick={() => alert('Support line: 1800-HOMEPOT (Available 24/7)')}
-          className="w-9 h-9 rounded-full bg-white/70 border border-[#EADBCC] flex items-center justify-center text-[#6C645E] hover:text-[#9C4A28] hover:bg-white transition-colors"
+          onClick={() => alert('Support helpline: 1800-HOMEPOT-HELP (Available 24/7)')}
+          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#6C645E] hover:text-[#8C4A32] hover:bg-white transition-colors cursor-pointer"
           title="Help & Support"
         >
           <HelpCircle size={18} />
         </button>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content Area matching Image 1 */}
       <div className="flex-1 px-4 sm:px-6 py-2 max-w-sm mx-auto w-full space-y-4">
-        {/* Rider Profile Card Header */}
+        
+        {/* Rider Profile Card Header matching Image 1 */}
         <div className="flex flex-col items-center">
-          {/* Avatar Icon */}
           <div className="w-20 h-20 rounded-full bg-[#505D61] text-white flex items-center justify-center shadow-md border-4 border-white">
             <User size={40} className="text-[#F3ECE0]" />
           </div>
 
-          <h2 className="font-serif text-xl font-bold text-[#8B3A1C] mt-2">
-            Kumar V.
+          <h2 className="font-serif text-xl font-bold text-[#8C4A32] mt-2">
+            {profile.name}
           </h2>
 
           <div className="flex items-center gap-1.5 text-xs text-[#6C645E] font-medium mt-0.5">
             <span className="text-[#D99436] font-bold">★ 4.8</span>
             <span>/</span>
             <span className="text-[#16A34A] font-semibold flex items-center gap-1">
-              Verified
+              <CheckCircle2 size={12} />
+              <span>Verified</span>
             </span>
           </div>
         </div>
 
-        {/* Profile Options List (Matching page6.jpeg exactly) */}
-        <div className="bg-[#FFFDF8] rounded-3xl border border-[#EADBCC] shadow-soft p-4 divide-y divide-[#F0E6D8] space-y-3">
-          {/* 1. Account Details */}
-          <div 
-            onClick={() => alert('Vehicle: TVS Jupiter (KA-01-EQ-9876)\nPhone: +91 9876543210\nEmail: kumar.delivery@gmail.com')}
-            className="pt-2 first:pt-0 cursor-pointer hover:bg-[#FAF6EE]/60 p-2 rounded-xl transition-colors"
-          >
-            <h4 className="font-serif font-bold text-sm text-[#8B3A1C]">Account Details:</h4>
-            <p className="text-xs text-[#5C544E] mt-0.5">Phone, Email, Registered Vehicle</p>
+        {/* Big White Rounded Card with Profile Sections matching Image 1 */}
+        <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-5 shadow-sm space-y-4 text-xs text-[#333C3E]">
+          
+          {/* 1. Account Details matching Image 1 */}
+          <div className="border-b border-[#EADBCC] pb-3">
+            <h3 className="font-bold text-[#8C4A32] text-xs">
+              {t('account_details')}
+            </h3>
+            <p className="text-[11px] text-[#6C645E] mt-0.5 font-medium">
+              {profile.phone} • {profile.email}
+            </p>
+            <p className="text-[11px] text-[#7C746E] mt-0.5">
+              Vehicle: {profile.vehicle || 'Electric Scooter (TN 09 BX 4521)'}
+            </p>
           </div>
 
-          {/* 2. Documents */}
+          {/* 2. Documents matching Image 1 */}
           <div 
-            onClick={() => setShowDocuments(true)}
-            className="pt-3 cursor-pointer hover:bg-[#FAF6EE]/60 p-2 rounded-xl transition-colors"
-          >
-            <h4 className="font-serif font-bold text-sm text-[#8B3A1C]">Documents:</h4>
-            <div className="flex items-center gap-6 mt-1.5 text-xs font-medium text-[#333C3E]">
-              <div className="flex items-center gap-1.5">
-                <span>Driving License</span>
-                <CheckCircle2 size={16} className="text-[#16A34A] fill-[#16A34A]/20" />
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>RC</span>
-                <CheckCircle2 size={16} className="text-[#16A34A] fill-[#16A34A]/20" />
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Preferences */}
-          <div 
-            onClick={() => setShowPreferences(true)}
-            className="pt-3 flex items-center justify-between cursor-pointer hover:bg-[#FAF6EE]/60 p-2 rounded-xl transition-colors"
+            onClick={() => setShowDocumentsModal(true)}
+            className="border-b border-[#EADBCC] pb-3 flex items-center justify-between cursor-pointer hover:opacity-80"
           >
             <div>
-              <h4 className="font-serif font-bold text-sm text-[#8B3A1C]">Preferences:</h4>
-              <p className="text-xs text-[#5C544E] mt-0.5">Language, Sound Settings</p>
+              <h3 className="font-bold text-[#8C4A32] text-xs">
+                {t('documents')}
+              </h3>
+              <div className="flex items-center gap-4 mt-1 text-[11px]">
+                <span className="flex items-center gap-1 font-semibold text-[#16A34A]">
+                  <span>{t('driving_license')}</span>
+                  <CheckCircle2 size={13} />
+                </span>
+                <span className="flex items-center gap-1 font-semibold text-[#16A34A]">
+                  <span>{t('rc_book')}</span>
+                  <CheckCircle2 size={13} />
+                </span>
+              </div>
             </div>
-            <div className="w-8 h-8 rounded-full bg-[#FAF6EE] text-[#8B3A1C] flex items-center justify-center border border-[#EADBCC]">
-              <Settings size={18} />
-            </div>
+            <ChevronRight size={16} className="text-[#6C645E]" />
           </div>
 
-          {/* 4. Bank Details */}
-          <div 
-            onClick={() => setShowBankDetails(true)}
-            className="pt-3 flex items-center justify-between cursor-pointer hover:bg-[#FAF6EE]/60 p-2 rounded-xl transition-colors"
-          >
+          {/* 3. Preferences matching Image 1 */}
+          <div className="border-b border-[#EADBCC] pb-3 flex items-center justify-between">
             <div>
-              <h4 className="font-serif font-bold text-sm text-[#8B3A1C]">Bank Details:</h4>
-              <p className="text-xs text-[#5C544E] mt-0.5 leading-snug">
-                Payment methods<br />
-                Bank Account, UPI ID
+              <h3 className="font-bold text-[#8C4A32] text-xs">
+                {t('preferences')}
+              </h3>
+              <p className="text-[11px] text-[#6C645E] mt-0.5 font-medium">
+                {t('preferences_sub')}
               </p>
             </div>
-            <div className="w-8 h-8 rounded-full bg-[#FAF6EE] text-[#8B3A1C] flex items-center justify-center border border-[#EADBCC]">
-              <Wallet size={18} />
+            <div className="flex items-center gap-2">
+              <LanguageSelector variant="pill" />
             </div>
           </div>
 
-          {/* 5. Support & SOS */}
-          <div className="pt-3 flex items-center justify-between p-2">
+          {/* 4. Bank Details matching Image 1 */}
+          <div 
+            onClick={() => setShowBankModal(true)}
+            className="border-b border-[#EADBCC] pb-3 flex items-center justify-between cursor-pointer hover:opacity-80"
+          >
             <div>
-              <h4 className="font-serif font-bold text-sm text-[#8B3A1C]">Support:</h4>
-              <p className="text-xs text-[#5C544E] mt-0.5">Contact Us,</p>
+              <h3 className="font-bold text-[#8C4A32] text-xs">
+                {t('bank_details')}
+              </h3>
+              <p className="text-[11px] text-[#6C645E] mt-0.5 font-medium">
+                A/C: ****{profile.bank?.accountNumber?.slice(-4) || '1234'} • UPI: {profile.bank?.upiId || 'kumar@okaxis'}
+              </p>
             </div>
-            {/* SOS Red Button Badge */}
+            <div className="w-8 h-8 rounded-xl bg-[#8C4A32]/10 text-[#8C4A32] flex items-center justify-center">
+              <Wallet size={16} />
+            </div>
+          </div>
+
+          {/* 5. Support & SOS Button matching Image 1 */}
+          <div className="border-b border-[#EADBCC] pb-3 flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-[#8C4A32] text-xs">
+                {t('support')}
+              </h3>
+              <p className="text-[11px] text-[#6C645E] mt-0.5">
+                {t('contact_us')} 1800-HOMEPOT
+              </p>
+            </div>
+
+            {/* Red Pill SOS Button matching Image 1 */}
             <button
               onClick={() => setShowSOS(true)}
-              className="bg-[#DC2626]/15 border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-xs transition-all flex items-center gap-1.5"
+              className="bg-[#C85250]/15 text-[#B91C1C] border border-[#B91C1C]/40 px-3.5 py-1.5 rounded-full text-xs font-bold hover:bg-[#B91C1C] hover:text-white transition-all shadow-xs cursor-pointer active:scale-95 flex items-center gap-1"
             >
-              <ShieldAlert size={14} />
-              <span>SOS Button</span>
+              <AlertTriangle size={13} />
+              <span>{t('sos_button')}</span>
             </button>
           </div>
 
-          {/* 6. Terms of Service */}
+          {/* 6. Terms of Service matching Image 1 */}
           <div 
-            onClick={() => setShowTerms(true)}
-            className="pt-3 cursor-pointer hover:bg-[#FAF6EE]/60 p-2 rounded-xl transition-colors flex items-center justify-between"
+            onClick={() => setShowTermsModal(true)}
+            className="border-b border-[#EADBCC] pb-3 flex items-center justify-between cursor-pointer hover:text-[#8C4A32]"
           >
-            <span className="font-serif font-bold text-sm text-[#333C3E]">Terms of Service</span>
-            <ChevronRight size={16} className="text-[#8C847E]" />
+            <span className="font-bold text-xs text-[#333C3E]">{t('terms_of_service')}</span>
+            <ChevronRight size={16} className="text-[#6C645E]" />
           </div>
 
-          {/* 7. Logout */}
+          {/* 7. Logout matching Image 1 */}
           <div 
             onClick={handleLogout}
-            className="pt-3 cursor-pointer hover:bg-red-50 p-2 rounded-xl transition-colors flex items-center justify-between text-[#DC2626]"
+            className="pt-1 flex items-center justify-between cursor-pointer text-[#8C4A32] hover:text-rose-600 font-bold"
           >
-            <span className="font-serif font-bold text-sm">Logout</span>
+            <span className="text-xs">{t('logout')}</span>
             <LogOut size={16} />
           </div>
+
         </div>
 
-        {/* Legal text */}
-        <p className="text-[#8C847E] text-[11px] text-center pt-1 leading-relaxed">
-          Terms and Privacy under the terms and Privacy list below.
-        </p>
       </div>
 
-      {/* SOS Alert Modal */}
+      {/* SOS EMERGENCY MODAL */}
       {showSOS && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border-2 border-[#DC2626] space-y-3 text-center">
-            <div className="w-12 h-12 rounded-full bg-red-100 text-[#DC2626] flex items-center justify-center mx-auto">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#DC2626]">Emergency SOS</h3>
-            <p className="text-xs text-[#6C645E]">
-              Are you in an emergency situation? Triggering this will immediately share your live GPS coordinates with HomePot Emergency Response & the nearest local authority.
-            </p>
-            <div className="pt-2 space-y-2">
-              <button
-                onClick={() => {
-                  alert('Emergency signal sent! Support team has been dispatched to your GPS location.');
-                  setShowSOS(false);
-                }}
-                className="w-full py-2.5 bg-[#DC2626] text-white rounded-full font-bold text-xs shadow-md"
-              >
-                CONFIRM SOS (CALL 112)
-              </button>
-              <button
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+          <div className="bg-white border-2 border-rose-300 rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-4 text-[#2C231E]">
+            <div className="flex justify-between items-center border-b border-rose-100 pb-2">
+              <div className="flex items-center gap-2 text-rose-600 font-bold">
+                <AlertTriangle size={20} />
+                <h3>{t('sos_emergency_modal')}</h3>
+              </div>
+              <button 
                 onClick={() => setShowSOS(false)}
-                className="w-full py-2 bg-[#F3ECE0] text-[#333C3E] rounded-full text-xs font-semibold"
+                className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 cursor-pointer"
               >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Preferences Modal */}
-      {showPreferences && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border border-[#EADBCC] space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif font-bold text-base text-[#333C3E]">Preferences</h3>
-              <button onClick={() => setShowPreferences(false)}>
-                <X size={18} />
+                <X size={14} />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-2 border-b border-[#F0E6D8]">
-                <span>App Sound Alerts</span>
-                <button 
-                  onClick={() => setSoundEnabled(!soundEnabled)}
-                  className={`w-11 h-6 rounded-full transition-colors relative ${soundEnabled ? 'bg-[#9C4A28]' : 'bg-[#C8BFB5]'}`}
-                >
-                  <span className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${soundEnabled ? 'right-1' : 'left-1'}`}></span>
-                </button>
-              </div>
-
-              <div className="flex justify-between items-center py-2">
-                <span>App Language</span>
-                <select 
-                  value={language} 
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-[#FAF6EE] border border-[#EADBCC] rounded-lg px-2 py-1 text-xs"
-                >
-                  <option>English</option>
-                  <option>Kannada</option>
-                  <option>Hindi</option>
-                  <option>Tamil</option>
-                </select>
-              </div>
-            </div>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              {t('sos_warning')}
+            </p>
 
             <button
-              onClick={() => setShowPreferences(false)}
-              className="w-full py-2 bg-[#9C4A28] text-white rounded-full text-xs font-medium"
+              onClick={() => {
+                alert('🚨 EMERGENCY SOS BROADCASTED! GPS Coordinates sent to police control and HomePot emergency helpline.');
+                setShowSOS(false);
+              }}
+              className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer animate-pulse"
             >
-              Save Preferences
+              {t('trigger_sos')}
             </button>
           </div>
         </div>
       )}
 
-      {/* Bank Details Modal */}
-      {showBankDetails && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border border-[#EADBCC] space-y-3">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif font-bold text-base text-[#333C3E]">Linked Bank Account</h3>
-              <button onClick={() => setShowBankDetails(false)}>
-                <X size={18} />
+      {/* BANK DETAILS MODAL */}
+      {showBankModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
+            <div className="flex justify-between items-center border-b border-[#EADBCC] pb-2">
+              <h3 className="font-serif font-bold text-sm text-[#8C4A32]">{t('bank_details')}</h3>
+              <button onClick={() => setShowBankModal(false)} className="w-7 h-7 rounded-full bg-white flex items-center justify-center cursor-pointer">
+                <X size={14} />
               </button>
             </div>
-            <div className="p-3 bg-[#FAF6EE] rounded-2xl border border-[#EADBCC] space-y-2 text-xs">
-              <p><strong>Bank:</strong> HDFC Bank Ltd.</p>
-              <p><strong>A/C No:</strong> *******4829</p>
-              <p><strong>IFSC:</strong> HDFC0001234</p>
-              <p><strong>UPI ID:</strong> kumar.v@okhdfcbank</p>
-            </div>
-            <button
-              onClick={() => setShowBankDetails(false)}
-              className="w-full py-2 bg-[#333C3E] text-white rounded-full text-xs font-medium"
-            >
-              Done
-            </button>
+
+            <form onSubmit={handleSaveBank} className="space-y-2.5 text-xs">
+              <div>
+                <label className="font-bold text-[#6C645E] block mb-1">UPI ID</label>
+                <input
+                  type="text"
+                  required
+                  value={tempUpi}
+                  onChange={(e) => setTempUpi(e.target.value)}
+                  className="w-full bg-white border border-[#EADBCC] rounded-xl px-3 py-2 font-mono text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-[#6C645E] block mb-1">{t('bank_account_number')}</label>
+                <input
+                  type="text"
+                  required
+                  value={tempAc}
+                  onChange={(e) => setTempAc(e.target.value)}
+                  className="w-full bg-white border border-[#EADBCC] rounded-xl px-3 py-2 font-mono text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-[#6C645E] block mb-1">{t('ifsc_code')}</label>
+                <input
+                  type="text"
+                  required
+                  value={tempIfsc}
+                  onChange={(e) => setTempIfsc(e.target.value.toUpperCase())}
+                  className="w-full bg-white border border-[#EADBCC] rounded-xl px-3 py-2 font-mono uppercase text-xs"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#8C4A32] text-white font-bold py-2.5 rounded-xl mt-2 cursor-pointer shadow-xs"
+              >
+                {t('save_changes')}
+              </button>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Documents Modal */}
-      {showDocuments && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border border-[#EADBCC] space-y-3">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif font-bold text-base text-[#333C3E]">Verified Documents</h3>
-              <button onClick={() => setShowDocuments(false)}>
-                <X size={18} />
+      {/* DOCUMENTS MODAL */}
+      {showDocumentsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
+            <div className="flex justify-between items-center border-b border-[#EADBCC] pb-2">
+              <h3 className="font-serif font-bold text-sm text-[#8C4A32]">{t('documents')}</h3>
+              <button onClick={() => setShowDocumentsModal(false)} className="w-7 h-7 rounded-full bg-white flex items-center justify-center cursor-pointer">
+                <X size={14} />
               </button>
             </div>
+
             <div className="space-y-2 text-xs">
-              <div className="p-3 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">
+              <div className="bg-white border border-[#EADBCC] p-3 rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-green-900">Driving License</p>
-                  <p className="text-[10px] text-green-700">KA-05-20180029384</p>
+                  <p className="font-bold text-[#2C231E]">{t('driving_license')}</p>
+                  <p className="text-[10px] text-[#7C746E]">DL-0420110012345</p>
                 </div>
-                <CheckCircle2 size={18} className="text-green-600" />
+                <span className="text-emerald-700 bg-emerald-100 font-bold text-[10px] px-2 py-0.5 rounded-md">Verified ✓</span>
               </div>
 
-              <div className="p-3 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">
+              <div className="bg-white border border-[#EADBCC] p-3 rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-green-900">Vehicle Registration (RC)</p>
-                  <p className="text-[10px] text-green-700">KA-01-EQ-9876</p>
+                  <p className="font-bold text-[#2C231E]">{t('rc_book')}</p>
+                  <p className="text-[10px] text-[#7C746E]">TN 09 BX 4521</p>
                 </div>
-                <CheckCircle2 size={18} className="text-green-600" />
+                <span className="text-emerald-700 bg-emerald-100 font-bold text-[10px] px-2 py-0.5 rounded-md">Verified ✓</span>
               </div>
             </div>
-            <button
-              onClick={() => setShowDocuments(false)}
-              className="w-full py-2 bg-[#333C3E] text-white rounded-full text-xs font-medium"
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
 
-      {/* Terms Modal */}
-      {showTerms && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border border-[#EADBCC] space-y-3 max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif font-bold text-base text-[#333C3E]">Terms of Service</h3>
-              <button onClick={() => setShowTerms(false)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="text-xs text-[#5C544E] space-y-2 leading-relaxed">
-              <p>1. HomePot delivery partners are independent contractors connecting home kitchens to valued customers.</p>
-              <p>2. Fresh hot food must be maintained in insulated containers during transit.</p>
-              <p>3. Payouts are computed daily and deposited weekly on Mondays to the verified bank account.</p>
-            </div>
-            <button
-              onClick={() => setShowTerms(false)}
-              className="w-full py-2 bg-[#9C4A28] text-white rounded-full text-xs font-medium"
-            >
-              Understood
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Bottom Navigation Bar */}
+      {/* Persistent Bottom Navbar matching reference images */}
       <DeliveryNavbar activeTab="profile" />
+
+      {/* Footer Notice matching reference images */}
+      <div className="w-full text-center pb-2 pt-1">
+        <p className="text-[10px] text-[#7C746E]">
+          {t('terms_privacy_notice')}
+        </p>
+      </div>
     </div>
   );
 }

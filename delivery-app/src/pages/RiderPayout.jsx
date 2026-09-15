@@ -1,146 +1,124 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ArrowLeft, Wallet, ArrowDownLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Wallet, TrendingUp, Calendar, ArrowDownRight, CheckCircle2 } from 'lucide-react';
 import HomepotLogo from '../components/HomepotLogo';
 import DeliveryNavbar from '../components/DeliveryNavbar';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderPayout() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
-  const payouts = [
-    {
-      id: '#HP12345-6789',
-      date: 'Today, 14:30',
-      items: 'Dinner delivery (Rupa’s)',
-      amount: '₹85.00',
-      status: 'Paid',
-      distance: '5.2 km'
-    },
-    {
-      id: '#HP12345-6788',
-      date: 'Today, 13:10',
-      items: 'Lunch surge (Anitha’s)',
-      amount: '₹115.00',
-      status: 'Paid',
-      distance: '6.8 km'
-    },
-    {
-      id: '#HP12345-6780',
-      date: 'Yesterday, 20:45',
-      items: 'Dinner rush delivery',
-      amount: '₹95.00',
-      status: 'Paid',
-      distance: '4.5 km'
-    },
-    {
-      id: '#HP12345-6775',
-      date: '24-Oct-2023',
-      items: 'Weekly incentive reward',
-      amount: '₹350.00',
-      status: 'Paid',
-      distance: 'Bonus'
-    }
-  ];
+  const [balance, setBalance] = useState(680.00);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const [txns, setTxns] = useState([
+    { id: 'TXN-8821', desc: 'Order Delivery #HP12345-6789', amount: '+₹65.00', date: 'Today, 2:30 PM' },
+    { id: 'TXN-8819', desc: 'Eco-Tiffin Return Bonus', amount: '+₹20.00', date: 'Today, 2:30 PM' },
+    { id: 'TXN-8762', desc: 'Order Delivery #HP99102-1209', amount: '+₹75.00', date: 'Today, 1:15 PM' }
+  ]);
+
+  const handleWithdraw = () => {
+    if (balance <= 0) return;
+    setIsWithdrawing(true);
+
+    setTimeout(() => {
+      const withdrawn = balance;
+      setBalance(0);
+      setIsWithdrawing(false);
+      setSuccessMsg(`Successfully transferred ₹${withdrawn.toFixed(2)} directly to your linked UPI!`);
+
+      setTxns((prev) => [
+        { id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`, desc: 'Instant UPI Settlement', amount: `-₹${withdrawn.toFixed(2)}`, date: 'Just now' },
+        ...prev
+      ]);
+
+      setTimeout(() => setSuccessMsg(''), 5000);
+    }, 1500);
+  };
 
   return (
-    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24">
-      {/* Top Header Bar */}
-      <div className="w-full flex items-center justify-between px-5 pt-5 pb-2">
+    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans">
+      {/* Top Header */}
+      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2">
         <button
           onClick={() => navigate('/radar')}
-          className="w-9 h-9 rounded-full bg-white/70 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white transition-colors"
-          title="Back"
+          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white cursor-pointer"
         >
           <ArrowLeft size={18} />
         </button>
 
         <HomepotLogo size="md" showText={false} />
-
-        <div className="w-9 h-9"></div>
+        <LanguageSelector variant="round" />
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 px-4 sm:px-6 py-2 max-w-sm mx-auto w-full space-y-4">
-        {/* Earnings Summary Card */}
-        <div className="bg-[#9C4A28] text-white rounded-3xl p-5 shadow-elevated relative overflow-hidden">
-          {/* Subtle background decoration */}
-          <div className="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10 pointer-events-none"></div>
-          
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs text-[#F5E5DC] font-medium">Total Balance</p>
-              <h2 className="font-serif text-3xl font-bold mt-1 tracking-tight">₹4,250.00</h2>
-            </div>
-            <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center">
-              <Wallet size={20} className="text-[#FAF6EE]" />
-            </div>
-          </div>
+        {/* Earnings Card */}
+        <div className="bg-gradient-to-br from-[#8C4A32] to-[#683220] text-white rounded-3xl p-6 shadow-md relative overflow-hidden">
+          <span className="text-xs uppercase font-bold tracking-wider text-orange-200">
+            {t('total_payout_balance')}
+          </span>
+          <h2 className="font-serif text-3xl font-bold mt-1">₹{balance.toFixed(2)}</h2>
 
-          <div className="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs">
+          {successMsg && (
+            <div className="mt-3 bg-emerald-500 text-white text-xs p-2.5 rounded-xl font-semibold flex items-center gap-2">
+              <CheckCircle2 size={16} />
+              <span>{successMsg}</span>
+            </div>
+          )}
+
+          <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
             <div>
-              <span className="text-[#F5E5DC] block text-[10px]">Today's Earnings</span>
-              <span className="font-bold text-sm">₹650.00</span>
+              <p className="text-[10px] text-orange-200">Instant UPI Direct Deposit</p>
+              <p className="text-[10px] text-white font-bold">100% Commission-Free</p>
             </div>
-            <div className="text-right">
-              <span className="text-[#F5E5DC] block text-[10px]">Next Payout</span>
-              <span className="font-bold text-sm">Monday, 10:00 AM</span>
-            </div>
+
+            <button
+              onClick={handleWithdraw}
+              disabled={balance <= 0 || isWithdrawing}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer ${
+                balance > 0 ? 'bg-amber-300 text-stone-900 hover:bg-amber-200' : 'bg-stone-600 text-stone-300 cursor-not-allowed'
+              }`}
+            >
+              {isWithdrawing ? 'Transferring...' : t('withdraw_instantly')}
+            </button>
           </div>
         </div>
 
-        {/* Milestone Goal Card */}
-        <div className="bg-[#FFFDF8] rounded-2xl border border-[#EADBCC] p-3.5 shadow-soft flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D99436]/15 text-[#D99436] flex items-center justify-center shrink-0">
-            <TrendingUp size={20} />
+        {/* Breakdown Stats */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-2xl p-3.5 text-center">
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{t('deliveries_completed')}</p>
+            <p className="text-lg font-serif font-bold text-[#8C4A32] mt-0.5">12 Orders</p>
           </div>
-          <div className="flex-1">
-            <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-[#333C3E]">Weekly Milestone</span>
-              <span className="text-[#9C4A28] font-bold">18 / 20 Orders</span>
-            </div>
-            <div className="w-full bg-[#EADBCC] h-2 rounded-full mt-1.5 overflow-hidden">
-              <div className="bg-[#9C4A28] h-full rounded-full" style={{ width: '90%' }}></div>
-            </div>
-            <p className="text-[10px] text-[#7C746E] mt-1">2 more deliveries to unlock ₹300 bonus!</p>
+
+          <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-2xl p-3.5 text-center">
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{t('tiffin_bonuses_earned')}</p>
+            <p className="text-lg font-serif font-bold text-emerald-700 mt-0.5">+₹60.00</p>
           </div>
         </div>
 
-        {/* Recent Deliveries Breakdown */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center px-1">
-            <h3 className="font-serif font-bold text-sm text-[#333C3E]">Recent Deliveries</h3>
-            <span className="text-xs text-[#9C4A28] font-semibold">View All</span>
-          </div>
-
+        {/* Transaction History */}
+        <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-5 shadow-xs space-y-3">
+          <h3 className="font-bold text-xs text-[#8C4A32] font-serif">{t('recent_payouts')}</h3>
           <div className="space-y-2">
-            {payouts.map((item, index) => (
-              <div 
-                key={index}
-                className="bg-[#FFFDF8] rounded-2xl border border-[#EADBCC] p-3 shadow-soft flex items-center justify-between hover:border-[#9C4A28]/40 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#FAF6EE] border border-[#EADBCC] flex items-center justify-center text-[#9C4A28]">
-                    <ArrowDownRight size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#333C3E]">{item.id}</p>
-                    <p className="text-[10px] text-[#7C746E]">{item.date} • {item.distance}</p>
-                  </div>
+            {txns.map((txn) => (
+              <div key={txn.id} className="bg-white border border-[#EADBCC] rounded-2xl p-3 flex justify-between items-center text-xs">
+                <div>
+                  <p className="font-bold text-[#2C231E]">{txn.desc}</p>
+                  <p className="text-[10px] text-[#7C746E]">{txn.date}</p>
                 </div>
-
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#16A34A]">{item.amount}</p>
-                  <span className="inline-flex items-center gap-1 text-[9px] text-[#16A34A] font-semibold">
-                    <CheckCircle2 size={10} /> {item.status}
-                  </span>
-                </div>
+                <span className={`font-mono font-bold ${txn.amount.startsWith('+') ? 'text-emerald-700' : 'text-[#8C4A32]'}`}>
+                  {txn.amount}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Floating Bottom Navigation Bar */}
       <DeliveryNavbar activeTab="payout" />
     </div>
   );
