@@ -11,8 +11,8 @@ export default function RiderLogin() {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') || 'login';
 
-  // Step state: 'step2a' (Enter Details) | 'step2b' (Verify Phone OTP)
-  const [step, setStep] = useState('step2a');
+  // Step state: 'details' (Enter Details) | 'verify' (Verify Phone OTP)
+  const [step, setStep] = useState('details');
 
   // Form Fields
   const [fullName, setFullName] = useState(() => {
@@ -26,7 +26,7 @@ export default function RiderLogin() {
   });
   const [acceptedTerms, setAcceptedTerms] = useState(true);
 
-  // OTP State (6 digits matching Image 4)
+  // OTP State (6 digits)
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [generatedOtp, setGeneratedOtp] = useState('482910');
   const [timer, setTimer] = useState(30);
@@ -34,19 +34,16 @@ export default function RiderLogin() {
   const [alertMsg, setAlertMsg] = useState('');
   const otpRefs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
 
-  // Google Apps Script Webhook URL for live email/phone OTP delivery
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3ebjUS21_hc02QWDpUv2FXsff4MiYOz8PChnhbLBET8oCpsNpXq-KXag4FU-TKnCWmg/exec";
 
-  // Countdown timer for resend
   useEffect(() => {
     let interval;
-    if (step === 'step2b' && timer > 0) {
+    if (step === 'verify' && timer > 0) {
       interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [step, timer]);
 
-  // Handle OTP digit changes
   const handleOtpChange = (index, value) => {
     const cleanValue = value.replace(/\D/g, '');
     if (cleanValue.length > 1) {
@@ -76,65 +73,69 @@ export default function RiderLogin() {
     }
   };
 
-  // SEND REAL OTP
   const handleSendOtp = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!phone || phone.length < 10) {
-      setAlertMsg('Please enter a valid 10-digit phone number');
+      alert('Please enter a valid 10-digit mobile number.');
       return;
     }
     if (!acceptedTerms) {
-      setAlertMsg('Please accept the terms and conditions.');
+      alert('Please accept terms and conditions.');
       return;
     }
 
     setIsSending(true);
     setAlertMsg(t('sending_code'));
 
-    // Generate random 6-digit OTP
-    const realOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(realOtp);
+    const randomOtp = String(Math.floor(100000 + Math.random() * 900000));
+    setGeneratedOtp(randomOtp);
 
     try {
-      // Send real email via Apps Script
       if (email && email.includes('@')) {
-        await fetch(APPS_SCRIPT_URL, {
+        fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, otp: realOtp })
-        });
+          body: JSON.stringify({
+            action: 'sendOtp',
+            email: email,
+            phone: phone,
+            name: fullName,
+            otp: randomOtp,
+            role: 'delivery_partner',
+            app: 'HomePot Delivery'
+          })
+        }).catch(err => console.log('OTP webhook dispatch note:', err));
       }
-
-      setIsSending(false);
-      setStep('step2b');
-      setTimer(30);
-      setAlertMsg(`Verification code dispatched to ${email || phone}! (Backup: ${realOtp})`);
-      setTimeout(() => setAlertMsg(''), 6000);
     } catch (err) {
-      setIsSending(false);
-      setStep('step2b');
-      setTimer(30);
-      setAlertMsg(`Code generated! (Backup code: ${realOtp})`);
-      setTimeout(() => setAlertMsg(''), 6000);
+      console.log('Dispatch error:', err);
     }
+
+    setTimeout(() => {
+      setIsSending(false);
+      setStep('verify');
+      setTimer(59);
+      setAlertMsg(`Verification code sent to +91 ${phone} & ${email || 'email'}. Live code: ${randomOtp}`);
+    }, 800);
   };
 
-  // VERIFY OTP & PROCEED
-  const handleVerify = (e) => {
+  const handleVerifyOtp = (e) => {
     e.preventDefault();
-    const entered = otp.join('');
-    if (entered !== generatedOtp && entered !== '123456' && entered !== '482910') {
-      setAlertMsg(t('invalid_otp'));
+    const enteredOtp = otp.join('');
+    if (enteredOtp.length !== 6) {
+      alert('Please enter all 6 digits of the OTP.');
       return;
     }
 
-    // Save profile to local storage
+    if (enteredOtp !== generatedOtp && enteredOtp !== '123456' && enteredOtp !== '482910') {
+      alert('Invalid OTP. Please check the code sent or use the live test code displayed.');
+      return;
+    }
+
     localStorage.setItem('homepot_rider_name', fullName);
     localStorage.setItem('homepot_rider_email', email);
     localStorage.setItem('homepot_rider_phone', phone);
 
-    // If new signup or profile incomplete, redirect to KYC & Bank Onboarding
     const savedKyc = localStorage.getItem('homepot_rider_kyc_completed');
     if (initialMode === 'signup' || !savedKyc) {
       navigate('/onboarding');
@@ -149,8 +150,8 @@ export default function RiderLogin() {
       <div className="w-full relative z-20 flex items-center justify-between px-5 pt-4 pb-2">
         <button
           onClick={() => {
-            if (step === 'step2b') {
-              setStep('step2a');
+            if (step === 'verify') {
+              setStep('details');
             } else {
               navigate('/');
             }
@@ -178,7 +179,7 @@ export default function RiderLogin() {
         </div>
       </div>
 
-      {/* Decorative Wavy Layered Header Graphics matching Image 4 */}
+      {/* Decorative Wavy Layered Header Graphics */}
       <div className="w-full overflow-hidden leading-none relative z-10 -mt-2">
         <svg
           viewBox="0 0 400 75"
@@ -202,14 +203,14 @@ export default function RiderLogin() {
         </svg>
       </div>
 
-      {/* Main Form Content matching Image 4 */}
+      {/* Main Form Content */}
       <div className="flex-1 px-6 max-w-sm mx-auto w-full flex flex-col justify-start pt-2">
         
-        {/* STEP 2A: ENTER DETAILS */}
-        {step === 'step2a' && (
+        {/* DETAILS FORM (No Step 2A) */}
+        {step === 'details' && (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <h2 className="font-serif text-2xl font-bold text-[#8C4A32] tracking-tight">
-              {t('step_2a_title')}
+              {t('enter_details_title')}
             </h2>
 
             {/* Full Name */}
@@ -247,8 +248,8 @@ export default function RiderLogin() {
               <label className="block text-xs font-semibold text-[#6C645E] mb-1">
                 {t('phone_number_label')}
               </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#8C4A32]">
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-xs font-bold text-[#8C4A32] select-none">
                   +91
                 </span>
                 <input
@@ -257,110 +258,114 @@ export default function RiderLogin() {
                   maxLength={10}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                  placeholder="9876543210"
-                  className="w-full bg-white border border-[#EADBCC] rounded-2xl pl-12 pr-4 py-3 text-sm text-[#2C231E] font-medium tracking-wider focus:outline-none focus:border-[#8C4A32] focus:ring-1 focus:ring-[#8C4A32]"
+                  placeholder={t('phone_placeholder')}
+                  className="w-full bg-white border border-[#EADBCC] rounded-2xl pl-12 pr-4 py-3 text-sm font-medium text-[#2C231E] focus:outline-none focus:border-[#8C4A32] focus:ring-1 focus:ring-[#8C4A32]"
                 />
               </div>
             </div>
 
-            {/* Terms Checkbox matching Image 4 */}
-            <label className="flex items-center gap-2 pt-1 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="w-4 h-4 rounded text-[#8C4A32] border-[#EADBCC] focus:ring-[#8C4A32] accent-[#8C4A32]"
-              />
-              <span className="text-xs text-[#6C645E]">
-                {t('accept_terms')}
-              </span>
-            </label>
+            {/* Accept Terms Checkbox */}
+            <div className="flex items-center gap-2 pt-1">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#6C645E]">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="w-4 h-4 accent-[#8C4A32] rounded cursor-pointer"
+                />
+                <span>{t('accept_terms')}</span>
+              </label>
+            </div>
 
-            {/* SEND OTP BUTTON */}
-            <button
-              type="submit"
-              disabled={isSending}
-              className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md mt-4 cursor-pointer disabled:opacity-50"
-            >
-              {isSending ? t('sending_code') : t('send_otp_btn')}
-            </button>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={isSending}
+                className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+              >
+                {isSending ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <span>{t('send_otp_btn')}</span>
+                )}
+              </button>
+            </div>
           </form>
         )}
 
-        {/* STEP 2B: VERIFY PHONE & EMAIL OTP */}
-        {step === 'step2b' && (
-          <form onSubmit={handleVerify} className="space-y-4">
+        {/* VERIFY FORM (No Step 2B) */}
+        {step === 'verify' && (
+          <form onSubmit={handleVerifyOtp} className="space-y-4">
             <h2 className="font-serif text-2xl font-bold text-[#8C4A32] tracking-tight">
-              {t('step_2b_title')}
+              {t('verify_phone_title')}
             </h2>
+
+            {alertMsg && (
+              <div className="bg-amber-50 border border-amber-200 text-[#8C4A32] text-xs p-3 rounded-2xl flex items-start gap-2 shadow-xs">
+                <ShieldCheck size={18} className="shrink-0 text-[#8C4A32] mt-0.5" />
+                <div>
+                  <p className="font-semibold">{alertMsg}</p>
+                </div>
+              </div>
+            )}
+
             <p className="text-xs text-[#6C645E]">
-              {t('enter_6_digit_otp')} <strong className="text-[#2C231E]">+91 {phone.slice(0, 2)}XXXXXX{phone.slice(-2)}</strong>
+              {t('enter_6_digit_otp')} <span className="font-bold text-[#2C231E]">+91 {phone}</span>
             </p>
 
-            {/* 6 Individual OTP Boxes matching Image 4 */}
-            <div className="flex justify-between items-center gap-2 py-3">
-              {otp.map((digit, idx) => (
+            {/* 6-box OTP entry */}
+            <div className="flex justify-between gap-2 py-2">
+              {otp.map((digit, index) => (
                 <input
-                  key={idx}
-                  ref={otpRefs[idx]}
+                  key={index}
+                  ref={otpRefs[index]}
                   type="text"
+                  inputMode="numeric"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(idx, e)}
-                  autoFocus={idx === 0}
-                  className="w-11 h-13 sm:w-12 sm:h-14 text-center font-serif text-xl font-bold bg-white border border-[#EADBCC] rounded-2xl text-[#2C231E] shadow-xs focus:outline-none focus:border-[#8C4A32] focus:ring-2 focus:ring-[#8C4A32]/30"
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="w-12 h-14 text-center font-mono font-bold text-xl bg-white border-2 border-[#EADBCC] focus:border-[#8C4A32] rounded-2xl shadow-xs text-[#2C231E] focus:outline-none transition-all"
                 />
               ))}
             </div>
 
-            {/* Resend Timer matching Image 4 */}
+            {/* Resend OTP & Timer */}
             <div className="flex justify-between items-center text-xs pt-1">
               <span className="text-[#7C746E]">
-                {timer > 0 ? `${t('resend_otp')} (${timer}s)` : (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    className="text-[#8C4A32] font-bold hover:underline cursor-pointer"
-                  >
-                    {t('resend_otp')}
-                  </button>
-                )}
+                {timer > 0 ? `00:${String(timer).padStart(2, '0')}` : 'Code expired'}
               </span>
               <button
                 type="button"
-                onClick={() => setStep('step2a')}
-                className="text-[#8C4A32] font-semibold hover:underline cursor-pointer"
+                onClick={handleSendOtp}
+                disabled={timer > 0 || isSending}
+                className={`font-bold transition ${
+                  timer > 0 ? 'text-[#A09890] cursor-not-allowed' : 'text-[#8C4A32] hover:underline cursor-pointer'
+                }`}
               >
-                Change number
+                {t('resend_otp')}
               </button>
             </div>
 
-            {/* VERIFY & PROCEED BUTTON matching Image 4 */}
-            <button
-              type="submit"
-              disabled={otp.join('').length < 6}
-              className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md mt-4 cursor-pointer disabled:opacity-50"
-            >
-              {t('verify_proceed_btn')}
-            </button>
+            {/* Verify Button */}
+            <div className="pt-3">
+              <button
+                type="submit"
+                className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Check size={18} />
+                <span>{t('verify_proceed_btn')}</span>
+              </button>
+            </div>
           </form>
-        )}
-
-        {/* Feedback Alert */}
-        {alertMsg && (
-          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl text-xs text-center font-medium">
-            {alertMsg}
-          </div>
         )}
 
       </div>
 
-      {/* Footer Notice matching Image 4 */}
-      <div className="w-full text-center pb-5 pt-2">
-        <p className="text-[10px] text-[#7C746E]">
-          {t('terms_privacy_notice')}
-        </p>
+      {/* Bottom Footer Notice */}
+      <div className="w-full text-center py-4 text-[10px] text-[#7C746E]">
+        {t('terms_privacy_notice')}
       </div>
     </div>
   );

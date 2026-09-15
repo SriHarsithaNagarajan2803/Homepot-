@@ -13,7 +13,7 @@ export default function WelcomeLanding() {
     <div className="relative min-h-[760px] h-full flex flex-col justify-between items-center bg-[#FAF6EE] text-[#2C231E] px-6 py-6 font-sans">
       {/* Top Header with Language Selector */}
       <div className="w-full flex justify-between items-center pt-2">
-        <div className="w-9"></div> {/* Spacer */}
+        <div className="w-9"></div>
         <HomepotLogo size="lg" showText={false} />
         <LanguageSelector variant="round" />
       </div>
@@ -27,7 +27,7 @@ export default function WelcomeLanding() {
           {t('deliver_fresh_earn')}
         </p>
 
-        {/* Feature Badges matching Image 3 */}
+        {/* Feature Badges */}
         <div className="flex items-center gap-2.5 mt-3">
           <span className="bg-[#D99436]/15 text-[#9C4A28] border border-[#D99436]/40 px-3 py-1 rounded-full text-xs font-bold">
             {t('daily_earnings_badge')}
@@ -39,14 +39,13 @@ export default function WelcomeLanding() {
         </div>
       </div>
 
-      {/* 3D Scooter Rider Illustration matching Image 3 */}
+      {/* 3D Scooter Rider Illustration */}
       <div className="w-full my-4 flex items-center justify-center">
         <RiderIllustration className="w-full max-w-[280px]" />
       </div>
 
-      {/* Action Buttons matching Image 3 */}
+      {/* Action Buttons */}
       <div className="w-full max-w-xs space-y-3 pb-4">
-        {/* LOGIN Button (Solid Brown / Slate) */}
         <button
           onClick={() => navigate('/login?mode=login')}
           className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center"
@@ -54,7 +53,6 @@ export default function WelcomeLanding() {
           {t('login_btn')}
         </button>
 
-        {/* JOIN US / SIGN UP Button (Outlined / Light Pill) */}
         <button
           onClick={() => navigate('/login?mode=signup')}
           className="w-full bg-white hover:bg-[#F4EFE6] text-[#8C4A32] border-2 border-[#8C4A32] font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-xs active:scale-98 cursor-pointer flex items-center justify-center"
