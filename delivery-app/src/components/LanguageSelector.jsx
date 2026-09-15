@@ -4,13 +4,18 @@ import { Globe, Check, X } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '../context/LanguageContext';
 
 export default function LanguageSelector({ variant = 'pill' }) {
-  const { currentLang, setCurrentLang, t } = useLanguage();
+  const { currentLang, changeLanguage, setCurrentLang, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   const activeLanguage = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
 
   const handleSelect = (code) => {
-    setCurrentLang(code);
+    if (typeof changeLanguage === 'function') {
+      changeLanguage(code);
+    } else if (typeof setCurrentLang === 'function') {
+      setCurrentLang(code);
+    }
+    localStorage.setItem('homepot_rider_lang', code);
     setIsOpen(false);
   };
 

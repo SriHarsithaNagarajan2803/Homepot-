@@ -753,7 +753,7 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLang, changeLanguage, t, languages: LANGUAGES }}>
+    <LanguageContext.Provider value={{ currentLang, changeLanguage, setCurrentLang: changeLanguage, setLanguage: changeLanguage, t, languages: LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
