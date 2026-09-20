@@ -81,7 +81,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
     }
 
     setLoading(true);
-    setMessage({ text: 'Sending verification code to your email inbox...', type: 'green' });
+    setMessage({ text: 'Sending verification code to your email ...', type: 'green' });
 
     // Generate random 4-digit OTP
     const realOtp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -104,7 +104,7 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
       setLoading(false);
       setOtpStep('otp_sent');
       setMessage({ 
-        text: `Real OTP sent to ${regEmail}! Please check your Inbox (or Spam folder).`, 
+        text: `OTP sent to ${regEmail}! Please check your Inbox (or Spam folder).`, 
         type: 'green' 
       });
     } catch (err) {
