@@ -1,45 +1,77 @@
 import React, { useState } from 'react';
-import { Landmark, CreditCard, ShieldCheck, ArrowRight, CheckCircle2, Sparkles, Box, Home } from 'lucide-react';
+import { Building2, CreditCard, User, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import logoImg from '../assets/HomePot-logo.jpeg';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
 export function HomePotBankingSetup({ initialData = {}, onCompleteOnboarding, onBack }) {
   const { t } = useLanguage();
-  const [holderName, setHolderName] = useState(initialData.ownerName || '');
-  const [bankName, setBankName] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [ifsc, setIfsc] = useState('');
-  const [upiId, setUpiId] = useState('');
-  
+  const [accountHolder, setAccountHolder] = useState(initialData.ownerName || initialData.accountHolder || '');
+  const [accountNumber, setAccountNumber] = useState(initialData.accountNumber || '');
+  const [confirmAccountNumber, setConfirmAccountNumber] = useState(initialData.accountNumber || '');
+  const [ifscCode, setIfscCode] = useState(initialData.ifscCode || '');
+  const [upiId, setUpiId] = useState(initialData.upiId || '');
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
-  const handleFinish = (e) => {
+  // Restrict Account Number: only digits, max 18 length
+  const handleAccountNumberChange = (val, isConfirm = false) => {
+    const digits = val.replace(/\D/g, '').slice(0, 18);
+    if (isConfirm) {
+      setConfirmAccountNumber(digits);
+    } else {
+      setAccountNumber(digits);
+    }
+  };
+
+  const handleIfscChange = (val) => {
+    // IFSC is typically 11 alphanumeric characters (e.g., SBIN0001234)
+    const upperVal = val.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11);
+    setIfscCode(upperVal);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!holderName || !accountNumber || !ifsc) {
-      setMessage({ text: 'Please fill in account holder name, account number and IFSC code.', type: 'red' });
+    if (!accountHolder || !accountNumber || !ifscCode) {
+      setMessage({ text: 'Please fill in Account Holder Name, Account Number and IFSC Code.', type: 'red' });
+      return;
+    }
+    if (accountNumber.length < 9) {
+      setMessage({ text: 'Bank account number is too short (minimum 9 digits required).', type: 'red' });
+      return;
+    }
+    if (accountNumber !== confirmAccountNumber) {
+      setMessage({ text: 'Account numbers do not match. Please re-check.', type: 'red' });
+      return;
+    }
+    if (ifscCode.length !== 11) {
+      setMessage({ text: 'IFSC Code must be exactly 11 characters.', type: 'red' });
+      return;
+    }
+    
+    // UPI validation: checks that it contains '@' and has valid text/characters following it (e.g., @oksbi, @hdfc, @axis)
+    const upiRegex = /^[\w.-]+@[a-zA-Z0-9.-]+$/;
+    if (upiId && !upiRegex.test(upiId)) {
+      setMessage({ text: 'Please enter a valid UPI ID (e.g., username@okaxis)', type: 'red' });
       return;
     }
 
     setLoading(true);
-    setMessage({ text: 'Verifying bank details with penny-drop verification...', type: 'green' });
+    setMessage({ text: '', type: '' });
 
     setTimeout(() => {
       setLoading(false);
       if (onCompleteOnboarding) {
         onCompleteOnboarding({
           ...initialData,
-          banking: {
-            holderName,
-            bankName,
-            accountNumber,
-            ifsc,
-            upiId
-          }
+          accountHolder,
+          accountNumber,
+          ifscCode,
+          upiId
         });
       }
-    }, 1200);
+    }, 700);
   };
 
   return (
@@ -52,6 +84,7 @@ export function HomePotBankingSetup({ initialData = {}, onCompleteOnboarding, on
         className="w-full max-w-md h-[92vh] max-h-[850px] border border-[#E8DEC8] rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden relative text-stone-900 pb-2"
         style={{ backgroundColor: '#FFFFFF', colorScheme: 'light' }}
       >
+        
         {/* Soft Grey Dot Pattern Overlay */}
         <div 
           className="absolute inset-0 z-0 pointer-events-none"
@@ -78,103 +111,116 @@ export function HomePotBankingSetup({ initialData = {}, onCompleteOnboarding, on
               />
             </div>
             
-            {/* Title Matching Page 4 */}
+            {/* Title */}
             <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#2C1D14] tracking-tight">
-              {t('banking_title')}
+              {t('Bank Details') || 'Banking & Payouts'}
             </h1>
             <p className="text-xs text-[#6B5B4F] mt-0.5">
-              {t('step_3_title')}
+              {t('step_3_title') || 'Where should we send your daily earnings?'}
             </p>
 
-            <form onSubmit={handleFinish} className="w-full space-y-3 mt-3 text-left" autoComplete="off">
+            <form onSubmit={handleSubmit} className="w-full space-y-3 mt-3 text-left" autoComplete="off">
               
-              {/* {t('account_holder')} */}
+              {/* Account Holder Name */}
               <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
                 <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
-                  {t('account_holder')}
+                  {t('account_holder_name') || 'Account Holder Name'}
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={holderName}
-                  onChange={(e) => setHolderName(e.target.value)}
-                  placeholder={t('account_holder_placeholder')}
-                  className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
-                />
-              </div>
-
-              {/* {t('bank_name')} */}
-              <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
-                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
-                  {t('bank_name')}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                  placeholder={t('bank_name_placeholder')}
-                  className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
-                />
-              </div>
-
-              {/* {t('account_number')} & IFSC Grid */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
-                  <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
-                    {t('account_number')}
-                  </label>
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#8C4A32] shrink-0" />
                   <input
                     type="text"
                     required
-                    value={accountNumber}
-                    onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="12-16 digit A/C"
-                    className="w-full text-xs text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-mono"
+                    value={accountHolder}
+                    onChange={(e) => setAccountHolder(e.target.value)}
+                    placeholder={t('holder_name_placeholder') || 'As per bank passbook'}
+                    className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
                   />
                 </div>
+              </div>
 
-                <div className="bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
-                  <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
-                    {t('ifsc_code')}
-                  </label>
+              {/* Bank Account Number */}
+              <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
+                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
+                  {t('account_number') || 'Bank Account Number'} 
+                </label>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#8C4A32] shrink-0" />
+                  <input
+                    type="text"
+                    required
+                    maxLength={18}
+                    value={accountNumber}
+                    onChange={(e) => handleAccountNumberChange(e.target.value, false)}
+                    placeholder="Enter account number"
+                    className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium tracking-wider"
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Bank Account Number */}
+              <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
+                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
+                  {t('confirm_account_number') || 'Re-enter Account Number'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#8C4A32] shrink-0" />
+                  <input
+                    type="text"
+                    required
+                    maxLength={18}
+                    value={confirmAccountNumber}
+                    onChange={(e) => handleAccountNumberChange(e.target.value, true)}
+                    placeholder="Re-enter account number"
+                    className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium tracking-wider"
+                  />
+                </div>
+                {confirmAccountNumber && accountNumber === confirmAccountNumber && (
+                  <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 mt-1">
+                    <CheckCircle2 className="w-3 h-3" /> Account numbers match
+                  </span>
+                )}
+              </div>
+
+              {/* IFSC Code */}
+              <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
+                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
+                  {t('ifsc_code') || 'IFSC Code'} 
+                </label>
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-[#8C4A32] shrink-0" />
                   <input
                     type="text"
                     required
                     maxLength={11}
-                    value={ifsc}
-                    onChange={(e) => setIfsc(e.target.value.toUpperCase())}
-                    placeholder="HDFC0000482"
-                    className="w-full text-xs text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-mono tracking-wider"
+                    value={ifscCode}
+                    onChange={(e) => handleIfscChange(e.target.value)}
+                    placeholder="e.g. SBIN0001234"
+                    className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium uppercase tracking-wider"
                   />
                 </div>
               </div>
 
-              {/* UPI ID for Instant Daily Payouts */}
+              {/* UPI ID (Optional) */}
               <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
                 <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">
-                  {t('upi_id')}
+                  {t('upi_id') || 'UPI ID'}
                 </label>
                 <input
                   type="text"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
-                  placeholder={t('upi_placeholder')}
-                  className="w-full text-xs text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
+                  placeholder="e.g. username@okaxis"
+                  className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
                 />
               </div>
 
-              {/* HomePot Direct Payouts Guarantee */}
-              <div className="bg-[#FAF6F0] p-3.5 rounded-2xl border border-[#E8DEC8] flex items-start gap-3 mt-1">
-                <div className="p-2 rounded-xl bg-white border border-[#E2D5BE] text-[#8C4A32] shrink-0 shadow-2xs">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#2C1D14]">{t('direct_payout_title')}</h4>
-                  <p className="text-[10px] text-[#6B5B4F] mt-0.5 leading-relaxed">
-                    {t('direct_payout_desc')}
-                  </p>
-                </div>
+              {/* Secure Escrow Protection Badge */}
+              <div className="bg-[#FAF6F0] p-2.5 rounded-xl flex items-start gap-2 border border-[#E8DEC8]">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="text-[10px] text-[#6B5B4F] leading-tight">
+                  <strong>Bank Grade Security:</strong> Payouts are processed securely via RBI-licensed partner escrow accounts directly to your verified bank account.
+                </span>
               </div>
 
               {/* Status Message */}
@@ -191,14 +237,9 @@ export function HomePotBankingSetup({ initialData = {}, onCompleteOnboarding, on
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm sm:text-base py-3.5 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm sm:text-base py-3.5 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2"
                 >
-                  {loading ? 'Verifying Bank Account...' : (
-                    <>
-                      <span>{t('open_kitchen_btn')}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
+                  {loading ? 'Completing Setup...' : <><span>{t('complete_registration') || 'Complete Setup & Launch'}</span> <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </div>
 

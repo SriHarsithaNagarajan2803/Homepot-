@@ -44,6 +44,12 @@ export default function BankingPage() {
     e.preventDefault();
     if (!tempBank.accountNumber || !tempBank.ifsc || !tempBank.holderName) return;
 
+    // Validate Indian Bank Account Number length (typically 9 to 18 digits)
+    if (tempBank.accountNumber.length < 9 || tempBank.accountNumber.length > 18) {
+      alert('Please enter a valid bank account number between 9 and 18 digits.');
+      return;
+    }
+
     setIsVerifying(true);
     // Simulate real bank server handshake & penny-drop verification
     setTimeout(() => {
@@ -274,11 +280,24 @@ export default function BankingPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">{t('account_number')}</label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="font-bold text-stone-700">{t('account_number')}</label>
+                    <span className="text-[10px] text-stone-400">9–18 digits</span>
+                  </div>
                   <input 
                     type="text" 
+                    inputMode="numeric"
+                    pattern="\d{9,18}"
+                    maxLength={18}
+                    minLength={9}
                     value={tempBank.accountNumber} 
-                    onChange={(e) => setTempBank({ ...tempBank, accountNumber: e.target.value })}
+                    onChange={(e) => {
+                      // Allow only numeric digits
+                      const val = e.target.value.replace(/\D/g, '');
+                      if (val.length <= 18) {
+                        setTempBank({ ...tempBank, accountNumber: val });
+                      }
+                    }}
                     placeholder={t('enter_ac_digits')}
                     className="w-full px-3 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:border-[#8C4A32] font-mono"
                     required 
@@ -289,6 +308,7 @@ export default function BankingPage() {
                   <label className="font-bold text-stone-700 block mb-1">{t('ifsc_code')}</label>
                   <input 
                     type="text" 
+                    maxLength={11}
                     value={tempBank.ifsc} 
                     onChange={(e) => setTempBank({ ...tempBank, ifsc: e.target.value.toUpperCase() })}
                     placeholder="e.g. HDFC0001234"

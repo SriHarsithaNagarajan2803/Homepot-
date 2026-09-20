@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 export default function ChefProfile() {
   const { t } = useLanguage();
+  
   // Load initial profile from localStorage or fallback to defaults
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem('homepot_chef_profile');
@@ -51,6 +52,32 @@ export default function ChefProfile() {
   const [savedMessage, setSavedMessage] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
+  // Sync state if localStorage changes externally
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('homepot_chef_profile');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed) {
+            setProfile(parsed);
+            setFormData(parsed);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('homepot_profile_updated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('homepot_profile_updated', handleStorageChange);
+    };
+  }, []);
+
   // Keep profile localStorage updated
   const handleSave = (e) => {
     e.preventDefault();
@@ -58,6 +85,7 @@ export default function ChefProfile() {
     localStorage.setItem('homepot_chef_profile', JSON.stringify(formData));
     setIsEditing(false);
     setSavedMessage(true);
+    window.dispatchEvent(new Event('homepot_profile_updated'));
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
@@ -66,7 +94,10 @@ export default function ChefProfile() {
     setProfile(updated);
     setFormData(updated);
     localStorage.setItem('homepot_chef_profile', JSON.stringify(updated));
+    
+    // Dispatch both native storage event and custom event for same-tab reactivity
     window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('homepot_profile_updated'));
   };
 
   // Handle Image upload via file selector
@@ -160,6 +191,7 @@ export default function ChefProfile() {
             <span className="inline-block bg-orange-50 text-orange-800 border border-orange-200/60 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wide mt-1.5 uppercase">
               {profile.specialties}
             </span>
+
           </div>
         </div>
 

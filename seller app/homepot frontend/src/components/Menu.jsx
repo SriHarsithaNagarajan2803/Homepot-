@@ -262,7 +262,7 @@ export default function Menu() {
     <div className="flex flex-col gap-3.5 pb-6">
       
       {/* ======================================================== */}
-      {/* 1. DAILY KITCHEN HYGIENE CAMERA PHOTO BANNER             */}
+      {/* 1. DAILY KITCHEN HYGIENE CAMERA PHOTO BANNER            */}
       {/* ======================================================== */}
       <div className={`p-3.5 rounded-2xl border transition-all ${
         dailyKitchenPhoto 
@@ -330,7 +330,7 @@ export default function Menu() {
       </div>
 
       {/* ======================================================== */}
-      {/* 2. MENU HEADER & ADD DISH BUTTON                        */}
+      {/* 2. MENU HEADER & ADD DISH BUTTON                         */}
       {/* ======================================================== */}
       <div className="flex justify-between items-center mt-1 px-1">
         <div>
@@ -342,7 +342,7 @@ export default function Menu() {
           className="bg-[#A0523D] hover:bg-[#8C4A32] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>{t('add_dish_btn')}</span>
+          <span>Add Dish</span>
         </button>
       </div>
 
@@ -353,7 +353,7 @@ export default function Menu() {
         {menuItems.length === 0 ? (
           <div className="bg-white/90 rounded-2xl p-6 text-center border border-[#E2D5BE] text-[#A39281] text-xs mt-2 shadow-xs">
             <p className="font-bold text-[#2C1D14] mb-1">Your menu is currently empty.</p>
-            <p className="text-[11px]">Click "+ Add Dish" above to add your first delicious home-cooked item!</p>
+            <p className="text-[11px]">Click "Add Dish" above to add your first delicious home-cooked item!</p>
           </div>
         ) : (
           menuItems.map((item) => (

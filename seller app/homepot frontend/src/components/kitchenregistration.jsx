@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, ChefHat, CheckCircle2, ShieldCheck, ArrowRight, MapPin, Award, HeartHandshake } from 'lucide-react';
+import { Camera, ChefHat, CheckCircle2, ShieldCheck, ArrowRight, MapPin } from 'lucide-react';
 import logoImg from '../assets/HomePot-logo.jpeg';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
@@ -59,7 +59,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!kitchenName || !ownerName || !address) {
-      setMessage({ text: 'Please fill in Kitchen Name, Owner Name and Address.', type: 'red' });
+      setMessage({ text: 'Please fill in Kitchen Name, Full Name and Address.', type: 'red' });
       return;
     }
     if (fssaiNumber.length !== 14) {
@@ -127,17 +127,17 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
               />
             </div>
             
-            {/* Title Matching Page 1 */}
+            {/* Title */}
             <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#2C1D14] tracking-tight">
-              {t('register_kitchen')}
+              {t('register_kitchen') || 'Register Kitchen'}
             </h1>
             <p className="text-xs text-[#6B5B4F] mt-0.5">
-              {t('step_2_title')}
+              {t('step_2_title') || 'Set up your kitchen details'}
             </p>
 
             <form onSubmit={handleSubmit} className="w-full space-y-3 mt-3 text-left" autoComplete="off">
               
-              {/* Amma / Chef Photo Upload */}
+              {/* Chef's photo Upload */}
               <div className="flex flex-col items-center justify-center my-1">
                 <label className="relative cursor-pointer group">
                   <div className="w-20 h-20 rounded-full border-2 border-[#A0523D] bg-[#F4EFE6] flex items-center justify-center overflow-hidden shadow-inner relative transition-transform active:scale-95">
@@ -153,45 +153,45 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                   <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                 </label>
                 <span className="text-xs font-bold text-[#2C1D14] mt-1 tracking-wide">
-                  {t('amma_chef_photo')}
+                  Chef's photo
                 </span>
               </div>
 
               {/* Kitchen Name */}
               <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
-                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">{t('kitchen_name')}</label>
+                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">{t('kitchen_name') || 'Kitchen Name'}</label>
                 <input
                   type="text"
                   required
                   value={kitchenName}
                   onChange={(e) => setKitchenName(e.target.value)}
-                  placeholder={t('kitchen_name_placeholder')}
+                  placeholder={t('kitchen_name_placeholder') || "e.g. Grandma's Kitchen"}
                   className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
                 />
               </div>
 
-              {/* Owner Full Name */}
+              {/* Full Name */}
               <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
-                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">{t('owner_full_name')}</label>
+                <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-0.5">{t('Owner Full Name') || 'Owner Full Name'}</label>
                 <input
                   type="text"
                   required
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
-                  placeholder={t('owner_name_placeholder')}
+                  placeholder="Enter your full name"
                   className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium"
                 />
               </div>
 
-              {/* {t('fssai_title')} */}
+              {/* FSSAI Number */}
               <div className="w-full bg-white/90 backdrop-blur-xs border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
                 <div className="flex justify-between items-center mb-0.5">
                   <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase">
-                    {t('fssai_title')}
+                    {t('fssai_title') || 'FSSAI License Number'}
                   </label>
                   {fssaiVerified && (
                     <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      <CheckCircle2 className="w-3 h-3" /> {t('fssai_verified')}
+                      <CheckCircle2 className="w-3 h-3" /> {t('fssai_verified') || 'Verified'}
                     </span>
                   )}
                 </div>
@@ -201,7 +201,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                   required
                   value={fssaiNumber}
                   onChange={(e) => handleFssaiChange(e.target.value)}
-                  placeholder={t('fssai_placeholder')}
+                  placeholder={t('fssai_placeholder') || '14-digit FSSAI number'}
                   className="w-full text-xs sm:text-sm text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium tracking-wide"
                 />
                 {isVerifyingFssai && (
@@ -216,7 +216,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                 <div className="flex items-center gap-1.5 mb-1">
                   <MapPin className="w-3.5 h-3.5 text-[#8C4A32]" />
                   <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase">
-                    {t('kitchen_address')}
+                    {t('kitchen_address') || 'Kitchen Address'}
                   </label>
                 </div>
                 <textarea
@@ -224,7 +224,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={t('kitchen_address_placeholder')}
+                  placeholder={t('kitchen_address_placeholder') || 'Enter complete address'}
                   className="w-full text-xs text-[#2C1D14] bg-transparent focus:outline-none placeholder-[#A39281] font-medium resize-none"
                 />
                 <div className="bg-[#FAF6F0] p-2 rounded-xl mt-1.5 flex items-start gap-1.5 border border-[#E8DEC8]">
@@ -235,10 +235,10 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                 </div>
               </div>
 
-              {/* Cuisine Tags (Matching Page 1 screenshot) */}
+              {/* Cuisine Tags */}
               <div>
                 <label className="block text-[10px] font-bold text-[#593222] tracking-wide uppercase mb-1.5">
-                  {t('cuisine_specialties')}
+                  {t('cuisine_specialties') || 'Cuisine Specialties'}
                 </label>
                 <div className="flex flex-wrap gap-1.5">
                   {specialties.map(name => {
@@ -271,7 +271,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                   className="mt-0.5 accent-[#A0523D] cursor-pointer"
                 />
                 <label htmlFor="safety-declaration" className="text-[10px] text-[#6B5B4F] leading-relaxed cursor-pointer">
-                  <strong>{t('safety_declaration_title')}</strong> {t('safety_declaration_desc')}
+                  <strong>{t('safety_declaration_title') || 'Food Safety Declaration:'}</strong> {t('safety_declaration_desc') || 'I declare that food will be prepared in a clean, hygienic environment following standard safety protocols.'}
                 </label>
               </div>
 
@@ -291,7 +291,7 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
                   disabled={loading}
                   className="w-full bg-[#A0523D] hover:bg-[#8C4A32] text-white font-semibold text-sm sm:text-base py-3.5 rounded-full shadow-md transition-all tracking-wide cursor-pointer active:scale-95 flex items-center justify-center gap-2"
                 >
-                  {loading ? 'Submitting...' : <><span>{t('continue_to_banking')}</span> <ArrowRight className="w-4 h-4" /></>}
+                  {loading ? 'Submitting...' : <><span>{t('continue_to_banking') || 'Continue to Banking'}</span> <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </div>
 
