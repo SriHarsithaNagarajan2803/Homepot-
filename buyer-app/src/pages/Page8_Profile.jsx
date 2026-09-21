@@ -1,7 +1,22 @@
 import React from 'react';
-import { FiUser, FiPhone, FiMail, FiMapPin, FiClock, FiShoppingBag, FiHelpCircle, FiLogOut, FiArrowRight, FiCheck } from 'react-icons/fi';
+import { FiPhone, FiMail, FiMapPin, FiClock, FiHelpCircle, FiLogOut, FiArrowRight, FiCheck, FiShield } from 'react-icons/fi';
 
-export default function Profile({ onBack, onReorder, onTrackOrder, activeOrder, orderHistory = [] }) {
+export default function Profile({ 
+  currentUser, 
+  onLogout, 
+  onBack, 
+  onReorder, 
+  onTrackOrder, 
+  activeOrder, 
+  orderHistory = [] 
+}) {
+  const user = currentUser || {
+    name: 'Harshitha',
+    phone: '9345605005',
+    email: 'harshitha@homepot.com',
+    address: 'Anna Nagar, Flat 4B, Chennai'
+  };
+
   const defaultHistory = [
     {
       id: '#HP-99824',
@@ -33,33 +48,52 @@ export default function Profile({ onBack, onReorder, onTrackOrder, activeOrder, 
   ];
 
   const history = orderHistory.length > 0 ? orderHistory : defaultHistory;
+  const initialLetter = (user.name || 'H').charAt(0).toUpperCase();
 
   return (
     <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-24 relative select-none">
       
       {/* Top Header */}
       <div className="sticky top-0 z-40 bg-[#FAF6EE]/95 backdrop-blur-md px-5 py-3 border-b border-[#E2D5BE] flex items-center justify-between">
-        <h2 className="font-serif font-bold text-base text-[#2C1D14]">My Profile & Orders</h2>
-        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
-          Active Buyer
-        </span>
+        <div>
+          <h2 className="font-serif font-bold text-base text-[#2C1D14]">My Profile & Orders</h2>
+          <span className="text-[10px] text-[#6B5B4F]">Account Settings</span>
+        </div>
+
+        {/* Quick Header Logout Button */}
+        <button
+          type="button"
+          onClick={onLogout}
+          title="Log Out"
+          className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold cursor-pointer transition active:scale-95 shadow-2xs"
+        >
+          <FiLogOut size={13} />
+          <span>Log Out</span>
+        </button>
       </div>
 
       <div className="p-4 space-y-4">
         
-        {/* Profile Card Header */}
-        <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] shadow-xs flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-full bg-[#8C4A32] text-white flex items-center justify-center text-xl font-bold font-serif shadow-xs">
-            H
-          </div>
-          <div>
-            <h3 className="font-serif font-bold text-base text-[#2C1D14]">Harshitha</h3>
-            <p className="text-xs text-[#6B5B4F] flex items-center gap-1 mt-0.5">
-              <FiPhone size={12} /> +91 93456 05005
-            </p>
-            <p className="text-[10px] text-[#A09890] flex items-center gap-1">
-              <FiMail size={11} /> harshitha@homepot.com
-            </p>
+        {/* Profile User Card */}
+        <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] shadow-xs flex items-center justify-between">
+          <div className="flex items-center gap-3.5">
+            <div className="w-14 h-14 rounded-full bg-[#8C4A32] text-white flex items-center justify-center text-xl font-bold font-serif shadow-xs">
+              {initialLetter}
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-serif font-bold text-base text-[#2C1D14]">{user.name}</h3>
+                <span className="text-[9px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded-full flex items-center gap-0.5">
+                  <FiShield size={9} /> Verified
+                </span>
+              </div>
+              <p className="text-xs text-[#6B5B4F] flex items-center gap-1 mt-0.5">
+                <FiPhone size={12} /> +91 {user.phone}
+              </p>
+              <p className="text-[10px] text-[#A09890] flex items-center gap-1">
+                <FiMail size={11} /> {user.email}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -138,23 +172,35 @@ export default function Profile({ onBack, onReorder, onTrackOrder, activeOrder, 
         <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] shadow-xs space-y-2 text-xs">
           <h3 className="font-serif font-bold text-xs text-[#2C1D14] flex items-center gap-1.5 border-b border-[#F4EFE6] pb-2">
             <FiMapPin className="text-[#8C4A32]" />
-            <span>Saved Addresses</span>
+            <span>Saved Delivery Addresses</span>
           </h3>
-          <div className="space-y-1.5 text-[#6B5B4F] text-[11px]">
-            <p><b>Home:</b> Anna Nagar, Flat 4B, 2nd Avenue, Chennai</p>
-            <p><b>Office:</b> T. Nagar, North Usman Road, Chennai</p>
+          <div className="space-y-2 text-[#6B5B4F] text-[11px]">
+            <div className="p-2.5 bg-[#FAF6EE] rounded-xl border border-[#E8DEC8]">
+              <span className="font-bold text-[#2C1D14] block">Default Address:</span>
+              <span>{user.address || 'Anna Nagar, Flat 4B, 2nd Avenue, Chennai'}</span>
+            </div>
           </div>
         </div>
 
-        {/* Support & Logout */}
-        <div className="space-y-2 pt-1">
+        {/* Support & Primary Logout Buttons */}
+        <div className="space-y-2.5 pt-1">
           <button
             type="button"
-            onClick={() => alert('HomePot 24x7 Customer Helpline: 1800-HOMEPOT (1800-466-3768)')}
-            className="w-full bg-white border border-[#E2D5BE] text-[#2C1D14] text-xs font-bold py-3 rounded-2xl flex items-center justify-center gap-2 cursor-pointer hover:bg-[#FAF4EB]"
+            onClick={() => alert('HomePot 24x7 Customer Helpline: 1800-HOMEPOT (1800-466-3768)\nEmail: support@homepot.com')}
+            className="w-full bg-white border border-[#E2D5BE] text-[#2C1D14] text-xs font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-pointer hover:bg-[#FAF4EB] transition shadow-xs active:scale-98"
           >
-            <FiHelpCircle />
-            <span>24x7 Help & Support</span>
+            <FiHelpCircle className="text-[#8C4A32]" />
+            <span>24x7 Help & Customer Support</span>
+          </button>
+
+          {/* Big Clear Logout Button */}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="w-full bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-pointer transition shadow-xs active:scale-98"
+          >
+            <FiLogOut size={16} />
+            <span>Log Out from Account</span>
           </button>
         </div>
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Login from './pages/Page1_Login';
 import HomeFeed from './pages/Page2_HomeFeed';
 import FoodDetail from './pages/Page3_FoodDetail';
 import Checkout from './pages/Page4_Checkout';
@@ -7,14 +8,62 @@ import Profile from './pages/Page8_Profile';
 import BottomNav from './components/BottomNav';
 
 export default function App() {
-  // Navigation stack & state
-  const [currentPage, setCurrentPage] = useState('feed'); // 'feed' | 'detail' | 'checkout' | 'tracking' | 'profile'
-  const [historyStack, setHistoryStack] = useState(['feed']);
+  // Check if buyer user is already signed in
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('homepot_buyer_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  // Navigation stack & state (defaults to 'auth' if not logged in!)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const saved = localStorage.getItem('homepot_buyer_user');
+    return saved ? 'feed' : 'auth';
+  });
+
+  const [historyStack, setHistoryStack] = useState(() => {
+    const saved = localStorage.getItem('homepot_buyer_user');
+    return saved ? ['feed'] : ['auth'];
+  });
+
   const [selectedDish, setSelectedDish] = useState(null);
   const [cart, setCart] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState('Anna Nagar, Flat 4B');
+  const [selectedLocation, setSelectedLocation] = useState(() => {
+    try {
+      const saved = localStorage.getItem('homepot_buyer_user');
+      if (saved) {
+        const u = JSON.parse(saved);
+        return u.address || 'Anna Nagar, Chennai';
+      }
+    } catch (e) {}
+    return 'Anna Nagar, Chennai';
+  });
   const [activeOrder, setActiveOrder] = useState(null);
   const [orderHistory, setOrderHistory] = useState([]);
+
+  // When user successfully signs up or logs in with OTP
+  const handleLoginSuccess = (userData) => {
+    setCurrentUser(userData);
+    if (userData.address) setSelectedLocation(userData.address);
+    setCurrentPage('feed');
+    setHistoryStack(['feed']);
+  };
+
+  // When user clicks Log Out
+  const handleLogout = () => {
+    const confirmLogout = window.confirm('Are you sure you want to log out of HomePot?');
+    if (confirmLogout) {
+      localStorage.removeItem('homepot_buyer_user');
+      setCurrentUser(null);
+      setCart([]);
+      setActiveOrder(null);
+      setCurrentPage('auth');
+      setHistoryStack(['auth']);
+    }
+  };
 
   // Navigate forward with history stack
   const handleNavigate = (page, data = null) => {
@@ -32,8 +81,13 @@ export default function App() {
       setHistoryStack(nextStack);
       setCurrentPage(prevPage);
     } else {
-      setCurrentPage('feed');
-      setHistoryStack(['feed']);
+      if (currentUser) {
+        setCurrentPage('feed');
+        setHistoryStack(['feed']);
+      } else {
+        setCurrentPage('auth');
+        setHistoryStack(['auth']);
+      }
     }
   };
 
@@ -78,8 +132,8 @@ export default function App() {
 
   const totalCartCount = cart.reduce((acc, i) => acc + (i.quantity || 1), 0);
 
-  // Show BottomNav only on primary tabs ('feed', 'profile')
-  const showBottomNav = currentPage === 'feed' || currentPage === 'profile';
+  // Show BottomNav only on primary tabs ('feed', 'profile') when authenticated
+  const showBottomNav = currentUser && (currentPage === 'feed' || currentPage === 'profile');
 
   return (
     <div 
@@ -103,6 +157,12 @@ export default function App() {
 
         {/* Content Container */}
         <div className="flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          
+          {/* Auth Screen: Sign Up & Sign In with OTP */}
+          {currentPage === 'auth' && (
+            <Login onLoginSuccess={handleLoginSuccess} />
+          )}
+
           {currentPage === 'feed' && (
             <HomeFeed 
               onNavigate={handleNavigate}
@@ -140,6 +200,8 @@ export default function App() {
 
           {currentPage === 'profile' && (
             <Profile 
+              currentUser={currentUser}
+              onLogout={handleLogout}
               onBack={() => handleNavigate('feed')}
               activeOrder={activeOrder}
               orderHistory={orderHistory}
