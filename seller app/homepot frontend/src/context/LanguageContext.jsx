@@ -75,7 +75,7 @@ export const TRANSLATIONS = {
 
     // Kitchen Registration (Step 2)
     step_2_title: 'படி 2 / 3 • சமையலறை & சுகாதாரம்',
-    amma_chef_photo: 'அம்மா / சமையல் கலைஞர் புகைப்படம்',
+    amma_chef_photo: 'புகைப்படம் பதிவேற்றவும் (Upload Photo)',
     kitchen_name: 'சமையலறை பெயர்',
     kitchen_name_placeholder: 'உதா., அம்மா சமையல் கூடம்',
     owner_full_name: 'உரிமையாளர் முழு பெயர்',
@@ -198,7 +198,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'சமையலறை மெனு & அளவுகள்',
     menu_portions_subtitle: 'உணவை சேர்க்கவும், மாற்றவும், அளவுகளை சரிசெய்யவும்',
-    add_dish_btn: '+ உணவு சேர்க்க',
+    add_dish_btn: 'உணவு சேர்க்க',
     portions_label: 'அளவுகள்:',
     edit_btn: 'திருத்து',
     mark_sold_out: 'தீர்ந்துவிட்டது என குறிக்கவும்',
@@ -290,7 +290,7 @@ export const TRANSLATIONS = {
     change_email_mobile: '← Change email or mobile number',
 
     step_2_title: 'Step 2 / 3 • Kitchen & Hygiene',
-    amma_chef_photo: 'Chef / Amma Profile Picture',
+    amma_chef_photo: 'Upload Photo',
     kitchen_name: 'Kitchen Name',
     kitchen_name_placeholder: 'e.g. Amma Home Kitchen',
     owner_full_name: 'Owner Full Name',
@@ -408,7 +408,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'Kitchen Menu & Portions',
     menu_portions_subtitle: 'Add dishes, update meal slots, and manage available daily portions',
-    add_dish_btn: '+ Add Dish',
+    add_dish_btn: 'Add Dish',
     portions_label: 'Portions:',
     edit_btn: 'Edit',
     mark_sold_out: 'Mark Sold Out',
@@ -500,7 +500,7 @@ export const TRANSLATIONS = {
     change_email_mobile: '← ईमेल या मोबाइल नंबर बदलें',
 
     step_2_title: 'चरण 2 / 3 • रसोई और स्वच्छता',
-    amma_chef_photo: 'शेफ / माताजी की प्रोफाइल फोटो',
+    amma_chef_photo: 'फोटो अपलोड करें (Upload Photo)',
     kitchen_name: 'किचन का नाम',
     kitchen_name_placeholder: 'उदा., माँ की रसोई',
     owner_full_name: 'मालिक का पूरा नाम',
@@ -618,7 +618,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'रसोई मेनू और मात्रा',
     menu_portions_subtitle: 'व्यंजन जोड़ें, स्लॉट अपडेट करें और दैनिक मात्रा प्रबंधित करें',
-    add_dish_btn: '+ व्यंजन जोड़ें',
+    add_dish_btn: 'व्यंजन जोड़ें',
     portions_label: 'मात्रा:',
     edit_btn: 'संपादित करें',
     mark_sold_out: 'समाप्त चिह्नित करें',
@@ -710,7 +710,7 @@ export const TRANSLATIONS = {
     change_email_mobile: '← ఈమెయిల్ లేదా మొబైల్ మార్చండి',
 
     step_2_title: 'దశ 2 / 3 • వంటగది & పరిశుభ్రత',
-    amma_chef_photo: 'చెఫ్ / అమ్మ ప్రొఫైల్ ఫోటో',
+    amma_chef_photo: 'ఫోటో అప్‌లోడ్ చేయండి (Upload Photo)',
     kitchen_name: 'కిచెన్ పేరు',
     kitchen_name_placeholder: 'ఉదా., అమ్మ చేతి వంట',
     owner_full_name: 'యజమాని పూర్తి పేరు',
@@ -828,7 +828,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'వంటల మెనూ & కొలతలు',
     menu_portions_subtitle: 'వంటకాలు జోడించండి మరియు పరిమాణాలను నిర్వహించండి',
-    add_dish_btn: '+ వంటకం జోడించండి',
+    add_dish_btn: 'వంటకం జోడించండి',
     portions_label: 'కొలతలు:',
     edit_btn: 'సవరించు',
     mark_sold_out: 'అయిపోయిందని గుర్తించు',
@@ -920,7 +920,7 @@ export const TRANSLATIONS = {
     change_email_mobile: '← ಇಮೇಲ್ ಅಥವಾ ಮೊಬೈಲ್ ಬದಲಾಯಿಸಿ',
 
     step_2_title: 'ಹಂತ 2 / 3 • ಅಡುಗೆಮನೆ ಮತ್ತು ನೈರ್ಮಲ್ಯ',
-    amma_chef_photo: 'ಚೆಫ್ / ಅಮ್ಮನ ಪ್ರೊಫೈಲ್ ಫೋಟೋ',
+    amma_chef_photo: 'ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (Upload Photo)',
     kitchen_name: 'ಅಡುಗೆಮನೆ ಹೆಸರು',
     kitchen_name_placeholder: 'ಉದಾ., ಅಮ್ಮನ ಅಡುಗೆ ಮನೆ',
     owner_full_name: 'ಮಾಲೀಕರ ಪೂರ್ಣ ಹೆಸರು',
@@ -1038,7 +1038,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'ಅಡುಗೆಮನೆ ಮೆನು ಮತ್ತು ಪ್ರಮಾಣ',
     menu_portions_subtitle: 'ಖಾದ್ಯಗಳನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಲಭ್ಯವಿರುವ ಪ್ರಮಾಣವನ್ನು ನಿರ್ವಹಿಸಿ',
-    add_dish_btn: '+ ಖಾದ್ಯ ಸೇರಿಸಿ',
+    add_dish_btn: 'ಖಾದ್ಯ ಸೇರಿಸಿ',
     portions_label: 'ಪ್ರಮಾಣ:',
     edit_btn: 'ಸಂಪಾದಿಸಿ',
     mark_sold_out: 'ಖಾಲಿಯಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ',
@@ -1130,7 +1130,7 @@ export const TRANSLATIONS = {
     change_email_mobile: '← ഇമെയിൽ അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ മാറ്റുക',
 
     step_2_title: 'ഘട്ടം 2 / 3 • അടുക്കളയും ശുചിത്വവും',
-    amma_chef_photo: 'ഷെഫ് / അമ്മയുടെ പ്രൊഫൈൽ ഫോട്ടോ',
+    amma_chef_photo: 'ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (Upload Photo)',
     kitchen_name: 'അടുക്കളയുടെ പേര്',
     kitchen_name_placeholder: 'ഉദാ., അമ്മയുടെ അടുക്കള',
     owner_full_name: 'ഉടമസ്ഥന്റെ പൂർണ്ണമായ പേര്',
@@ -1248,7 +1248,7 @@ export const TRANSLATIONS = {
 
     menu_portions_title: 'അടുക്കള മെനുവും അളവുകളും',
     menu_portions_subtitle: 'വിഭവങ്ങൾ ചേർക്കുക, സമയം മാറ്റുക, ലഭ്യമായ അളവ് ക്രമീകരിക്കുക',
-    add_dish_btn: '+ വിഭവം ചേർക്കുക',
+    add_dish_btn: 'വിഭവം ചേർക്കുക',
     portions_label: 'അളവ്:',
     edit_btn: 'മാറ്റുക',
     mark_sold_out: 'തീർന്നു എന്ന് അടയാളപ്പെടുത്തുക',

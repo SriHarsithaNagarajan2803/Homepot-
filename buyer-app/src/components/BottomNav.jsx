@@ -1,25 +1,51 @@
 import React from 'react';
-import { FiClock, FiMenu, FiCreditCard, FiUser } from 'react-icons/fi';
+import { FiMenu, FiShoppingBag, FiUser } from 'react-icons/fi';
 
-export default function BottomNav() {
+export default function BottomNav({ activeTab = 'menu', onSelectTab, cartCount = 0 }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-[#FAF5EE] border-t border-[#E2D5BE] py-2 px-6 flex justify-between items-center z-50 shadow-md">
-      <div className="flex flex-col items-center gap-0.5 cursor-pointer text-[#8C4A32]">
-        <FiClock className="text-base" />
-        <span className="text-[10px] font-bold">Live Orders</span>
-      </div>
-      <div className="flex flex-col items-center gap-0.5 cursor-pointer text-[#8C4A32]">
-        <FiMenu className="text-base" />
+    <div className="absolute bottom-0 left-0 right-0 bg-[#FAF5EE] border-t border-[#E2D5BE] py-2 px-8 flex justify-around items-center z-50 shadow-md">
+      {/* 1. Menu Tab */}
+      <button 
+        type="button"
+        onClick={() => onSelectTab && onSelectTab('feed')}
+        className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${
+          activeTab === 'feed' || activeTab === 'menu' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
+        }`}
+      >
+        <FiMenu className="text-lg" />
         <span className="text-[10px] font-bold">Menu</span>
-      </div>
-      <div className="flex flex-col items-center gap-0.5 cursor-pointer text-[#8C4A32]">
-        <FiCreditCard className="text-base" />
-        <span className="text-[10px] font-bold">Bankings</span>
-      </div>
-      <div className="flex flex-col items-center gap-0.5 cursor-pointer text-[#8C4A32]">
-        <FiUser className="text-base" />
-        <span className="text-[10px] font-bold">Impine</span>
-      </div>
+      </button>
+
+      {/* 2. Pot / Cart Tab with Live Counter */}
+      <button 
+        type="button"
+        onClick={() => onSelectTab && onSelectTab('checkout')}
+        className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors relative ${
+          activeTab === 'checkout' || activeTab === 'cart' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
+        }`}
+      >
+        <div className="relative">
+          <FiShoppingBag className="text-lg" />
+          {cartCount > 0 && (
+            <span className="absolute -top-1.5 -right-2 bg-[#8C4A32] text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-xs animate-bounce">
+              {cartCount}
+            </span>
+          )}
+        </div>
+        <span className="text-[10px] font-bold">My Pot</span>
+      </button>
+
+      {/* 3. Profile Tab (With History inside) */}
+      <button 
+        type="button"
+        onClick={() => onSelectTab && onSelectTab('profile')}
+        className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${
+          activeTab === 'profile' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
+        }`}
+      >
+        <FiUser className="text-lg" />
+        <span className="text-[10px] font-bold">Profile</span>
+      </button>
     </div>
   );
 }

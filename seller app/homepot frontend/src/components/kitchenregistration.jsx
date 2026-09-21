@@ -137,23 +137,29 @@ export function HomePotKitchenRegistration({ initialData = {}, onProceedToBankin
 
             <form onSubmit={handleSubmit} className="w-full space-y-3 mt-3 text-left" autoComplete="off">
               
-              {/* Chef's photo Upload */}
-              <div className="flex flex-col items-center justify-center my-1">
+              {/* Kitchen Photo Upload */}
+              <div className="flex flex-col items-center justify-center my-2">
                 <label className="relative cursor-pointer group">
-                  <div className="w-20 h-20 rounded-full border-2 border-[#A0523D] bg-[#F4EFE6] flex items-center justify-center overflow-hidden shadow-inner relative transition-transform active:scale-95">
+                  <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-[#A0523D] bg-[#FAF6EE] flex items-center justify-center overflow-hidden shadow-sm hover:border-[#8C4A32] transition-all">
                     {photoPreview ? (
-                      <img src={photoPreview} alt="Chef Preview" className="w-full h-full object-cover" />
+                      <div className="relative w-full h-full group">
+                        <img src={photoPreview} alt="Kitchen Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition">
+                          Change
+                        </div>
+                      </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center text-[#8C4A32]">
-                        <ChefHat className="w-8 h-8 opacity-80" />
-                        <Camera className="w-4 h-4 absolute bottom-1 right-1 bg-[#A0523D] text-white p-0.5 rounded-full shadow" />
+                      <div className="flex flex-col items-center justify-center text-[#8C4A32] gap-1 p-2 text-center">
+                        <Camera className="w-6 h-6 text-[#A0523D]" />
+                        <span className="text-[10px] font-bold text-[#8C4A32]">Upload Photo</span>
                       </div>
                     )}
                   </div>
                   <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                 </label>
-                <span className="text-xs font-bold text-[#2C1D14] mt-1 tracking-wide">
-                  Chef's photo
+                <span className="text-[11px] font-bold text-[#593222] mt-1.5 flex items-center gap-1">
+                  <Camera className="w-3 h-3 text-[#A0523D]" />
+                  <span>Upload Photo</span>
                 </span>
               </div>
 

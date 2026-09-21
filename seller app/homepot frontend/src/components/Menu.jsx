@@ -365,16 +365,22 @@ export default function Menu() {
             >
               {/* Dish Top Row: Image + Details + Price */}
               <div className="flex items-start gap-3">
-                {/* Dish Photo Thumbnail (Optional or default) */}
+                {/* Dish Photo Thumbnail with Vibrant Availability Dot on Logo/Photo side */}
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#F4EFE6] border border-[#E8DEC8] shrink-0 relative">
                   <img 
                     src={item.photo || defaultFoodImg} 
                     alt={item.name} 
                     className="w-full h-full object-cover" 
                   />
-                  <span className={`absolute top-1 left-1 w-2.5 h-2.5 rounded-full border border-white ${
-                    item.isVeg ? 'bg-emerald-500' : 'bg-rose-500'
-                  }`} title={item.isVeg ? 'Veg' : 'Non-Veg'}></span>
+                  {/* Vibrant status dot: GREEN when item is Available, RED only when Sold Out / Not Available */}
+                  <span 
+                    className={`absolute top-1 left-1 w-3 h-3 rounded-full border-2 border-white transition-all ${
+                      item.available 
+                        ? 'bg-[#10B981] shadow-[0_0_8px_#10B981]' 
+                        : 'bg-[#EF4444] shadow-[0_0_8px_#EF4444]'
+                    }`} 
+                    title={item.available ? "Dish Available / In Stock" : "Dish Sold Out / Unavailable"}
+                  ></span>
                 </div>
 
                 {/* Dish Title, Category & Portions */}
@@ -391,6 +397,13 @@ export default function Menu() {
                   <div className="flex items-center gap-1.5 mt-1">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-[#A0523D] bg-[#FAF6F0] px-1.5 py-0.5 rounded border border-[#E8DEC8]">
                       {item.category || 'Lunch'}
+                    </span>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${
+                      item.isVeg 
+                        ? 'text-emerald-800 bg-emerald-50 border-emerald-300' 
+                        : 'text-amber-900 bg-amber-50 border-amber-300'
+                    }`}>
+                      {item.isVeg ? 'Veg' : 'Non-Veg'}
                     </span>
                     <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full ${
                       item.available 

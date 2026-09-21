@@ -309,19 +309,11 @@ export default function ChefDashboard({ userData, onLogout }) {
               </button>
             </div>
             
-            {/* Chef Name with Bright Light Dot */}
+            {/* Chef Name */}
             <div className="flex items-center gap-1.5 mt-1.5">
               <p className="text-xs text-orange-100 font-bold">
                 {profile.chefName} <span className="font-normal text-orange-200/80">(@{profile.handle})</span>
               </p>
-              <span 
-                className={`w-2.5 h-2.5 rounded-full border border-[#8C4A32] shrink-0 transition-colors ${
-                  isKitchenOpen 
-                    ? 'bg-[#10B981] shadow-[0_0_8px_#10B981] animate-pulse' 
-                    : 'bg-[#EF4444] shadow-[0_0_8px_#EF4444]'
-                }`}
-                title={isKitchenOpen ? t('kitchen_open') : t('kitchen_closed')}
-              />
             </div>
 
             {/* Quick Kitchen Open / Closed Status Pill */}
