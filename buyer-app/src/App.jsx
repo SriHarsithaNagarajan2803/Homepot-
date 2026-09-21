@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Login from './pages/Page1_Login';
 import HomeFeed from './pages/Page2_HomeFeed';
 import FoodDetail from './pages/Page3_FoodDetail';
@@ -8,7 +8,6 @@ import Profile from './pages/Page8_Profile';
 import BottomNav from './components/BottomNav';
 
 export default function App() {
-  // Check if buyer user is already signed in
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('homepot_buyer_user');
@@ -18,7 +17,6 @@ export default function App() {
     }
   });
 
-  // Navigation stack & state (defaults to 'auth' if not logged in!)
   const [currentPage, setCurrentPage] = useState(() => {
     const saved = localStorage.getItem('homepot_buyer_user');
     return saved ? 'feed' : 'auth';
@@ -31,20 +29,21 @@ export default function App() {
 
   const [selectedDish, setSelectedDish] = useState(null);
   const [cart, setCart] = useState([]);
+  
   const [selectedLocation, setSelectedLocation] = useState(() => {
     try {
       const saved = localStorage.getItem('homepot_buyer_user');
       if (saved) {
         const u = JSON.parse(saved);
-        return u.address || 'Anna Nagar, Chennai';
+        if (u.address) return u.address;
       }
     } catch (e) {}
-    return 'Anna Nagar, Chennai';
+    return 'Choose your location';
   });
+
   const [activeOrder, setActiveOrder] = useState(null);
   const [orderHistory, setOrderHistory] = useState([]);
 
-  // When user successfully signs up or logs in with OTP
   const handleLoginSuccess = (userData) => {
     setCurrentUser(userData);
     if (userData.address) setSelectedLocation(userData.address);
@@ -52,7 +51,6 @@ export default function App() {
     setHistoryStack(['feed']);
   };
 
-  // When user clicks Log Out
   const handleLogout = () => {
     const confirmLogout = window.confirm('Are you sure you want to log out of HomePot?');
     if (confirmLogout) {
@@ -65,18 +63,16 @@ export default function App() {
     }
   };
 
-  // Navigate forward with history stack
   const handleNavigate = (page, data = null) => {
     setHistoryStack(prev => [...prev, page]);
     setCurrentPage(page);
     if (data) setSelectedDish(data);
   };
 
-  // Back button handler: Always returns to exact previous screen!
   const handleBack = () => {
     if (historyStack.length > 1) {
       const nextStack = [...historyStack];
-      nextStack.pop(); // remove current
+      nextStack.pop();
       const prevPage = nextStack[nextStack.length - 1];
       setHistoryStack(nextStack);
       setCurrentPage(prevPage);
@@ -131,8 +127,6 @@ export default function App() {
   };
 
   const totalCartCount = cart.reduce((acc, i) => acc + (i.quantity || 1), 0);
-
-  // Show BottomNav only on primary tabs ('feed', 'profile') when authenticated
   const showBottomNav = currentUser && (currentPage === 'feed' || currentPage === 'profile');
 
   return (
@@ -140,13 +134,10 @@ export default function App() {
       className="min-h-screen w-full flex justify-center items-center py-0 sm:py-4 px-0 sm:px-4"
       style={{ backgroundColor: '#EFE9DF', colorScheme: 'light' }}
     >
-      {/* Mobile Card Frame */}
       <div 
         className="w-full max-w-md h-screen sm:h-[92vh] sm:max-h-[850px] sm:border sm:border-[#E8DEC8] sm:rounded-3xl shadow-2xl flex flex-col justify-between overflow-y-auto relative text-stone-900"
         style={{ backgroundColor: '#FAF6EE', colorScheme: 'light' }}
       >
-        
-        {/* Soft Dot Overlay */}
         <div 
           className="absolute inset-0 z-0 pointer-events-none"
           style={{
@@ -155,10 +146,7 @@ export default function App() {
           }}
         ></div>
 
-        {/* Content Container */}
         <div className="flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          
-          {/* Auth Screen: Sign Up & Sign In with OTP */}
           {currentPage === 'auth' && (
             <Login onLoginSuccess={handleLoginSuccess} />
           )}
@@ -211,7 +199,6 @@ export default function App() {
           )}
         </div>
 
-        {/* Persistent Bottom Navigation (Only on Feed and Profile) */}
         {showBottomNav && (
           <BottomNav 
             activeTab={currentPage} 

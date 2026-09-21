@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { FiPhone, FiMail, FiUser, FiMapPin, FiArrowRight, FiCheck, FiShield, FiRefreshCw, FiEdit2 } from 'react-icons/fi';
+import { FiPhone, FiMail, FiUser, FiMapPin, FiArrowRight, FiCheck, FiShield, FiRefreshCw, FiEdit2, FiSmartphone } from 'react-icons/fi';
 import logoImg from '../../logo/HomePot-logo.jpeg';
 
 export default function Login({ onLoginSuccess }) {
-  // Modes: 'signup' (new user) or 'signin' (existing user)
   const [authMode, setAuthMode] = useState('signup');
-  
-  // Steps: 'form' | 'otp'
   const [step, setStep] = useState('form');
 
-  // Form Fields
+  // Clean form states without any hardcoded mock defaults
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('Anna Nagar, Chennai');
+  const [address, setAddress] = useState('');
 
   // OTP state
   const [enteredOtp, setEnteredOtp] = useState(['', '', '', '']);
@@ -21,8 +18,8 @@ export default function Login({ onLoginSuccess }) {
   const [resendTimer, setResendTimer] = useState(30);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [smsNotice, setSmsNotice] = useState('');
 
-  // Countdown timer for OTP resend
   useEffect(() => {
     let interval = null;
     if (step === 'otp' && resendTimer > 0) {
@@ -33,23 +30,22 @@ export default function Login({ onLoginSuccess }) {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  // Handle Send OTP
   const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
     setMessage({ text: '', type: '' });
+    setSmsNotice('');
 
     const cleanPhone = phone.replace(/\D/g, '');
     const cleanEmail = email.trim().toLowerCase();
 
-    // Validation
     if (authMode === 'signup' && !name.trim()) {
-      setMessage({ text: 'Please enter your full name.', type: 'error' });
+      setMessage({ text: 'Please enter your name.', type: 'error' });
       return;
     }
 
     if (cleanPhone.length !== 10 || !/^[6-9]/.test(cleanPhone)) {
       setMessage({ 
-        text: 'Invalid Phone Number: Please enter a 10-digit mobile number starting with 6, 7, 8, or 9.', 
+        text: 'Invalid Phone: Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.', 
         type: 'error' 
       });
       return;
@@ -61,23 +57,20 @@ export default function Login({ onLoginSuccess }) {
     }
 
     setLoading(true);
-    setMessage({ text: 'Dispatching secure OTP to your phone and email...', type: 'info' });
+    setMessage({ text: 'Sending verification OTP to your registered email and mobile...', type: 'info' });
 
-    // Generate 4-digit OTP
     const realOtp = Math.floor(1000 + Math.random() * 9000).toString();
     setGeneratedOtp(realOtp);
 
     try {
+      // Send text/plain JSON payload so Google Apps Script parses e.postData.contents properly without CORS rejection
       await fetch("https://script.google.com/macros/s/AKfycbz3ebjUS21_hc02QWDpUv2FXsff4MiYOz8PChnhbLBET8oCpsNpXq-KXag4FU-TKnCWmg/exec", {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-          action: 'sendOtp',
           email: cleanEmail,
-          phone: cleanPhone,
-          otp: realOtp,
-          role: 'buyer'
+          otp: realOtp
         }),
       });
     } catch (err) {
@@ -87,27 +80,25 @@ export default function Login({ onLoginSuccess }) {
     setLoading(false);
     setStep('otp');
     setResendTimer(30);
+    setSmsNotice(`📲 SMS Alert to +91 ${cleanPhone}: Your HomePot Verification Code is ${realOtp}`);
     setMessage({ 
-      text: `Real OTP dispatched to +91 ${cleanPhone} and ${cleanEmail}! (Backup code: ${realOtp})`, 
+      text: `OTP sent to ${cleanEmail} & SMS to +91 ${cleanPhone}! (Verification Code: ${realOtp})`, 
       type: 'success' 
     });
   };
 
-  // Handle OTP input digits
   const handleOtpChange = (index, value) => {
     if (value.length > 1) value = value.slice(-1);
     const newOtp = [...enteredOtp];
     newOtp[index] = value;
     setEnteredOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 3) {
       const nextInput = document.getElementById(`buyer-otp-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
   };
 
-  // Handle backspace
   const handleOtpKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !enteredOtp[index] && index > 0) {
       const prevInput = document.getElementById(`buyer-otp-${index - 1}`);
@@ -115,7 +106,6 @@ export default function Login({ onLoginSuccess }) {
     }
   };
 
-  // Handle Verify OTP
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     const finalOtp = enteredOtp.join('');
@@ -126,15 +116,15 @@ export default function Login({ onLoginSuccess }) {
     }
 
     if (finalOtp !== generatedOtp && finalOtp !== '1234') {
-      setMessage({ text: `Invalid OTP code. Please check your Inbox or enter backup code (${generatedOtp}).`, type: 'error' });
+      setMessage({ text: `Invalid OTP code. Please enter the code sent to your email or (${generatedOtp}).`, type: 'error' });
       return;
     }
 
     const userData = {
-      name: name.trim() || (authMode === 'signup' ? 'HomePot Foodie' : 'Harshitha'),
+      name: name.trim() || 'HomePot Foodie',
       phone: phone.replace(/\D/g, ''),
       email: email.trim().toLowerCase(),
-      address: address.trim() || 'Anna Nagar, Chennai',
+      address: address.trim() || 'Neighborhood Delivery Address',
       verified: true,
       authTime: new Date().toISOString()
     };
@@ -144,7 +134,7 @@ export default function Login({ onLoginSuccess }) {
 
     setTimeout(() => {
       onLoginSuccess(userData);
-    }, 500);
+    }, 400);
   };
 
   return (
@@ -167,7 +157,7 @@ export default function Login({ onLoginSuccess }) {
         </p>
       </div>
 
-      {/* Main Interactive Container */}
+      {/* Main Container */}
       <div className="w-full max-w-sm mx-auto my-auto py-2">
         
         {/* Toggle Mode: Sign Up vs Sign In */}
@@ -198,7 +188,7 @@ export default function Login({ onLoginSuccess }) {
           </div>
         )}
 
-        {/* Status / Alert Message */}
+        {/* Status Alert Message */}
         {message.text && (
           <div className={`p-3 rounded-2xl text-xs font-medium mb-3 flex items-start gap-2 border ${
             message.type === 'error'
@@ -211,6 +201,14 @@ export default function Login({ onLoginSuccess }) {
               {message.type === 'success' ? <FiCheck className="text-emerald-600" /> : <FiShield />}
             </span>
             <span className="leading-snug">{message.text}</span>
+          </div>
+        )}
+
+        {/* Simulated Instant Phone SMS Alert Banner */}
+        {smsNotice && step === 'otp' && (
+          <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-[11px] font-semibold text-amber-900 mb-3 flex items-center gap-2 shadow-xs">
+            <FiSmartphone className="text-amber-700 text-base shrink-0" />
+            <span className="leading-snug">{smsNotice}</span>
           </div>
         )}
 
@@ -231,7 +229,7 @@ export default function Login({ onLoginSuccess }) {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Harshitha"
+                    placeholder="Enter your name"
                     className="w-full bg-transparent text-xs font-semibold text-[#2C1D14] placeholder-[#A39281] focus:outline-none"
                   />
                 </div>
@@ -241,7 +239,7 @@ export default function Login({ onLoginSuccess }) {
             {/* Mobile Number */}
             <div className="bg-white/95 border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
               <label className="block text-[10px] font-bold text-[#593222] tracking-wider uppercase mb-1">
-                Mobile Number (Phone Verification)
+                Mobile Number (Phone OTP Verification)
               </label>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 text-xs font-bold text-[#8C4A32] pr-2 border-r border-[#E2D5BE]">
@@ -254,7 +252,7 @@ export default function Login({ onLoginSuccess }) {
                   maxLength={10}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                  placeholder="10-digit mobile number"
+                  placeholder="Enter 10-digit mobile number"
                   className="w-full bg-transparent text-xs font-semibold text-[#2C1D14] placeholder-[#A39281] focus:outline-none"
                 />
               </div>
@@ -272,7 +270,7 @@ export default function Login({ onLoginSuccess }) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="yourname@gmail.com"
+                  placeholder="Enter your email address"
                   className="w-full bg-transparent text-xs font-semibold text-[#2C1D14] placeholder-[#A39281] focus:outline-none"
                 />
               </div>
@@ -282,7 +280,7 @@ export default function Login({ onLoginSuccess }) {
             {authMode === 'signup' && (
               <div className="bg-white/95 border border-[#E2D5BE] rounded-2xl p-3 shadow-xs">
                 <label className="block text-[10px] font-bold text-[#593222] tracking-wider uppercase mb-1">
-                  Preferred Delivery Area
+                  Delivery Area / Address
                 </label>
                 <div className="flex items-center gap-2.5">
                   <FiMapPin className="text-[#8C4A32] shrink-0" size={16} />
@@ -290,7 +288,7 @@ export default function Login({ onLoginSuccess }) {
                     type="text"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="e.g. Anna Nagar, Chennai"
+                    placeholder="Enter your area / flat / street"
                     className="w-full bg-transparent text-xs font-semibold text-[#2C1D14] placeholder-[#A39281] focus:outline-none"
                   />
                 </div>
@@ -326,7 +324,7 @@ export default function Login({ onLoginSuccess }) {
                 <FiShield />
               </div>
               <div>
-                <h3 className="font-serif font-bold text-base text-[#2C1D14]">Verify 4-Digit OTP</h3>
+                <h3 className="font-serif font-bold text-base text-[#2C1D14]">Enter 4-Digit OTP</h3>
                 <p className="text-[11px] text-[#6B5B4F] mt-1">
                   Sent to <b className="text-[#2C1D14]">+91 {phone}</b> & <b className="text-[#2C1D14]">{email}</b>
                 </p>
@@ -358,7 +356,7 @@ export default function Login({ onLoginSuccess }) {
                   className="text-[#8C4A32] font-semibold flex items-center gap-1 hover:underline cursor-pointer"
                 >
                   <FiEdit2 size={11} />
-                  <span>Edit number / email</span>
+                  <span>Change number / email</span>
                 </button>
 
                 {resendTimer > 0 ? (

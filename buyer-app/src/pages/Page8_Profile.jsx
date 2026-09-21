@@ -11,10 +11,10 @@ export default function Profile({
   orderHistory = [] 
 }) {
   const user = currentUser || {
-    name: 'Harshitha',
-    phone: '9345605005',
-    email: 'harshitha@homepot.com',
-    address: 'Anna Nagar, Flat 4B, Chennai'
+    name: 'HomePot Customer',
+    phone: '',
+    email: '',
+    address: 'Delivery address not set'
   };
 
   const defaultHistory = [
@@ -23,7 +23,7 @@ export default function Profile({
       date: 'Today, 1:15 PM',
       dish: 'Authentic Chettinad Chicken Curry + 3 Parottas',
       chef: 'Radha Amma',
-      amount: 145,
+      amount: 140,
       status: 'DELIVERED',
       itemsCount: 1
     },
@@ -32,23 +32,14 @@ export default function Profile({
       date: 'Yesterday, 9:30 AM',
       dish: 'Traditional Ghee Podi Idli & Vadai',
       chef: 'Saraswathi Amma',
-      amount: 135,
+      amount: 90,
       status: 'DELIVERED',
       itemsCount: 2
-    },
-    {
-      id: '#HP-77610',
-      date: '18-Sep-2026, 8:45 PM',
-      dish: 'Authentic Egg Curry + Roti',
-      chef: 'Radha Amma',
-      amount: 145,
-      status: 'DELIVERED',
-      itemsCount: 1
     }
   ];
 
   const history = orderHistory.length > 0 ? orderHistory : defaultHistory;
-  const initialLetter = (user.name || 'H').charAt(0).toUpperCase();
+  const initialLetter = (user.name || 'U').charAt(0).toUpperCase();
 
   return (
     <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-24 relative select-none">
@@ -87,12 +78,16 @@ export default function Profile({
                   <FiShield size={9} /> Verified
                 </span>
               </div>
-              <p className="text-xs text-[#6B5B4F] flex items-center gap-1 mt-0.5">
-                <FiPhone size={12} /> +91 {user.phone}
-              </p>
-              <p className="text-[10px] text-[#A09890] flex items-center gap-1">
-                <FiMail size={11} /> {user.email}
-              </p>
+              {user.phone && (
+                <p className="text-xs text-[#6B5B4F] flex items-center gap-1 mt-0.5">
+                  <FiPhone size={12} /> +91 {user.phone}
+                </p>
+              )}
+              {user.email && (
+                <p className="text-[10px] text-[#A09890] flex items-center gap-1">
+                  <FiMail size={11} /> {user.email}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -177,7 +172,7 @@ export default function Profile({
           <div className="space-y-2 text-[#6B5B4F] text-[11px]">
             <div className="p-2.5 bg-[#FAF6EE] rounded-xl border border-[#E8DEC8]">
               <span className="font-bold text-[#2C1D14] block">Default Address:</span>
-              <span>{user.address || 'Anna Nagar, Flat 4B, 2nd Avenue, Chennai'}</span>
+              <span>{user.address || 'Click to set delivery address'}</span>
             </div>
           </div>
         </div>
