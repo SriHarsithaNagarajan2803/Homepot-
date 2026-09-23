@@ -10,9 +10,7 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
   const [showToast, setShowToast] = useState(false);
 
   // Delivery vs Self-Pickup options
-  const [deliveryOption, setDeliveryOption] = useState('delivery'); // 'delivery' | 'pickup'
-  
-  // Container Option for Self-Pickup: 'own_box' (₹0 FREE) | 'packed' (+₹15)
+  const [deliveryOption, setDeliveryOption] = useState('delivery');
   const [containerOption, setContainerOption] = useState('own_box');
 
   const defaultDish = {
@@ -29,9 +27,6 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
 
   const meal = dish || defaultDish;
 
-  // Packaging Fee Calculation:
-  // Delivery always includes packed container (+₹15).
-  // Pickup allows customer to choose: Bring Own Dabba (₹0) OR Packed Container (+₹15).
   const packagingFee = deliveryOption === 'delivery' ? 15 : (containerOption === 'packed' ? 15 : 0);
   const deliveryFee = deliveryOption === 'delivery' ? 25 : 0;
   
@@ -70,7 +65,7 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-32 relative select-none">
+    <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-24 relative select-none">
       
       {/* Sticky Top Header Bar */}
       <div className="sticky top-0 z-40 bg-[#FAF6EE]/95 backdrop-blur-md px-4 py-3 border-b border-[#E2D5BE] flex items-center justify-between">
@@ -98,7 +93,7 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
         <div className="px-4 pt-2">
           <div className="bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl flex items-center gap-2 shadow-md">
             <FiCheck className="text-base shrink-0" />
-            <span>Added {quantity}x "{meal.title}" to your Pot!</span>
+            <span>Added {quantity}x "{meal.title}" to your Tiffin!</span>
           </div>
         </div>
       )}
@@ -141,7 +136,6 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
             <span className="text-[10px] font-bold text-[#8C4A32]">Customer's Choice</span>
           </div>
 
-          {/* Option 1: Delivery vs Pickup Toggle */}
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
@@ -156,7 +150,7 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
                 <Truck className="w-4 h-4 text-[#8C4A32]" />
                 <span className="text-xs font-bold">Rider Delivery</span>
               </div>
-              <p className="text-[9px] text-[#7C746E] mt-1">Direct to door (within 5km) • +₹15 packed</p>
+              <p className="text-[9px] text-[#7C746E] mt-1">Direct to door • +₹15 packed</p>
             </button>
 
             <button
@@ -176,7 +170,6 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
             </button>
           </div>
 
-          {/* If Self-Pickup: Container Option */}
           {deliveryOption === 'pickup' ? (
             <div className="bg-[#FAF4EB] p-3 rounded-2xl border border-[#E2D5BE] space-y-2">
               <span className="text-[10px] font-bold text-[#593222] uppercase tracking-wide block">
@@ -213,7 +206,7 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
 
               <p className="text-[10px] text-emerald-900 font-medium">
                 {containerOption === 'own_box' 
-                  ? '🌿 You selected to bring your own container to Amma’s kitchen. No packaging charge!' 
+                  ? '🌿 You selected to bring your own container to Amma’s kitchen. Zero packaging charge!' 
                   : '📦 Amma will pack your hot food in a sealed food-grade disposable box (+₹15).'}
               </p>
             </div>
@@ -253,7 +246,6 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
         <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] space-y-3 shadow-xs">
           <h3 className="font-bold text-xs text-[#2C1D14]">Customization Box</h3>
           
-          {/* Spice level selector */}
           <div>
             <label className="text-[11px] font-bold text-[#6B5B4F]">Spice Level</label>
             <div className="grid grid-cols-3 gap-1.5 mt-1.5">
@@ -274,7 +266,6 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
             </div>
           </div>
 
-          {/* Cooking Instructions */}
           <div>
             <label className="text-[11px] font-bold text-[#6B5B4F]">Special Cooking Instructions for Chef</label>
             <input 
@@ -287,48 +278,45 @@ export default function FoodDetail({ dish, onBack, onAddToCart, onBookNow }) {
           </div>
         </div>
 
-      </div>
+        {/* INLINE ACTION BUTTONS: Cleanly integrated into the page content so it never covers BottomNav */}
+        <div className="pt-2 flex items-center gap-2">
+          {/* Quantity Counter */}
+          <div className="flex items-center gap-2 bg-white border border-[#E2D5BE] rounded-2xl px-2.5 py-2 shadow-xs shrink-0">
+            <button 
+              type="button"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="w-7 h-7 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#8C4A32] font-bold hover:bg-[#EFE3D0] active:scale-90 cursor-pointer"
+            >
+              <FiMinus size={12} />
+            </button>
+            <span className="font-bold text-xs text-[#2C1D14] w-4 text-center">{quantity}</span>
+            <button 
+              type="button"
+              onClick={() => setQuantity(quantity + 1)}
+              className="w-7 h-7 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#8C4A32] font-bold hover:bg-[#EFE3D0] active:scale-90 cursor-pointer"
+            >
+              <FiPlus size={12} />
+            </button>
+          </div>
 
-      {/* STICKY BOTTOM ACTION BAR */}
-      <div className="sticky bottom-0 left-0 right-0 bg-[#FAF6EE]/95 backdrop-blur-md border-t border-[#E2D5BE] p-3 px-4 z-50 flex items-center justify-between gap-2 shadow-lg">
-        
-        {/* Quantity Counter */}
-        <div className="flex items-center gap-2 bg-white border border-[#E2D5BE] rounded-2xl px-2 py-1.5 shadow-xs">
+          {/* Select & Add To Tiffin */}
           <button 
             type="button"
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="w-7 h-7 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#8C4A32] font-bold hover:bg-[#EFE3D0] active:scale-90 cursor-pointer"
+            onClick={handleAddToCart}
+            className="flex-1 bg-white hover:bg-[#FAF4EB] border-2 border-[#8C4A32] text-[#8C4A32] font-bold text-xs py-3 rounded-2xl shadow-xs cursor-pointer transition active:scale-95 flex items-center justify-center gap-1"
           >
-            <FiMinus size={12} />
+            <span>ADD TO TIFFIN • ₹{totalPrice}</span>
           </button>
-          <span className="font-bold text-xs text-[#2C1D14] w-4 text-center">{quantity}</span>
+
+          {/* Book Order Now Button */}
           <button 
             type="button"
-            onClick={() => setQuantity(quantity + 1)}
-            className="w-7 h-7 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#8C4A32] font-bold hover:bg-[#EFE3D0] active:scale-90 cursor-pointer"
+            onClick={handleBookOrderNow}
+            className="bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold text-xs px-3.5 py-3 rounded-2xl shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1 shrink-0"
           >
-            <FiPlus size={12} />
+            <span>BOOK NOW ➔</span>
           </button>
         </div>
-
-        {/* Select & Add To Pot */}
-        <button 
-          type="button"
-          onClick={handleAddToCart}
-          className="flex-1 bg-white hover:bg-[#FAF4EB] border-2 border-[#8C4A32] text-[#8C4A32] font-bold text-xs py-3 rounded-2xl shadow-xs cursor-pointer transition active:scale-95 flex items-center justify-center gap-1"
-        >
-          <span>SELECT THIS • ₹{totalPrice}</span>
-        </button>
-
-        {/* Book Order Now Button */}
-        <button 
-          type="button"
-          onClick={handleBookOrderNow}
-          className="bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold text-xs px-4 py-3 rounded-2xl shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1.5"
-        >
-          <span>BOOK ORDER</span>
-          <span>➔</span>
-        </button>
 
       </div>
 

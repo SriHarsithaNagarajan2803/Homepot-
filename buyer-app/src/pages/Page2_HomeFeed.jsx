@@ -328,7 +328,7 @@ export default function HomeFeed({ onNavigate, onAddToCart, cart = [], selectedL
             >
               <div className="flex items-center gap-2">
                 <FiShoppingBag className="text-base" />
-                <span>{totalCartCount} item(s) in Pot • ₹{totalCartPrice}</span>
+                <span>{totalCartCount} item(s) in Tiffin • ₹{totalCartPrice}</span>
               </div>
               <div className="flex items-center gap-1">
                 <span>Book Order Now</span>

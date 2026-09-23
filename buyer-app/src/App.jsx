@@ -127,7 +127,9 @@ export default function App() {
   };
 
   const totalCartCount = cart.reduce((acc, i) => acc + (i.quantity || 1), 0);
-  const showBottomNav = currentUser && (currentPage === 'feed' || currentPage === 'profile');
+  
+  // BottomNav is ALWAYS visible for logged-in buyers across Menu, My Tiffin, Profile, Detail, etc.
+  const showBottomNav = currentUser && currentPage !== 'auth';
 
   return (
     <div 
@@ -135,7 +137,7 @@ export default function App() {
       style={{ backgroundColor: '#EFE9DF', colorScheme: 'light' }}
     >
       <div 
-        className="w-full max-w-md h-screen sm:h-[92vh] sm:max-h-[850px] sm:border sm:border-[#E8DEC8] sm:rounded-3xl shadow-2xl flex flex-col justify-between overflow-y-auto relative text-stone-900"
+        className="w-full max-w-md h-screen sm:h-[92vh] sm:max-h-[850px] sm:border sm:border-[#E8DEC8] sm:rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden relative text-stone-900"
         style={{ backgroundColor: '#FAF6EE', colorScheme: 'light' }}
       >
         <div 
@@ -146,7 +148,8 @@ export default function App() {
           }}
         ></div>
 
-        <div className="flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* Scrollable Content Container with clean bottom margin for BottomNav */}
+        <div className={`flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${showBottomNav ? 'pb-14' : ''}`}>
           {currentPage === 'auth' && (
             <Login onLoginSuccess={handleLoginSuccess} />
           )}
@@ -199,6 +202,7 @@ export default function App() {
           )}
         </div>
 
+        {/* Persistent Bottom Navigation - Always visible and never obscured */}
         {showBottomNav && (
           <BottomNav 
             activeTab={currentPage} 

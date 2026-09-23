@@ -52,7 +52,7 @@ export default function Checkout({ cart = [], selectedLocation = 'Choose deliver
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-28 relative select-none">
+    <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-24 relative select-none">
       
       {/* Sticky Top Header */}
       <div className="sticky top-0 z-40 bg-[#FAF6EE]/95 backdrop-blur-md px-4 py-3 border-b border-[#E2D5BE] flex items-center justify-between">
@@ -172,7 +172,7 @@ export default function Checkout({ cart = [], selectedLocation = 'Choose deliver
         {/* Order Items List */}
         <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] shadow-xs space-y-3">
           <h3 className="font-serif font-bold text-xs text-[#2C1D14] border-b border-[#F4EFE6] pb-2">
-            Selected Dishes in Pot
+            Selected Dishes in Tiffin
           </h3>
 
           <div className="space-y-2.5">
@@ -264,21 +264,21 @@ export default function Checkout({ cart = [], selectedLocation = 'Choose deliver
           </div>
         </div>
 
-      </div>
+        {/* Confirm Order Button: Integrated right inside the review card, perfectly visible without blocking BottomNav */}
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={handleConfirmOrder}
+            className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold text-xs py-3.5 rounded-2xl shadow-md cursor-pointer transition active:scale-98 flex items-center justify-between px-4"
+          >
+            <div className="flex items-center gap-1.5">
+              <FiShield size={14} />
+              <span>Confirm & Book Order</span>
+            </div>
+            <span className="font-mono font-bold text-sm">₹{grandTotal} ➔</span>
+          </button>
+        </div>
 
-      {/* Sticky Bottom Order Button */}
-      <div className="sticky bottom-0 left-0 right-0 bg-[#FAF6EE]/95 backdrop-blur-md border-t border-[#E2D5BE] p-3 px-4 z-50 shadow-lg">
-        <button
-          type="button"
-          onClick={handleConfirmOrder}
-          className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold text-xs py-3.5 rounded-2xl shadow-md cursor-pointer transition active:scale-98 flex items-center justify-between px-4"
-        >
-          <div className="flex items-center gap-1.5">
-            <FiShield size={14} />
-            <span>Confirm & Book Order</span>
-          </div>
-          <span className="font-mono font-bold text-sm">₹{grandTotal} ➔</span>
-        </button>
       </div>
 
     </div>
