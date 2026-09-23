@@ -114,35 +114,4 @@ async def register_user(data: RegisterRequest):
     except Exception as e:
         print(f"Registration Error Details: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-    
-# ---------------------------------------------------------
-# 5. OPENCV FACE DETECTION ENDPOINT
-# ---------------------------------------------------------
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-@app.post("/api/detect-face")
-async def detect_face(file: UploadFile = File(...)):
-    try:
-        contents = await file.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        if img is None:
-            return {"success": False, "message": "Could not decode image file."}
-
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(
-            gray, 
-            scaleFactor=1.1, 
-            minNeighbors=5, 
-            minSize=(30, 30)
-        )
-
-        if len(faces) > 0:
-            return {"success": True, "message": f"Face verified! ({len(faces)} face detected)"}
-        else:
-            return {"success": False, "message": "No human face detected. Please upload a clear photo."}
-
-    except Exception as e:
-        print(f"Face Detection Error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error during face detection.")
+ 
