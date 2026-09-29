@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Phone, 
   Navigation, 
@@ -6,181 +7,200 @@ import {
   UtensilsCrossed, 
   Truck, 
   MapPin, 
-  User, 
   Volume2, 
   ShieldCheck, 
   Sparkles,
-  AlertCircle,
+  AlertTriangle,
   CheckCircle2,
   X,
-  PackageCheck
+  PackageCheck,
+  Lock,
+  Eye,
+  EyeOff,
+  Map,
+  ArrowRight
 } from 'lucide-react';
 import HomepotLogo from '../components/HomepotLogo';
 import DeliveryNavbar from '../components/DeliveryNavbar';
 import LanguageSelector from '../components/LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
 
-function playOrderAlertSound() {
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const osc1 = ctx.createOscillator();
-    const gain1 = ctx.createGain();
-    osc1.type = 'triangle';
-    osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
-    gain1.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-    osc1.connect(gain1);
-    gain1.connect(ctx.destination);
-    osc1.start();
-    osc1.stop(ctx.currentTime + 0.3);
-
-    setTimeout(() => {
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'triangle';
-      osc2.frequency.setValueAtTime(880, ctx.currentTime);
-      gain2.gain.setValueAtTime(0.35, ctx.currentTime);
-      gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start();
-      osc2.stop(ctx.currentTime + 0.4);
-    }, 180);
-  } catch (err) {
-    console.log('Audio alert fallback:', err);
-  }
-}
-
 export default function OrderRadar() {
+  const navigate = useNavigate();
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState('in_progress');
+  const [activeTab, setActiveTab] = useState('in_progress'); // 'in_progress' | 'history'
 
-  const [gpsLocation, setGpsLocation] = useState({
-    lat: 13.0524,
-    lng: 80.2120,
-    address: 'Vadapalani, Chennai (5 km Radar Active)'
-  });
-  const [gpsActive, setGpsActive] = useState(true);
-
-  const [activeOrder, setActiveOrder] = useState({
-    id: '#HP12345-6789',
-    date: '25-Oct-2023',
-    kitchenName: "Rupa's Homemade Foods",
-    kitchenPhone: '+91 98765 12345',
-    pickupAddress: 'No. 12, Main Street, Bengaluru',
-    customerName: 'Amit Sharma',
-    customerAddress: 'Flat No. 302, Greenview Apts, No. 12, Main Street, Bengaluru',
-    items: '1 X Paneer Pulao, 2 X Roti',
-    mealType: 'Dinner',
-    amount: '₹550',
-    paymentMode: 'COD',
-    distanceKm: '5 km',
-    deliveryFee: '₹65',
-    status: 'CONFIRMED'
-  });
-
-  const [availableOrders, setAvailableOrders] = useState([
-    {
-      id: '#HP98211-4412',
-      kitchenName: "Lakshmi Amma's Kitchen",
-      pickupAddress: '2nd Cross, Arcot Road, Vadapalani',
-      items: '2 X Sambar Rice, 1 X Poriyal, Appalam',
-      distance: 1.8,
-      payout: '₹70',
-      mealType: 'Lunch'
-    },
-    {
-      id: '#HP77120-9931',
-      kitchenName: "Meenakshi Traditional Meals",
-      pickupAddress: '15, 4th Avenue, Anna Nagar West',
-      items: '3 X Ghee Podi Idli, Chutney',
-      distance: 3.4,
-      payout: '₹85',
-      mealType: 'Dinner'
-    }
-  ]);
-
-  const [deliveryStage, setDeliveryStage] = useState(2);
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [customerOtp, setCustomerOtp] = useState('');
-  const EXPECTED_OTP = '4821';
-  const [otpError, setOtpError] = useState('');
   const [toast, setToast] = useState('');
 
-  // History list with per-order earnings explicitly displayed
-  const [completedOrders, setCompletedOrders] = useState([
+  // Delivery Stages:
+  // 0 = Available on Radar (Pending Acceptance - Addresses Locked)
+  // 1 = Accepted by Rider (Heading to Kitchen - Chef Full Address Revealed, Customer Address Locked)
+  // 2 = Food Taken / Picked Up from Chef (Chef Address Hidden, Customer Full Address Revealed, Live Traffic Map Active)
+  // 3 = Delivered (Completed via Customer OTP)
+  const [deliveryStage, setDeliveryStage] = useState(1);
+
+  // Active Order Object
+  const [activeOrder, setActiveOrder] = useState({
+    id: '#HP-48921',
+    date: 'Today, 1:15 PM',
+    chefName: 'Radha Amma',
+    chefRoughArea: 'Near Anna Nagar 2nd Avenue (Rough Area)',
+    chefFullAddress: 'Flat 3B, Plot 42, 2nd Cross Street, Anna Nagar West, Chennai',
+    chefPhone: '+91 98765 12345',
+    customerName: 'Kavitha R.',
+    customerRoughArea: 'Near Vadapalani Metro (Rough Area)',
+    customerFullAddress: 'Door 14, 5th Main Road, Vadapalani, Chennai',
+    customerPhone: '+91 94455 12345',
+    distRiderToChef: '1.2 km',
+    distChefToCustomer: '2.8 km',
+    totalDistance: '4.0 km',
+    items: '2 X Authentic Chettinad Chicken Curry + 3 Parottas',
+    mealType: 'Lunch',
+    amount: '₹280',
+    deliveryFee: '₹75',
+    paymentMode: 'COD',
+    status: 'RIDER_ACCEPTED'
+  });
+
+  // Nearby Orders in Radar (Only orders accepted by Chef appear here)
+  const [availableOrders, setAvailableOrders] = useState([
     {
-      id: '#HP99841-3321',
-      date: 'Today, 1:45 PM',
-      kitchenName: "Amma's Kitchen",
-      customerName: 'Kavitha R.',
-      address: 'Flat 4A, Orchid Enclave, Vadapalani',
-      distanceKm: '3.8 km',
-      amountCollected: '₹480',
-      earnedForOrder: '₹65.00',
-      status: 'DELIVERED',
-      items: '1 X Special Veg Thali, 2 X Chapatis'
-    },
-    {
-      id: '#HP99102-1209',
-      date: 'Today, 12:15 PM',
-      kitchenName: "Murugan Tiffin Center",
-      customerName: 'Senthil K.',
-      address: 'Plot 22, 5th Main Rd, Anna Nagar',
-      distanceKm: '2.4 km',
-      amountCollected: '₹320',
-      earnedForOrder: '₹55.00',
-      status: 'DELIVERED',
-      items: '4 X Mini Idlis, 2 X Medu Vada'
+      id: '#HP-55102',
+      chefName: "Saraswathi Amma's Kitchen",
+      chefRoughArea: 'Near Shanthi Colony (Rough Area)',
+      chefFullAddress: 'Door 8, 3rd Avenue, Anna Nagar East',
+      chefPhone: '+91 98401 23456',
+      customerName: 'Senthil Kumar',
+      customerRoughArea: 'Near Vadapalani Signal (Rough Area)',
+      customerFullAddress: 'Plot 18, 2nd Main Road, Vadapalani',
+      customerPhone: '+91 98409 87654',
+      distRiderToChef: '1.4 km',
+      distChefToCustomer: '2.1 km',
+      totalDistance: '3.5 km',
+      items: '3 X Traditional Ghee Podi Idli & Vadai',
+      mealType: 'Dinner',
+      amount: '₹270',
+      payout: '₹70'
     }
   ]);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          setGpsLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            address: 'Live GPS Pin Active (5 km Radar)'
-          });
-          setGpsActive(true);
-        },
-        (error) => {
-          console.log('Location watch notice:', error.message);
-        },
-        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-      );
-      return () => navigator.geolocation.clearWatch(watchId);
-    }
-  }, []);
+  // Customer Handover OTP state
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [enteredOtp, setEnteredOtp] = useState('');
+  const EXPECTED_OTP = '4821';
+  const [otpError, setOtpError] = useState('');
 
-  const handlePickedUp = () => {
-    setDeliveryStage(3);
-    setActiveOrder(prev => ({ ...prev, status: 'OUT_FOR_DELIVERY' }));
-    setToast('Parcel Picked Up from Kitchen! Heading to customer location.');
-    setTimeout(() => setToast(''), 4000);
+  // Completed Orders History
+  const [completedOrders, setCompletedOrders] = useState([
+    {
+      id: '#HP-99841',
+      date: 'Today, 12:45 PM',
+      chefName: "Radha Amma's Kitchen",
+      customerName: 'Suresh V.',
+      address: 'Door 19, 4th Avenue, Anna Nagar',
+      amountCollected: '₹290',
+      earnedForOrder: '₹75.00',
+      status: 'DELIVERED',
+      items: '1 X Mutton Sukka + Parotta'
+    }
+  ]);
+
+  // Dispatch live shared notification across apps via localStorage
+  const broadcastOrderNotification = (recipient, title, message) => {
+    try {
+      const notifData = {
+        id: Date.now(),
+        orderId: activeOrder.id,
+        recipient, // 'chef' | 'customer' | 'all'
+        title,
+        message,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      localStorage.setItem('homepot_live_notification', JSON.stringify(notifData));
+      window.dispatchEvent(new Event('storage'));
+    } catch (e) {
+      console.warn('Notification broadcast note:', e);
+    }
   };
 
+  // 1. Rider Accepts Available Order
+  const handleAcceptOrder = (order) => {
+    setActiveOrder({
+      id: order.id,
+      date: 'Today',
+      chefName: order.chefName,
+      chefRoughArea: order.chefRoughArea,
+      chefFullAddress: order.chefFullAddress,
+      chefPhone: order.chefPhone,
+      customerName: order.customerName,
+      customerRoughArea: order.customerRoughArea,
+      customerFullAddress: order.customerFullAddress,
+      customerPhone: order.customerPhone,
+      distRiderToChef: order.distRiderToChef,
+      distChefToCustomer: order.distChefToCustomer,
+      totalDistance: order.totalDistance,
+      items: order.items,
+      mealType: order.mealType,
+      amount: order.amount,
+      deliveryFee: order.payout,
+      paymentMode: 'COD',
+      status: 'RIDER_ACCEPTED'
+    });
+
+    setDeliveryStage(1);
+    setAvailableOrders(prev => prev.filter(o => o.id !== order.id));
+    setActiveTab('in_progress');
+
+    // Notify Chef & Customer
+    broadcastOrderNotification(
+      'all',
+      '🛵 Delivery Partner Assigned!',
+      `Delivery Partner accepted order ${order.id} and is heading to Amma's kitchen for pickup.`
+    );
+
+    setToast(`Order ${order.id} accepted! Chef's address is now revealed. Head to kitchen.`);
+    setTimeout(() => setToast(''), 4500);
+  };
+
+  // 2. Rider Picks Up Food from Chef
+  const handleFoodPickedUp = () => {
+    setDeliveryStage(2);
+    setActiveOrder(prev => ({ ...prev, status: 'OUT_FOR_DELIVERY' }));
+
+    // Notify Customer & Chef
+    broadcastOrderNotification(
+      'customer',
+      '🥘 Food Picked Up from Kitchen!',
+      `Your food has been picked up from ${activeOrder.chefName}! Rider is on the way to your door.`
+    );
+
+    broadcastOrderNotification(
+      'chef',
+      '✅ Food Handed Over to Rider',
+      `Food for order ${activeOrder.id} safely handed over to Delivery Partner.`
+    );
+
+    setToast('Food Picked Up! Chef address hidden. Customer address & live route revealed.');
+    setTimeout(() => setToast(''), 4500);
+  };
+
+  // 3. Verify Customer OTP & Complete Delivery
   const handleVerifyCustomerOtp = (e) => {
     e.preventDefault();
-    if (customerOtp !== EXPECTED_OTP && customerOtp !== '1234') {
-      setOtpError(t('invalid_otp'));
+    if (enteredOtp !== EXPECTED_OTP && enteredOtp !== '1234') {
+      setOtpError('Invalid OTP code. Please ask customer for the 4-digit handover code.');
       return;
     }
 
-    const earned = activeOrder.deliveryFee || '₹65';
+    const earned = activeOrder.deliveryFee || '₹75';
 
     setCompletedOrders(prev => [
       {
         id: activeOrder.id,
         date: 'Just now',
-        kitchenName: activeOrder.kitchenName,
+        chefName: activeOrder.chefName,
         customerName: activeOrder.customerName,
-        address: activeOrder.customerAddress,
-        distanceKm: activeOrder.distanceKm,
+        address: activeOrder.customerFullAddress,
         amountCollected: activeOrder.amount,
         earnedForOrder: `${earned}.00`,
         status: 'DELIVERED',
@@ -189,69 +209,40 @@ export default function OrderRadar() {
       ...prev
     ]);
 
-    setActiveOrder(prev => ({ ...prev, status: 'DELIVERED' }));
+    setDeliveryStage(3);
     setShowOtpModal(false);
-    setCustomerOtp('');
+    setEnteredOtp('');
     setOtpError('');
     setActiveTab('history');
+
+    broadcastOrderNotification(
+      'customer',
+      '🎉 Order Delivered!',
+      `Order ${activeOrder.id} has been safely delivered. Enjoy your hot homemade meal!`
+    );
+
     setToast(`Delivery Handover Verified! You earned ${earned} for this order.`);
     setTimeout(() => setToast(''), 5000);
   };
 
-  const handleAcceptNearbyOrder = (order) => {
-    playOrderAlertSound();
-    setActiveOrder({
-      id: order.id,
-      date: 'Today',
-      kitchenName: order.kitchenName,
-      kitchenPhone: '+91 98765 99887',
-      pickupAddress: order.pickupAddress,
-      customerName: 'Nearby Customer',
-      customerAddress: 'Within 5 km radius',
-      items: order.items,
-      mealType: order.mealType,
-      amount: '₹420',
-      paymentMode: 'COD',
-      distanceKm: `${order.distance} km`,
-      deliveryFee: order.payout,
-      status: 'CONFIRMED'
-    });
-    setDeliveryStage(1);
-    setAvailableOrders(prev => prev.filter(o => o.id !== order.id));
-    setActiveTab('in_progress');
-    setToast(`Order ${order.id} accepted! Navigate to kitchen for pickup.`);
-    setTimeout(() => setToast(''), 4000);
-  };
-
   return (
-    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans">
+    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans select-none">
       
       {/* Top Header Bar */}
-      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2">
-        <button
-          onClick={playOrderAlertSound}
-          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white cursor-pointer"
-          title="Test Order Alert Sound"
-        >
-          <Volume2 size={18} />
-        </button>
-
+      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2 border-b border-[#EADBCC]">
         <HomepotLogo size="md" showText={false} />
+        
+        {/* Radar Status Badge */}
+        <div className="bg-[#EFE7D8] border border-[#EADBCC] rounded-full py-1 px-3 flex items-center gap-1.5 text-xs font-bold text-[#8C4A32]">
+          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+          <span>5 km Delivery Radar Active</span>
+        </div>
+
         <LanguageSelector variant="round" />
       </div>
 
-      {/* GPS Radar Pill */}
-      <div className="w-full px-5 py-1">
-        <div className="bg-[#EFE7D8]/80 border border-[#EADBCC] rounded-full py-1.5 px-3 flex items-center justify-center gap-2 text-xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-          <span className="font-semibold text-[#2C231E] truncate max-w-[280px]">
-            {gpsLocation.address}
-          </span>
-        </div>
-      </div>
-
       {toast && (
-        <div className="px-5 py-1">
+        <div className="px-5 py-2">
           <div className="bg-[#8C4A32] text-white text-xs px-4 py-2.5 rounded-2xl flex items-center gap-2 shadow-md animate-bounce">
             <Sparkles size={16} className="shrink-0 text-amber-200" />
             <p className="font-semibold">{toast}</p>
@@ -280,7 +271,7 @@ export default function OrderRadar() {
               activeTab === 'history' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
             }`}
           >
-            <span>{t('history_tab')}</span>
+            <span>{t('history_tab')} ({completedOrders.length})</span>
             {activeTab === 'history' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8C4A32]"></span>
             )}
@@ -289,283 +280,349 @@ export default function OrderRadar() {
       </div>
 
       {/* Main Tab Content */}
-      <div className="flex-1 px-4 sm:px-6 py-3 max-w-sm mx-auto w-full">
+      <div className="flex-1 px-4 sm:px-5 py-3 max-w-sm mx-auto w-full">
         
         {/* TAB 1: IN PROGRESS */}
         {activeTab === 'in_progress' && (
-          <div className="space-y-3">
-            {activeOrder.status !== 'DELIVERED' ? (
-              <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-5 shadow-sm relative text-[#333C3E] space-y-4">
+          <div className="space-y-3.5">
+            
+            {deliveryStage < 3 ? (
+              <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-4 sm:p-5 shadow-sm text-[#333C3E] space-y-4">
                 
-                {/* Top Row: Order ID, Date & Calm Status Badge (No countdown timer) */}
+                {/* Order ID & Status Banner */}
                 <div className="flex justify-between items-start border-b border-[#EADBCC] pb-3">
                   <div>
-                    <h3 className="font-bold text-xs text-[#6C645E]">Order ID</h3>
+                    <span className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">Current Order</span>
                     <p className="font-mono font-bold text-sm text-[#2C231E]">{activeOrder.id}</p>
-                    <p className="text-[10px] text-[#7C746E] mt-0.5">Date: {activeOrder.date}</p>
                   </div>
 
-                  {/* Calm Status Badge */}
-                  <div className="bg-[#8C4A32] text-white px-3 py-1.5 rounded-2xl flex items-center gap-2 shadow-xs">
-                    <Sparkles size={16} className="text-amber-200" />
+                  <div className="bg-[#8C4A32] text-white px-3 py-1.5 rounded-2xl flex items-center gap-1.5 shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span className="font-bold text-xs">
+                      {deliveryStage === 1 ? 'Heading to Kitchen' : 'Out for Delivery'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* DISTANCE OVERVIEW CARD (Always Visible) */}
+                <div className="bg-white border border-[#EADBCC] p-3 rounded-2xl shadow-xs space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-[#6C645E] font-medium">🛵 Rider to Kitchen:</span>
+                    <span className="font-bold text-[#8C4A32]">{activeOrder.distRiderToChef}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-[#6C645E] font-medium">🍳 Kitchen to Customer:</span>
+                    <span className="font-bold text-[#8C4A32]">{activeOrder.distChefToCustomer}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs pt-1 border-t border-[#F0E6D8] font-bold">
+                    <span>Total Distance:</span>
+                    <span className="text-emerald-700">{activeOrder.totalDistance} (Within 5km)</span>
+                  </div>
+                </div>
+
+                {/* STAGE 1: CHEF ADDRESS REVEALED / STAGE 2: CHEF ADDRESS HIDDEN */}
+                {deliveryStage === 1 ? (
+                  <div className="bg-white border-2 border-emerald-500/60 p-3.5 rounded-2xl shadow-xs space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-1.5 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                        <MapPin size={14} className="text-emerald-600" />
+                        <span>Kitchen Pickup Address (Revealed)</span>
+                      </div>
+                      <span className="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                        Active Pickup
+                      </span>
+                    </div>
+
                     <div>
-                      <p className="font-bold text-xs leading-tight">
-                        {t('order_status_active')}
+                      <p className="text-xs font-bold text-[#2C231E]">{activeOrder.chefName}</p>
+                      <p className="text-[11px] text-[#593222] font-medium leading-snug mt-0.5">
+                        {activeOrder.chefFullAddress}
                       </p>
-                      <p className="text-[9px] text-orange-200">{t('est_delivery_time')}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1 border-t border-[#F0E6D8]">
+                      <a 
+                        href={`tel:${activeOrder.chefPhone}`}
+                        className="flex-1 bg-white hover:bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition"
+                      >
+                        <Phone size={13} />
+                        <span>Call Chef</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => alert(`Starting GPS Turn-by-Turn to: ${activeOrder.chefFullAddress}`)}
+                        className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition"
+                      >
+                        <Navigation size={13} />
+                        <span>Navigate</span>
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                {/* Step Timeline */}
-                <div className="py-1">
-                  <div className="flex items-center justify-between relative px-2">
-                    <div className="absolute left-6 right-6 top-3 h-0.5 bg-[#D2C5B6] -z-0"></div>
-
-                    {/* Step 1: Confirmed */}
-                    <div className="flex flex-col items-center z-10">
-                      <div className="w-6 h-6 rounded-full bg-[#8C4A32] text-white flex items-center justify-center text-xs shadow-xs">
-                        <Check size={12} strokeWidth={3} />
+                ) : (
+                  <div className="bg-[#FAF6EE] border border-[#EADBCC] p-3 rounded-2xl flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 size={16} className="text-emerald-600" />
+                      <div>
+                        <span className="font-bold text-[#2C231E]">Food Picked Up from {activeOrder.chefName}</span>
+                        <p className="text-[10px] text-[#7C746E]">Kitchen address archived for privacy</p>
                       </div>
-                      <span className="text-[9px] font-bold text-[#8C4A32] mt-1">{t('confirmed')}</span>
                     </div>
-
-                    {/* Step 2: Cooking */}
-                    <div className="flex flex-col items-center z-10">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                        deliveryStage >= 2 ? 'bg-[#8C4A32] text-white' : 'bg-white border border-[#D2C5B6] text-[#6C645E]'
-                      }`}>
-                        <UtensilsCrossed size={12} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#6C645E] mt-1">{t('cooking')}</span>
-                    </div>
-
-                    {/* Step 3: Out for Delivery */}
-                    <div className="flex flex-col items-center z-10">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                        deliveryStage >= 3 ? 'bg-[#8C4A32] text-white' : 'bg-white border border-[#D2C5B6] text-[#6C645E]'
-                      }`}>
-                        <Truck size={12} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#6C645E] mt-1">{t('out_for_delivery')}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 5 km Track Line */}
-                <div className="bg-[#EFE7D8]/70 border border-[#EADBCC] rounded-2xl py-2 px-4 relative">
-                  <div className="border-t border-dashed border-[#B8AA9A] w-full relative top-3.5"></div>
-                  <div className="flex justify-between items-center relative z-10">
-                    <div className="flex items-center gap-1.5 bg-[#8C4A32] text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs">
-                      <span>🛵</span>
-                      <span>5 km</span>
-                    </div>
-                    <span className="text-[10px] font-semibold text-[#8C4A32] bg-white/80 px-2 py-0.5 rounded-md border border-[#EADBCC]">
-                      5 km Neighborhood Radius
+                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
+                      ✓ Done
                     </span>
                   </div>
-                </div>
+                )}
 
-                {/* Kitchen Details */}
-                <div className="flex items-center justify-between border-b border-[#EADBCC] pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#333C3E] text-white flex items-center justify-center">
-                      <UtensilsCrossed size={18} />
+                {/* STAGE 1: CUSTOMER ADDRESS LOCKED / STAGE 2: CUSTOMER ADDRESS REVEALED */}
+                {deliveryStage === 1 ? (
+                  <div className="bg-[#EFE7D8]/80 border border-dashed border-[#D2C5B6] p-3.5 rounded-2xl space-y-1">
+                    <div className="flex items-center gap-1.5 text-[#7C746E] text-[10px] font-bold uppercase tracking-wider">
+                      <Lock size={12} className="text-[#8C4A32]" />
+                      <span>Customer Drop Address (Privacy Protected)</span>
                     </div>
+                    <p className="text-xs font-semibold text-[#2C231E]">
+                      {activeOrder.customerRoughArea}
+                    </p>
+                    <p className="text-[10px] text-[#8C4A32] italic">
+                      🔒 Full door & street address will unlock immediately once you pick up food from Amma.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-white border-2 border-[#8C4A32] p-3.5 rounded-2xl shadow-xs space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-1.5 text-[#8C4A32] text-[10px] font-bold uppercase tracking-wider">
+                        <MapPin size={14} className="text-[#8C4A32]" />
+                        <span>Customer Delivery Address (Revealed)</span>
+                      </div>
+                      <span className="bg-[#8C4A32]/10 text-[#8C4A32] text-[9px] font-bold px-2 py-0.5 rounded-full">
+                        Drop Location
+                      </span>
+                    </div>
+
                     <div>
-                      <p className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">{t('kitchen_details')}</p>
-                      <p className="text-xs font-bold text-[#2C231E]">{activeOrder.kitchenName}</p>
+                      <p className="text-xs font-bold text-[#2C231E]">{activeOrder.customerName}</p>
+                      <p className="text-[11px] text-[#593222] font-medium leading-snug mt-0.5">
+                        {activeOrder.customerFullAddress}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1 border-t border-[#F0E6D8]">
+                      <a 
+                        href={`tel:${activeOrder.customerPhone}`}
+                        className="flex-1 bg-white hover:bg-[#FAF4EB] border border-[#8C4A32] text-[#8C4A32] text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition"
+                      >
+                        <Phone size={13} />
+                        <span>Call Customer</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => navigate('/route')}
+                        className="flex-1 bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition"
+                      >
+                        <Navigation size={13} />
+                        <span>View Live Route</span>
+                      </button>
                     </div>
                   </div>
+                )}
 
-                  <a
-                    href={`tel:${activeOrder.kitchenPhone}`}
-                    className="w-9 h-9 rounded-full bg-white border border-[#EADBCC] text-[#333C3E] hover:bg-[#8C4A32] hover:text-white transition-colors flex items-center justify-center shadow-xs"
-                    title="Call Kitchen"
-                  >
-                    <Phone size={16} />
-                  </a>
-                </div>
-
-                {/* Pickup Address */}
-                <div className="flex items-center justify-between border-b border-[#EADBCC] pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#C9982E] text-white flex items-center justify-center">
-                      <MapPin size={18} />
+                {/* GOOGLE MAPS TRAFFIC PREVIEW (STAGE 2 - OUT FOR DELIVERY) */}
+                {deliveryStage === 2 && (
+                  <div className="bg-white border border-[#EADBCC] rounded-2xl p-3 shadow-xs space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <span className="font-serif font-bold text-xs text-[#2C231E] flex items-center gap-1">
+                        <span>🗺️ Live Route & Traffic Map</span>
+                      </span>
+                      <button
+                        onClick={() => navigate('/route')}
+                        className="text-[10px] font-bold text-[#8C4A32] hover:underline flex items-center gap-0.5 cursor-pointer"
+                      >
+                        <span>Fullscreen</span>
+                        <ArrowRight size={11} />
+                      </button>
                     </div>
-                    <div className="max-w-[180px]">
-                      <p className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">{t('pickup_address')}</p>
-                      <p className="text-xs font-medium text-[#2C231E] leading-snug">{activeOrder.pickupAddress}</p>
+
+                    {/* Mini SVG Route representation */}
+                    <div className="relative h-24 bg-[#E8E4DA] rounded-xl overflow-hidden border border-[#D2C5B6] flex items-center justify-center">
+                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        {/* Clear route segment */}
+                        <path d="M 20 60 L 90 60" stroke="#10B981" strokeWidth="6" strokeLinecap="round" fill="none" />
+                        
+                        {/* LIGHT RED TRAFFIC SECTION */}
+                        <path d="M 90 60 L 220 60" stroke="#EA4335" strokeWidth="8" strokeLinecap="round" fill="none" filter="drop-shadow(0 0 4px rgba(234, 67, 53, 0.7))" />
+                        
+                        {/* Clear route segment */}
+                        <path d="M 220 60 L 300 60" stroke="#10B981" strokeWidth="6" strokeLinecap="round" fill="none" />
+                      </svg>
+
+                      {/* Traffic Label */}
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#EA4335] text-white text-[8px] font-bold px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                        <span>2nd Avenue Traffic Slowdown (+4m)</span>
+                      </div>
+
+                      {/* Rider Icon on Traffic Road */}
+                      <div className="absolute top-[48%] left-[45%] -translate-y-1/2 text-base">
+                        🛵
+                      </div>
+                      <div className="absolute bottom-1 right-2 text-[8px] font-bold text-[#593222] bg-white/80 px-1 rounded">
+                        Drop: Vadapalani
+                      </div>
+                    </div>
+
+                    {/* Traffic Alert Banner */}
+                    <div className="bg-rose-50 border border-rose-200 p-2.5 rounded-xl flex items-start gap-2 text-[10px] text-rose-900 leading-snug">
+                      <AlertTriangle size={14} className="text-rose-600 shrink-0 mt-0.5" />
+                      <span>
+                        <b>Slow Traffic Detected:</b> Marked in light red on the route. The customer is automatically informed so they know you are waiting in traffic with their food.
+                      </span>
                     </div>
                   </div>
+                )}
 
-                  <button
-                    onClick={() => alert(`Opening GPS Navigation to: ${activeOrder.pickupAddress}`)}
-                    className="flex flex-col items-center text-[#333C3E] hover:text-[#8C4A32] transition cursor-pointer"
-                  >
-                    <Navigation size={18} />
-                    <span className="text-[9px] font-bold mt-0.5">Navigate</span>
-                  </button>
+                {/* Items & Payout */}
+                <div className="bg-white border border-[#EADBCC] p-3 rounded-2xl text-xs space-y-1">
+                  <div className="flex justify-between items-center font-bold">
+                    <span className="text-[#2C231E]">{activeOrder.items}</span>
+                    <span className="text-emerald-700 font-mono text-sm">{activeOrder.deliveryFee} Earning</span>
+                  </div>
+                  <p className="text-[10px] text-[#7C746E]">Payment: {activeOrder.paymentMode} • Collect {activeOrder.amount} at doorstep</p>
                 </div>
 
-                {/* View Order Items */}
-                <div className="bg-white/80 border border-[#EADBCC] rounded-2xl p-3 text-xs">
-                  <p className="font-bold text-[#7C746E] text-[10px] uppercase tracking-wider mb-1">
-                    {t('view_order_items')}
-                  </p>
-                  <p className="font-semibold text-[#2C231E]">{activeOrder.items}</p>
-                </div>
-
-                {/* Meal Type & COD Amount */}
-                <div className="flex items-center justify-between pt-1">
-                  <div className="bg-[#8C4A32] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-xs">
-                    <span className="text-[9px] block text-orange-200 uppercase tracking-wider">{t('meal_type')}</span>
-                    <span>{activeOrder.mealType}</span>
-                  </div>
-
-                  <div className="bg-white border border-[#EADBCC] px-3 py-1 rounded-xl flex items-center gap-2 shadow-xs">
-                    <div className="text-right">
-                      <span className="text-[9px] text-[#7C746E] block">{t('total_amount_collected')}</span>
-                      <span className="font-bold text-sm text-[#2C231E]">{activeOrder.amount}</span>
-                    </div>
-                    <span className="bg-[#A04A26] text-white text-[10px] font-bold px-2 py-1 rounded-md">
-                      {activeOrder.paymentMode}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Pure Plastic Container Sealed Assurance (No tiffin collection) */}
-                <div className="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-3 flex items-center gap-3 text-xs">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                    <PackageCheck size={18} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-emerald-950 text-[11px]">{t('sealed_container_title')}</p>
-                    <p className="text-[10px] text-emerald-800 leading-snug">{t('sealed_container_desc')}</p>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-2">
-                  {deliveryStage < 3 ? (
+                {/* PRIMARY LIFECYCLE ACTION BUTTON */}
+                <div className="pt-1">
+                  {deliveryStage === 1 ? (
                     <button
-                      onClick={handlePickedUp}
-                      className="w-full bg-[#333C3E] hover:bg-[#22292A] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                      onClick={handleFoodPickedUp}
+                      className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
                     >
-                      <span>{t('picked_up_btn')}</span>
+                      <UtensilsCrossed size={16} />
+                      <span>Food Picked Up / Taken from Chef</span>
                     </button>
                   ) : (
                     <button
                       onClick={() => setShowOtpModal(true)}
-                      className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98 animate-pulse"
+                      className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-bold py-3.5 px-6 rounded-full text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2 animate-pulse"
                     >
-                      <ShieldCheck size={18} />
-                      <span>{t('enter_delivery_otp')}</span>
+                      <ShieldCheck size={16} />
+                      <span>Enter Customer Handover OTP</span>
                     </button>
                   )}
                 </div>
 
               </div>
             ) : (
-              <div className="bg-white border border-[#EADBCC] rounded-3xl p-6 text-center shadow-xs">
-                <CheckCircle2 size={36} className="text-emerald-600 mx-auto mb-2" />
+              <div className="bg-white border border-[#EADBCC] rounded-3xl p-6 text-center shadow-xs space-y-2">
+                <CheckCircle2 size={36} className="text-emerald-600 mx-auto" />
                 <h3 className="font-serif font-bold text-base text-[#2C231E]">All Active Deliveries Completed!</h3>
-                <p className="text-xs text-[#7C746E] mt-1">Check nearby kitchen orders below to accept your next delivery.</p>
+                <p className="text-xs text-[#7C746E]">Check the radar below to accept your next nearby delivery.</p>
               </div>
             )}
 
-            {/* Nearby Available Orders Section */}
+            {/* RADAR AVAILABLE ORDERS (Only Chef-Accepted Orders) */}
             <div className="pt-2">
               <div className="flex items-center justify-between pb-2">
                 <h3 className="font-serif font-bold text-xs text-[#8C4A32]">
-                  {t('available_orders_radar')}
+                  Nearby Kitchen Orders Ready for Pickup (5 km Radar)
                 </h3>
-                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                   {availableOrders.length} Ready
                 </span>
               </div>
 
-              <div className="space-y-2.5">
-                {availableOrders.map(order => (
-                  <div
-                    key={order.id}
-                    className="bg-white border border-[#EADBCC] rounded-2xl p-3.5 shadow-xs flex flex-col gap-2"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-bold text-xs text-[#2C231E]">{order.kitchenName}</p>
-                        <p className="text-[10px] text-[#7C746E] mt-0.5">{order.pickupAddress}</p>
+              {availableOrders.length === 0 ? (
+                <div className="p-4 bg-white border border-[#EADBCC] rounded-2xl text-center text-xs text-[#7C746E]">
+                  Waiting for chefs to accept fresh orders in your 5 km area...
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {availableOrders.map(order => (
+                    <div
+                      key={order.id}
+                      className="bg-white border-2 border-[#EADBCC] rounded-2xl p-3.5 shadow-xs flex flex-col gap-2.5"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-xs text-[#2C231E]">{order.chefName}</p>
+                          <span className="text-[10px] text-emerald-800 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                            ✓ Chef Accepted & Cooking
+                          </span>
+                        </div>
+                        <span className="font-mono font-bold text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded-xl border border-emerald-200">
+                          {order.payout} Earning
+                        </span>
                       </div>
-                      <span className="bg-[#8C4A32]/10 text-[#8C4A32] font-bold text-[10px] px-2 py-0.5 rounded-full">
-                        {order.distance} {t('km_away')}
-                      </span>
-                    </div>
 
-                    <div className="text-[11px] text-[#6C645E] bg-[#FAF6EE] p-2 rounded-xl">
-                      {order.items}
-                    </div>
+                      {/* DISTANCE & ROUGH LOCATION (STRICT PRIVACY BEFORE ACCEPTANCE) */}
+                      <div className="bg-[#FAF6EE] p-2.5 rounded-xl border border-[#E8DEC8] space-y-1.5 text-xs">
+                        <div className="flex justify-between items-center text-[11px]">
+                          <span className="text-[#6C645E]">Rider to Kitchen: <b>{order.distRiderToChef}</b></span>
+                          <span className="text-[#6C645E]">Kitchen to Drop: <b>{order.distChefToCustomer}</b></span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-[#2C231E]">
+                          📍 Route: {order.chefRoughArea} ➔ {order.customerRoughArea}
+                        </p>
+                        <p className="text-[9px] text-[#8C4A32] italic flex items-center gap-1">
+                          <Lock size={10} />
+                          <span>Exact house & flat addresses locked until you accept the order.</span>
+                        </p>
+                      </div>
 
-                    <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-emerald-700">{order.payout}</span>
-                        <span className="text-[10px] text-[#7C746E]">Earning</span>
+                      <div className="text-[11px] text-[#6C645E]">
+                        {order.items}
                       </div>
 
                       <button
-                        onClick={() => handleAcceptNearbyOrder(order)}
-                        className="bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs font-bold py-1.5 px-4 rounded-xl transition shadow-xs cursor-pointer active:scale-98"
+                        onClick={() => handleAcceptOrder(order)}
+                        className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs font-bold py-2.5 rounded-xl transition shadow-xs cursor-pointer active:scale-98 flex items-center justify-center gap-1.5"
                       >
-                        {t('accept_order_btn')}
+                        <span>Accept Delivery Order ({order.payout})</span>
+                        <ArrowRight size={13} />
                       </button>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
         )}
 
-        {/* TAB 2: HISTORY (Shows Per-Order Earning explicitly) */}
+        {/* TAB 2: COMPLETED DELIVERIES HISTORY */}
         {activeTab === 'history' && (
           <div className="space-y-3">
             <div className="flex justify-between items-center px-1 pb-1">
-              <h3 className="font-serif font-bold text-sm text-[#8C4A32]">Completed Orders</h3>
-              <span className="text-xs text-[#7C746E]">{completedOrders.length} Deliveries</span>
+              <h3 className="font-serif font-bold text-sm text-[#8C4A32]">Delivery Earnings History</h3>
+              <span className="text-xs text-[#7C746E]">{completedOrders.length} Completed</span>
             </div>
 
             {completedOrders.map((order, index) => (
               <div
                 key={order.id || index}
-                className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-4 shadow-xs text-xs space-y-2.5"
+                className="bg-white border border-[#EADBCC] rounded-3xl p-4 shadow-xs text-xs space-y-2.5"
               >
-                <div className="flex justify-between items-start border-b border-[#EADBCC] pb-2">
+                <div className="flex justify-between items-start border-b border-[#F0E6D8] pb-2">
                   <div>
                     <span className="font-mono font-bold text-[#2C231E] text-xs">{order.id}</span>
                     <p className="text-[10px] text-[#7C746E]">{order.date}</p>
                   </div>
                   <div className="flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     <Check size={12} />
-                    <span>{t('delivered')}</span>
+                    <span>Delivered</span>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[#7C746E]">FROM:</span>
-                    <span className="font-semibold text-[#2C231E]">{order.kitchenName}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[#7C746E]">TO:</span>
-                    <span className="text-[#6C645E]">{order.customerName} ({order.address})</span>
-                  </div>
-                  <p className="text-[10px] text-[#7C746E] italic">{order.items}</p>
+                <div className="space-y-1 text-[11px]">
+                  <p><b>Kitchen:</b> {order.chefName}</p>
+                  <p><b>Customer:</b> {order.customerName} ({order.address})</p>
+                  <p className="text-[10px] text-[#7C746E]">{order.items}</p>
                 </div>
 
-                {/* Per-Order Earning Breakdown */}
-                <div className="border-t border-[#EADBCC] pt-2 flex justify-between items-center">
+                <div className="border-t border-[#F0E6D8] pt-2 flex justify-between items-center">
                   <div>
-                    <span className="text-[9px] text-[#7C746E] block">Customer COD</span>
+                    <span className="text-[9px] text-[#7C746E] block">Collected</span>
                     <span className="font-mono font-bold text-xs text-[#2C231E]">{order.amountCollected}</span>
                   </div>
 
@@ -581,13 +638,13 @@ export default function OrderRadar() {
 
       </div>
 
-      {/* Customer OTP Modal */}
+      {/* Customer Handover OTP Modal */}
       {showOtpModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-[#FAF6EE] border-2 border-[#8C4A32] rounded-3xl p-6 max-w-xs w-full shadow-2xl space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-serif font-bold text-base text-[#8C4A32]">
-                {t('verify_otp_modal_title')}
+                Customer Handover OTP
               </h3>
               <button
                 onClick={() => setShowOtpModal(false)}
@@ -598,11 +655,11 @@ export default function OrderRadar() {
             </div>
 
             <p className="text-xs text-[#6C645E] leading-relaxed">
-              {t('customer_otp_hint')}
+              Ask the customer for their 4-digit delivery handover OTP to confirm handover.
             </p>
 
             <div className="bg-amber-100/70 border border-amber-300 rounded-xl p-2 text-center text-xs font-mono font-bold text-amber-900">
-              Demo Code: {EXPECTED_OTP}
+              Customer's Code: {EXPECTED_OTP}
             </div>
 
             <form onSubmit={handleVerifyCustomerOtp} className="space-y-3">
@@ -611,9 +668,9 @@ export default function OrderRadar() {
                 inputMode="numeric"
                 maxLength={4}
                 required
-                value={customerOtp}
+                value={enteredOtp}
                 onChange={(e) => {
-                  setCustomerOtp(e.target.value.replace(/\D/g, ''));
+                  setEnteredOtp(e.target.value.replace(/\D/g, ''));
                   setOtpError('');
                 }}
                 placeholder="4-digit OTP"
@@ -628,7 +685,7 @@ export default function OrderRadar() {
                 type="submit"
                 className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3 rounded-full text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
               >
-                {t('confirm_and_complete')}
+                Confirm & Complete Delivery
               </button>
             </form>
           </div>
