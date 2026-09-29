@@ -6,18 +6,40 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
   // Starts completely empty — no static or sample cards!
   const [orders, setOrders] = useState([]);
 
+  // Live assigned rider state synced from delivery app
+  const [assignedRider, setAssignedRider] = useState(() => {
+    try {
+      const live = localStorage.getItem('homepot_live_assigned_rider');
+      if (live) return JSON.parse(live);
+      const profile = localStorage.getItem('homepot_rider_profile');
+      if (profile) return JSON.parse(profile);
+    } catch (e) {}
+    return null;
+  });
+
   // Use external orders if provided by props, otherwise use local state
   const activeOrders = externalOrders || orders;
 
-  // Optional: Listen to external window events if orders are dispatched dynamically from elsewhere
+  // Listen to external window events and storage updates
   useEffect(() => {
     const handleNewOrderQueued = (event) => {
       const newOrder = event.detail;
       setOrders((prev) => [newOrder, ...prev]);
     };
 
+    const handleStorageChange = () => {
+      try {
+        const live = localStorage.getItem('homepot_live_assigned_rider') || localStorage.getItem('homepot_rider_profile');
+        if (live) setAssignedRider(JSON.parse(live));
+      } catch (e) {}
+    };
+
     window.addEventListener('homepotNewOrderQueued', handleNewOrderQueued);
-    return () => window.removeEventListener('homepotNewOrderQueued', handleNewOrderQueued);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('homepotNewOrderQueued', handleNewOrderQueued);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   // Handle Accept Order
@@ -163,6 +185,14 @@ export default function LiveOrders({ externalOrders, onUpdateOrderStatus }) {
                 <p className="font-semibold text-[11px] text-stone-500 mb-0.5">{t('dishes_label')}</p>
                 <p>{ord.items}</p>
               </div>
+
+              {/* Accessible Pickup Tag for Chef Dashboard */}
+              {(ord.riderIsPwd || ord.isPwd || (assignedRider?.isPwd && (!ord.fulfillmentType || ord.fulfillmentType === 'delivery'))) && (
+                <div className="bg-amber-50 border border-amber-300 text-amber-900 px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-2 shadow-2xs">
+                  <span className="text-sm">♿</span>
+                  <span>Accessible Pickup: Ground-level handoff preferred.</span>
+                </div>
+              )}
 
               {/* Action Buttons based on Order Status */}
               <div className="pt-1">

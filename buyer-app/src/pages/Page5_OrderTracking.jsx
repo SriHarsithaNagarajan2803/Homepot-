@@ -20,12 +20,41 @@ export default function OrderTracking({ order, onBack }) {
   // Live order status synced with delivery app
   // 'CHEF_ACCEPTED' | 'RIDER_ASSIGNED' | 'OUT_FOR_DELIVERY' | 'DELIVERED'
   const [orderStage, setOrderStage] = useState('OUT_FOR_DELIVERY');
-  const [etaRemaining, setEtaRemaining] = useState(11);
+  const [baseEta, setBaseEta] = useState(11);
+
+  // Assigned delivery partner state synced from delivery app
+  const [assignedRider, setAssignedRider] = useState(() => {
+    try {
+      const live = localStorage.getItem('homepot_live_assigned_rider');
+      if (live) return JSON.parse(live);
+      const profile = localStorage.getItem('homepot_rider_profile');
+      if (profile) return JSON.parse(profile);
+    } catch (e) {}
+    return {
+      name: 'Kumar V.',
+      phone: '9876543210',
+      vehicle: 'Hero Splendor • TN 09 BK 4102',
+      gender: 'male',
+      isPwd: false
+    };
+  });
+
+  // Calculate ETA with 7-minute buffer (within 5-10 min buffer requirement) when partner is PwD
+  const pwdBufferMinutes = (!isPickup && assignedRider.isPwd) ? 7 : 0;
+  const etaRemaining = baseEta + pwdBufferMinutes;
 
   // Listen to shared live storage notifications
   useEffect(() => {
     const handleStorage = () => {
       try {
+        const live = localStorage.getItem('homepot_live_assigned_rider');
+        if (live) {
+          setAssignedRider(JSON.parse(live));
+        } else {
+          const profile = localStorage.getItem('homepot_rider_profile');
+          if (profile) setAssignedRider(JSON.parse(profile));
+        }
+
         const raw = localStorage.getItem('homepot_live_notification');
         if (raw) {
           const notif = JSON.parse(raw);
@@ -42,7 +71,7 @@ export default function OrderTracking({ order, onBack }) {
 
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+  }, [isPickup]);
 
   return (
     <div className="flex flex-col min-h-full bg-[#FAF6EE] text-[#2C1D14] pb-24 relative select-none">
@@ -84,6 +113,34 @@ export default function OrderTracking({ order, onBack }) {
           </p>
         </div>
 
+        {/* EMPATHETIC ACCESSIBILITY NOTICE CARD FOR PwD DELIVERY PARTNER */}
+        {!isPickup && assignedRider.isPwd && (
+          <div className="bg-[#FFF9F2] border-2 border-[#E8C5A5] rounded-3xl p-4 shadow-xs space-y-2.5 animate-fadeIn">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-full bg-[#8C4A32] text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+                ♿
+              </span>
+              <div>
+                <h4 className="font-serif font-bold text-xs text-[#8C4A32]">
+                  Inclusive Delivery Notice
+                </h4>
+                <p className="text-[10px] text-[#A06048] font-semibold">
+                  Empathetic Support & Safe Handoff
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#5C4535] leading-relaxed font-semibold bg-white/80 p-3 rounded-2xl border border-[#DFCBB5]">
+              "Your delivery partner is differently-abled. Deliveries may take a few extra minutes. If your building does not have an elevator, please consider meeting them at the ground floor or gate."
+            </p>
+
+            <div className="flex items-center gap-1.5 text-[10px] text-[#8C4A32] font-bold px-1">
+              <span>⏱️</span>
+              <span>+7 mins buffer added to ETA for partner safety and comfortable transit.</span>
+            </div>
+          </div>
+        )}
+
         {/* GOOGLE MAPS STYLE LIVE ROUTE WITH LIGHT RED TRAFFIC SECTION */}
         {!isPickup && (
           <div className="bg-white border border-[#E2D5BE] rounded-3xl p-4 shadow-xs space-y-3">
@@ -92,7 +149,7 @@ export default function OrderTracking({ order, onBack }) {
                 <span>📍 Live Route & Traffic Map</span>
               </span>
               <span className="bg-[#8C4A32] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs">
-                ETA: {etaRemaining} mins (2.4 km)
+                ETA: {etaRemaining} mins (2.4 km){assignedRider.isPwd ? ' • Accessible ETA' : ''}
               </span>
             </div>
 
@@ -192,7 +249,7 @@ export default function OrderTracking({ order, onBack }) {
                 ✓
               </span>
               <p className="font-bold text-[#2C1D14]">Delivery Partner Assigned</p>
-              <p className="text-[10px] text-[#7C746E]">Kumar V. accepted order & arrived at kitchen</p>
+              <p className="text-[10px] text-[#7C746E]">{assignedRider.name || 'Delivery Partner'} accepted order & arrived at kitchen</p>
             </div>
 
             {/* Step 3 */}
@@ -217,7 +274,7 @@ export default function OrderTracking({ order, onBack }) {
           </div>
         </div>
 
-        {/* Contact Delivery Partner & Chef */}
+        {/* Contact Delivery Partner & Chef (Maintains full privacy: standard name, vehicle, phone only, NO gender label displayed) */}
         <div className="bg-white p-4 rounded-3xl border border-[#E2D5BE] shadow-xs flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-[#FAF5EE] border border-[#E2D5BE] flex items-center justify-center text-lg">
@@ -225,16 +282,16 @@ export default function OrderTracking({ order, onBack }) {
             </div>
             <div>
               <p className="font-bold text-xs text-[#2C1D14]">
-                {isPickup ? 'Radha Amma (Chef)' : 'Kumar V. (Delivery Partner)'}
+                {isPickup ? 'Radha Amma (Chef)' : `${assignedRider.name || 'Kumar V.'} (Delivery Partner)`}
               </p>
               <p className="text-[10px] text-[#6B5B4F]">
-                {isPickup ? 'Kitchen: 2nd Cross Street (0.6km)' : 'Hero Splendor • TN 09 BK 4102'}
+                {isPickup ? 'Kitchen: 2nd Cross Street (0.6km)' : (assignedRider.vehicle || 'Two Wheeler')}
               </p>
             </div>
           </div>
 
           <a 
-            href="tel:9876543210"
+            href={`tel:${assignedRider.phone || '9876543210'}`}
             className="p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-full border border-emerald-200 cursor-pointer shadow-xs transition"
           >
             <FiPhone size={15} />

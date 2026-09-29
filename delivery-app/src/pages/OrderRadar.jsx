@@ -108,12 +108,23 @@ export default function OrderRadar() {
   // Dispatch live shared notification across apps via localStorage
   const broadcastOrderNotification = (recipient, title, message) => {
     try {
+      const riderProfile = (() => {
+        try {
+          return JSON.parse(localStorage.getItem('homepot_rider_profile')) || {};
+        } catch {
+          return {};
+        }
+      })();
+
       const notifData = {
         id: Date.now(),
-        orderId: activeOrder.id,
+        orderId: activeOrder?.id,
         recipient, // 'chef' | 'customer' | 'all'
         title,
         message,
+        isPwd: Boolean(riderProfile.isPwd),
+        pwdCategory: riderProfile.pwdCategory || '',
+        riderName: riderProfile.name || 'Delivery Partner',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       localStorage.setItem('homepot_live_notification', JSON.stringify(notifData));
@@ -125,6 +136,25 @@ export default function OrderRadar() {
 
   // 1. Rider Accepts Available Order
   const handleAcceptOrder = (order) => {
+    const riderProfile = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('homepot_rider_profile')) || {};
+      } catch {
+        return {};
+      }
+    })();
+
+    // Synchronize assigned rider across apps
+    localStorage.setItem('homepot_live_assigned_rider', JSON.stringify({
+      orderId: order.id,
+      name: riderProfile.name || 'Delivery Partner',
+      phone: riderProfile.phone || '9876543210',
+      vehicle: riderProfile.vehicle || 'Hero Splendor • TN 09 BK 4102',
+      gender: riderProfile.gender || 'male',
+      isPwd: Boolean(riderProfile.isPwd),
+      pwdCategory: riderProfile.pwdCategory || ''
+    }));
+
     setActiveOrder({
       id: order.id,
       date: 'Today',

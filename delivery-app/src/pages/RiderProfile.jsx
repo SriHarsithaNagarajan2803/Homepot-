@@ -138,8 +138,18 @@ export default function RiderProfile() {
               {profile.phone} • {profile.email}
             </p>
             <p className="text-[11px] text-[#7C746E] mt-0.5">
-              Vehicle: {profile.vehicle || 'Electric Scooter (TN 09 BX 4521)'}
+              Vehicle: {profile.vehicle || 'Vehicle Registered'}
             </p>
+            <div className="flex flex-wrap items-center gap-1.5 mt-2">
+              <span className="bg-white border border-[#EADBCC] text-[#6C645E] text-[10px] font-semibold px-2.5 py-0.5 rounded-full capitalize">
+                Gender: {profile.gender === 'other_prefer_not_to_say' ? 'Other' : (profile.gender || 'Not specified')}
+              </span>
+              {profile.isPwd && (
+                <span className="bg-emerald-50 border border-emerald-300 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <span>♿ Differently-Abled (PwD)</span>
+                </span>
+              )}
+            </div>
           </div>
 
           {/* 2. Documents matching Image 1 */}
@@ -151,7 +161,7 @@ export default function RiderProfile() {
               <h3 className="font-bold text-[#8C4A32] text-xs">
                 {t('documents')}
               </h3>
-              <div className="flex items-center gap-4 mt-1 text-[11px]">
+              <div className="flex items-center gap-3 mt-1 text-[11px] flex-wrap">
                 <span className="flex items-center gap-1 font-semibold text-[#16A34A]">
                   <span>{t('driving_license')}</span>
                   <CheckCircle2 size={13} />
@@ -160,6 +170,12 @@ export default function RiderProfile() {
                   <span>{t('rc_book')}</span>
                   <CheckCircle2 size={13} />
                 </span>
+                {profile.isPwd && (
+                  <span className="flex items-center gap-1 font-semibold text-[#16A34A]">
+                    <span>UDID Certificate</span>
+                    <CheckCircle2 size={13} />
+                  </span>
+                )}
               </div>
             </div>
             <ChevronRight size={16} className="text-[#6C645E]" />
