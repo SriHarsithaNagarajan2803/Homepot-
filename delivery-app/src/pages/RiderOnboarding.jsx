@@ -9,33 +9,54 @@ export default function RiderOnboarding() {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  const [vehicleType, setVehicleType] = useState('electric_scooter');
-  const [vehicleNumber, setVehicleNumber] = useState('TN 09 BX 4521');
-  const [drivingLicense, setDrivingLicense] = useState('DL-0420110012345');
-  const [operatingCity, setOperatingCity] = useState('Chennai - Vadapalani & Anna Nagar');
+  const savedProfile = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('homepot_rider_profile')) || {};
+    } catch {
+      return {};
+    }
+  })();
+
+  const [vehicleType, setVehicleType] = useState(savedProfile.vehicleType || 'petrol_two_wheeler');
+  const [vehicleNumber, setVehicleNumber] = useState(savedProfile.vehicleNumber === 'N/A' ? '' : (savedProfile.vehicleNumber || ''));
+  const [drivingLicense, setDrivingLicense] = useState(savedProfile.drivingLicense === 'N/A' ? '' : (savedProfile.drivingLicense || ''));
+  const [operatingCity, setOperatingCity] = useState(savedProfile.operatingCity || '');
   
   // Bank & UPI
-  const [holderName, setHolderName] = useState(() => localStorage.getItem('homepot_rider_name') || 'Delivery Partner');
-  const [accountNumber, setAccountNumber] = useState('98765432101234');
-  const [ifsc, setIfsc] = useState('HDFC0001234');
-  const [upiId, setUpiId] = useState('partner@upi');
+  const [holderName, setHolderName] = useState(() => localStorage.getItem('homepot_rider_name') || savedProfile.bank?.holderName || '');
+  const [accountNumber, setAccountNumber] = useState(savedProfile.bank?.accountNumber || '');
+  const [ifsc, setIfsc] = useState(savedProfile.bank?.ifsc || '');
+  const [upiId, setUpiId] = useState(savedProfile.bank?.upiId || '');
+
+  const isBicycle = vehicleType === 'bicycle_ecycle';
+
+  const VEHICLE_LABELS = {
+    bicycle_ecycle: 'Bicycle / E-Cycle',
+    petrol_two_wheeler: 'Petrol Two-Wheeler',
+    electric_two_wheeler: 'Electric Two-Wheeler',
+    car: 'Car'
+  };
 
   const handleComplete = (e) => {
     e.preventDefault();
+
+    const vehicleName = VEHICLE_LABELS[vehicleType] || vehicleType;
+    const vehicleFull = isBicycle ? vehicleName : `${vehicleName} (${vehicleNumber.trim()})`;
     
     const riderProfile = {
-      name: localStorage.getItem('homepot_rider_name') || 'Delivery Partner',
-      phone: localStorage.getItem('homepot_rider_phone') || '9876543210',
-      email: localStorage.getItem('homepot_rider_email') || 'partner@homepot.app',
+      name: (localStorage.getItem('homepot_rider_name') || holderName).trim() || 'Delivery Partner',
+      phone: localStorage.getItem('homepot_rider_phone') || '',
+      email: localStorage.getItem('homepot_rider_email') || '',
       vehicleType,
-      vehicleNumber,
-      drivingLicense,
-      operatingCity,
+      vehicle: vehicleFull,
+      vehicleNumber: isBicycle ? 'N/A' : vehicleNumber.trim(),
+      drivingLicense: isBicycle ? 'N/A' : drivingLicense.trim(),
+      operatingCity: operatingCity.trim() || 'Operating Zone (5km radius)',
       bank: {
-        holderName,
-        accountNumber,
-        ifsc,
-        upiId
+        holderName: holderName.trim(),
+        accountNumber: accountNumber.trim(),
+        ifsc: ifsc.trim().toUpperCase(),
+        upiId: upiId.trim()
       },
       verified: true
     };
@@ -62,48 +83,59 @@ export default function RiderOnboarding() {
         <div className="bg-white/90 border border-[#EADBCC] rounded-3xl p-4 shadow-xs space-y-3">
           <div className="flex items-center gap-2 text-[#8C4A32] font-bold text-xs">
             <Bike size={16} />
-            <span>{t('vehicle_info_title')}</span>
+            <span>Vehicle Details</span>
           </div>
 
           <div>
-            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">{t('vehicle_type')}</label>
+            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">Select Vehicle Type</label>
             <select
               value={vehicleType}
               onChange={(e) => setVehicleType(e.target.value)}
-              className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none"
+              className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none cursor-pointer"
             >
-              <option value="electric_scooter">{t('electric_scooter')}</option>
-              <option value="petrol_bike">{t('petrol_bike')}</option>
-              <option value="bicycle">{t('bicycle')}</option>
+              <option value="bicycle_ecycle">Bicycle / E-Cycle</option>
+              <option value="petrol_two_wheeler">Petrol Two-Wheeler</option>
+              <option value="electric_two_wheeler">Electric Two-Wheeler</option>
+              <option value="car">Car</option>
             </select>
           </div>
 
-          <div>
-            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">{t('vehicle_number')}</label>
-            <input
-              type="text"
-              required
-              value={vehicleNumber}
-              onChange={(e) => setVehicleNumber(e.target.value)}
-              placeholder="e.g. TN 09 BX 4521"
-              className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none"
-            />
-          </div>
+          {/* Dynamically hide DL and Registration if Bicycle / E-Cycle */}
+          {isBicycle ? (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-[11px] font-semibold text-emerald-800 flex items-center gap-2 shadow-xs">
+              <span className="text-base shrink-0">🚲</span>
+              <span className="leading-snug">No Driving License or Vehicle Registration required for Bicycle / E-Cycle.</span>
+            </div>
+          ) : (
+            <>
+              <div>
+                <label className="text-[10px] font-bold text-[#6C645E] block mb-1">Vehicle Registration Number</label>
+                <input
+                  type="text"
+                  required
+                  value={vehicleNumber}
+                  onChange={(e) => setVehicleNumber(e.target.value)}
+                  placeholder="e.g. TN 09 BX 4521"
+                  className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none uppercase"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-[#6C645E] block mb-1">Driving License (DL) Number</label>
+                <input
+                  type="text"
+                  required
+                  value={drivingLicense}
+                  onChange={(e) => setDrivingLicense(e.target.value)}
+                  placeholder="e.g. DL-0420110012345"
+                  className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none uppercase"
+                />
+              </div>
+            </>
+          )}
 
           <div>
-            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">{t('driving_license_no')}</label>
-            <input
-              type="text"
-              required
-              value={drivingLicense}
-              onChange={(e) => setDrivingLicense(e.target.value)}
-              placeholder="e.g. DL-0420110012345"
-              className="w-full bg-[#FAF6EE] border border-[#EADBCC] rounded-xl py-2 px-3 text-xs text-[#2C231E] font-medium focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">{t('operating_city')}</label>
+            <label className="text-[10px] font-bold text-[#6C645E] block mb-1">Operating City / Area</label>
             <input
               type="text"
               required

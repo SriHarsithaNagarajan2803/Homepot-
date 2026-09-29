@@ -18,7 +18,6 @@ export default function Login({ onLoginSuccess }) {
   const [resendTimer, setResendTimer] = useState(30);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [smsNotice, setSmsNotice] = useState('');
 
   useEffect(() => {
     let interval = null;
@@ -33,7 +32,6 @@ export default function Login({ onLoginSuccess }) {
   const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
     setMessage({ text: '', type: '' });
-    setSmsNotice('');
 
     const cleanPhone = phone.replace(/\D/g, '');
     const cleanEmail = email.trim().toLowerCase();
@@ -80,9 +78,8 @@ export default function Login({ onLoginSuccess }) {
     setLoading(false);
     setStep('otp');
     setResendTimer(30);
-    setSmsNotice(`📲 SMS Alert to +91 ${cleanPhone}: Your HomePot Verification Code is ${realOtp}`);
     setMessage({ 
-      text: `OTP sent to ${cleanEmail} & SMS to +91 ${cleanPhone}! (Verification Code: ${realOtp})`, 
+      text: 'OTP is generated and sent to your registered email and mobile number.', 
       type: 'success' 
     });
   };
@@ -116,7 +113,7 @@ export default function Login({ onLoginSuccess }) {
     }
 
     if (finalOtp !== generatedOtp && finalOtp !== '1234') {
-      setMessage({ text: `Invalid OTP code. Please enter the code sent to your email or (${generatedOtp}).`, type: 'error' });
+      setMessage({ text: 'Invalid OTP code. Please enter the code sent to your email and mobile number.', type: 'error' });
       return;
     }
 
@@ -201,14 +198,6 @@ export default function Login({ onLoginSuccess }) {
               {message.type === 'success' ? <FiCheck className="text-emerald-600" /> : <FiShield />}
             </span>
             <span className="leading-snug">{message.text}</span>
-          </div>
-        )}
-
-        {/* Simulated Instant Phone SMS Alert Banner */}
-        {smsNotice && step === 'otp' && (
-          <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-[11px] font-semibold text-amber-900 mb-3 flex items-center gap-2 shadow-xs">
-            <FiSmartphone className="text-amber-700 text-base shrink-0" />
-            <span className="leading-snug">{smsNotice}</span>
           </div>
         )}
 

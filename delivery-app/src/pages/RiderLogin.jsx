@@ -26,7 +26,6 @@ export default function RiderLogin() {
   const [timer, setTimer] = useState(30);
   const [isSending, setIsSending] = useState(false);
   const [alertMsg, setAlertMsg] = useState({ text: '', type: '' });
-  const [smsNotice, setSmsNotice] = useState('');
   
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
 
@@ -72,7 +71,6 @@ export default function RiderLogin() {
   const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
     setAlertMsg({ text: '', type: '' });
-    setSmsNotice('');
 
     const cleanPhone = phone.replace(/\D/g, '');
     const cleanEmail = email.trim().toLowerCase();
@@ -98,7 +96,7 @@ export default function RiderLogin() {
     }
 
     setIsSending(true);
-    setAlertMsg({ text: 'Dispatching real OTP to your registered email and mobile...', type: 'info' });
+    setAlertMsg({ text: 'Dispatching OTP to your registered email and mobile...', type: 'info' });
 
     // Generate 4-digit OTP
     const randomOtp = String(Math.floor(1000 + Math.random() * 9000));
@@ -122,9 +120,8 @@ export default function RiderLogin() {
     setIsSending(false);
     setStep('verify');
     setTimer(30);
-    setSmsNotice(`📲 SMS Alert to +91 ${cleanPhone}: Your HomePot Delivery OTP is ${randomOtp}`);
     setAlertMsg({ 
-      text: `Real OTP sent to ${cleanEmail} & +91 ${cleanPhone}! (Verification Code: ${randomOtp})`, 
+      text: 'OTP is generated and sent to your registered email and mobile number.', 
       type: 'success' 
     });
   };
@@ -138,7 +135,7 @@ export default function RiderLogin() {
     }
 
     if (enteredOtp !== generatedOtp && enteredOtp !== '1234' && enteredOtp !== '4829') {
-      setAlertMsg({ text: `Invalid OTP code. Please enter the code sent to your email or (${generatedOtp}).`, type: 'error' });
+      setAlertMsg({ text: 'Invalid OTP code. Please enter the code sent to your email and mobile number.', type: 'error' });
       return;
     }
 
@@ -203,14 +200,6 @@ export default function RiderLogin() {
               {alertMsg.type === 'success' ? <Check className="text-emerald-600" size={14} /> : <ShieldCheck size={14} />}
             </span>
             <span className="leading-snug">{alertMsg.text}</span>
-          </div>
-        )}
-
-        {/* Simulated Phone SMS Alert Banner */}
-        {smsNotice && step === 'verify' && (
-          <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-[11px] font-semibold text-amber-900 mb-3 flex items-center gap-2 shadow-xs">
-            <Smartphone className="text-amber-700 text-base shrink-0" size={16} />
-            <span className="leading-snug">{smsNotice}</span>
           </div>
         )}
 
