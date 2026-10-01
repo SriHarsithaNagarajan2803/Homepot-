@@ -19,6 +19,7 @@ import {
 import HomepotLogo from '../components/HomepotLogo';
 import DeliveryNavbar from '../components/DeliveryNavbar';
 import LanguageSelector from '../components/LanguageSelector';
+import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderProfile() {
@@ -384,10 +385,17 @@ export default function RiderProfile() {
 
       {/* Footer Notice matching reference images */}
       <div className="w-full text-center pb-2 pt-1">
-        <p className="text-[10px] text-[#7C746E]">
+        <button
+          type="button"
+          onClick={() => setShowTermsModal(true)}
+          className="text-[10px] text-[#7C746E] hover:text-[#8C4A32] underline hover:no-underline cursor-pointer"
+        >
           {t('terms_privacy_notice')}
-        </p>
+        </button>
       </div>
+
+      {/* TERMS & PRIVACY MODAL */}
+      <TermsAndPrivacyModal isOpen={showTermsModal} onClose={() => setShowTermsModal(false)} />
     </div>
   );
 }

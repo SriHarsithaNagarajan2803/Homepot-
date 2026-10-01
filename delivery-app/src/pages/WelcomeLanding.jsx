@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RiderIllustration from '../components/RiderIllustration';
 import LanguageSelector from '../components/LanguageSelector';
+import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function WelcomeLanding() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [showTerms, setShowTerms] = useState(false);
 
   return (
     <div className="relative min-h-[760px] h-full flex flex-col justify-between items-center bg-[#FAF6EE] text-[#2C231E] px-6 py-6 font-sans">
@@ -46,10 +48,17 @@ export default function WelcomeLanding() {
           {t('join_us_btn')}
         </button>
 
-        <p className="text-[10px] text-center text-[#7C746E] pt-2">
+        <button
+          type="button"
+          onClick={() => setShowTerms(true)}
+          className="text-[10px] text-center text-[#7C746E] hover:text-[#8C4A32] underline hover:no-underline pt-2 w-full cursor-pointer transition block"
+        >
           {t('terms_privacy_notice')}
-        </p>
+        </button>
       </div>
+
+      {/* Terms and Privacy Modal */}
+      <TermsAndPrivacyModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
     </div>
   );
 }
