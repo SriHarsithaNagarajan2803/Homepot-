@@ -64,15 +64,8 @@ export default function RiderIllustration({ className = '', animated = true }) {
         <g id="delivery-box">
           <rect x="70" y="130" width="75" height="75" rx="8" fill="#FAF6EE" stroke="#D7A68E" strokeWidth="2.5" />
           <rect x="74" y="134" width="67" height="67" rx="6" fill="#FFFDF8" />
-          
-          {/* HomePot Logo Badge on Box */}
-          <circle cx="107.5" cy="170" r="22" fill="#FFFFFF" stroke="#9C4A28" strokeWidth="1.5" />
-          {/* Mini clay pot icon on box */}
-          <path d="M 98 166 Q 107.5 160 117 166" stroke="#9C4A28" strokeWidth="1.5" fill="none" />
-          <path d="M 98 168 Q 94 176 107.5 178 Q 121 176 117 168 Z" fill="#9C4A28" />
-          <text x="107.5" y="186" textAnchor="middle" fontSize="6.5" fontFamily="'Playfair Display', serif" fill="#333C3E" fontWeight="bold">
-            HomePot
-          </text>
+          <rect x="80" y="142" width="55" height="6" rx="2" fill="#EADBCC" />
+          <line x1="74" y1="168" x2="141" y2="168" stroke="#EADBCC" strokeWidth="1.5" strokeDasharray="3 3" />
         </g>
 
         {/* Rider */}
