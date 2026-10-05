@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RiderIllustration from '../components/RiderIllustration';
+import HomepotLogo from '../components/HomepotLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
@@ -12,8 +13,9 @@ export default function WelcomeLanding() {
 
   return (
     <div className="relative min-h-[760px] h-full flex flex-col justify-between items-center bg-[#FAF6EE] text-[#2C231E] px-6 py-6 font-sans">
-      {/* Top Header with Language Selector */}
-      <div className="w-full flex justify-end items-center pt-2">
+      {/* Top Header with HomePot Logo and Language Selector */}
+      <div className="w-full flex justify-between items-center pt-2">
+        <HomepotLogo size="md" showText={false} />
         <LanguageSelector variant="round" />
       </div>
 

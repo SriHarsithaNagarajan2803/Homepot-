@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react';
 import tiffinArt from './assets/tiffin-box.jpeg';
-import logoImg from './assets/HomePot-logo.jpeg';
+import logoImg from './assets/homepot-chef-logo.jpeg';
 import { HomePotKitchenRegistration } from './components/kitchenregistration';
 import { HomePotBankingSetup } from './components/BankingSetup';
 import { useLanguage } from './context/LanguageContext';
@@ -323,11 +323,11 @@ export default function HomePotLogin({ onLoginSuccess, onStartRegistration }) {
               <LanguageSelector variant="pill" />
             </div>
             
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-[#E2D5BE] shadow-md flex items-center justify-center overflow-hidden mb-1.5">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-[#E2D5BE] shadow-md flex items-center justify-center overflow-hidden mb-2">
               <img 
                 src={logoImg} 
-                alt="HomePot Logo" 
-                className="w-full h-full object-cover mix-blend-multiply" 
+                alt="HomePot Chef App Logo" 
+                className="w-full h-full object-cover" 
               />
             </div>
             

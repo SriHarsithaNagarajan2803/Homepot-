@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Check, Smartphone, RefreshCw, Edit2 } from 'lucide-react';
 import HomepotLogo from '../components/HomepotLogo';
 import LanguageSelector from '../components/LanguageSelector';
+import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderLogin() {
@@ -18,7 +19,9 @@ export default function RiderLogin() {
   const [fullName, setFullName] = useState(() => localStorage.getItem('homepot_rider_name') || '');
   const [email, setEmail] = useState(() => localStorage.getItem('homepot_rider_email') || '');
   const [phone, setPhone] = useState(() => localStorage.getItem('homepot_rider_phone') || '');
-  const [acceptedTerms, setAcceptedTerms] = useState(true);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [hasViewedTerms, setHasViewedTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   // OTP State (4 digits)
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -39,6 +42,7 @@ export default function RiderLogin() {
     return () => clearInterval(interval);
   }, [step, timer]);
 
+  // Handle single digit input
   const handleOtpChange = (index, value) => {
     const cleanValue = value.replace(/\D/g, '');
     if (cleanValue.length > 1) {
@@ -60,6 +64,21 @@ export default function RiderLogin() {
     if (cleanValue && index < 3) {
       otpRefs[index + 1]?.current?.focus();
     }
+  };
+
+  // Handle full 4-digit clipboard paste across all boxes
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text/plain').replace(/\D/g, '').slice(0, 4);
+    if (!pastedData) return;
+    const digits = pastedData.split('');
+    const newOtp = ['', '', '', ''];
+    digits.forEach((d, i) => {
+      newOtp[i] = d;
+    });
+    setOtp(newOtp);
+    const focusIndex = Math.min(digits.length, 3);
+    otpRefs[focusIndex]?.current?.focus();
   };
 
   const handleKeyDown = (index, e) => {
@@ -91,12 +110,12 @@ export default function RiderLogin() {
     }
 
     if (!acceptedTerms) {
-      setAlertMsg({ text: 'Please accept terms and conditions.', type: 'error' });
+      setAlertMsg({ text: 'Please review and accept Terms & Safety Guidelines to proceed.', type: 'error' });
       return;
     }
 
     setIsSending(true);
-    setAlertMsg({ text: 'Dispatching OTP to your registered email and mobile...', type: 'info' });
+    setAlertMsg({ text: 'Sending verification OTP to your registered email and mobile...', type: 'info' });
 
     // Generate 4-digit OTP
     const randomOtp = String(Math.floor(1000 + Math.random() * 9000));
@@ -121,7 +140,7 @@ export default function RiderLogin() {
     setStep('verify');
     setTimer(30);
     setAlertMsg({ 
-      text: 'OTP is generated and sent to your registered email and mobile number.', 
+      text: t('otp_dispatched_alert') || 'OTP is generated and sent to your registered email and mobile number.', 
       type: 'success' 
     });
   };
@@ -180,9 +199,9 @@ export default function RiderLogin() {
           <h2 className="font-serif text-2xl font-bold text-[#8C4A32]">
             {step === 'details' ? t('enter_details_title') : 'Verify Delivery OTP'}
           </h2>
-          <p className="text-xs text-[#6C645E] mt-1">
+          <p className="text-xs text-[#6C645E] mt-1 font-medium">
             {step === 'details' 
-              ? 'Join as HomePot Delivery Partner within 5km' 
+              ? (t('delivery_partner_login_subtitle') || 'HomePot Delivery Partner Portal')
               : `Enter 4-digit code sent to +91 ${phone} & ${email}`}
           </p>
         </div>
@@ -244,7 +263,7 @@ export default function RiderLogin() {
             {/* Email Address */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#593222] uppercase tracking-wider block">
-                {t('email_id_label')} (For Real Email OTP)
+                {t('email_id_label')}
               </label>
               <input
                 type="email"
@@ -256,18 +275,32 @@ export default function RiderLogin() {
               />
             </div>
 
-            {/* Terms checkbox */}
-            <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+            {/* Terms checkbox & link */}
+            <div className="pt-1 bg-white/70 p-3 rounded-2xl border border-[#EADBCC] flex items-start gap-2.5">
               <input
                 type="checkbox"
+                id="termsCheck"
                 checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="w-4 h-4 rounded text-[#8C4A32] accent-[#8C4A32] cursor-pointer"
+                onChange={(e) => {
+                  if (!hasViewedTerms && !acceptedTerms) {
+                    setShowTerms(true);
+                  } else {
+                    setAcceptedTerms(e.target.checked);
+                  }
+                }}
+                className="w-4 h-4 mt-0.5 rounded text-[#8C4A32] accent-[#8C4A32] cursor-pointer"
               />
-              <span className="text-[11px] text-[#6C645E]">
-                I agree to the HomePot Partner Delivery Terms & Safety Guidelines
-              </span>
-            </label>
+              <label htmlFor="termsCheck" className="text-[11px] text-[#5C544E] leading-snug cursor-pointer select-none">
+                <span>{t('terms_agree_label') || 'I agree to the'} </span>
+                <button
+                  type="button"
+                  onClick={() => setShowTerms(true)}
+                  className="text-[#8C4A32] font-bold underline hover:text-[#783D29] cursor-pointer"
+                >
+                  {t('terms_link') || 'Terms & Safety Guidelines'}
+                </button>
+              </label>
+            </div>
 
             {/* Submit Button */}
             <button
@@ -278,7 +311,7 @@ export default function RiderLogin() {
               {isSending ? (
                 <>
                   <RefreshCw size={14} className="animate-spin" />
-                  <span>Sending Real OTP...</span>
+                  <span>{t('sending_otp') || 'Sending OTP...'}</span>
                 </>
               ) : (
                 <span>{t('send_otp_btn')} ➔</span>
@@ -302,7 +335,7 @@ export default function RiderLogin() {
                 </p>
               </div>
 
-              {/* 4-digit input boxes */}
+              {/* 4-digit input boxes with full paste support */}
               <div className="flex justify-center gap-3 py-2">
                 {[0, 1, 2, 3].map((idx) => (
                   <input
@@ -313,6 +346,7 @@ export default function RiderLogin() {
                     maxLength={1}
                     value={otp[idx]}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onPaste={handlePaste}
                     onKeyDown={(e) => handleKeyDown(idx, e)}
                     className="w-12 h-13 text-center text-xl font-bold bg-[#FAF6EE] border-2 border-[#DFCBB5] focus:border-[#8C4A32] focus:bg-white rounded-xl text-[#2C231E] focus:outline-none transition shadow-inner"
                     autoFocus={idx === 0}
@@ -361,6 +395,16 @@ export default function RiderLogin() {
       <div className="text-center pt-2 border-t border-[#EADBCC]/60 text-[10px] text-[#A09890]">
         <p>🔒 100% Safe Home Delivery Partner Program • HomePot</p>
       </div>
+
+      {/* Terms and Privacy Modal */}
+      <TermsAndPrivacyModal 
+        isOpen={showTerms} 
+        onClose={() => setShowTerms(false)} 
+        onAccept={() => {
+          setHasViewedTerms(true);
+          setAcceptedTerms(true);
+        }}
+      />
 
     </div>
   );

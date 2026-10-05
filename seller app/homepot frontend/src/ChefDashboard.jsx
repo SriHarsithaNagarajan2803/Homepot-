@@ -8,7 +8,7 @@ import Bankings from './components/Bankings';
 import Profile from './components/profile';
 
 // Import your logo from the assets folder
-import logoImg from './assets/logo.jpeg'; 
+import logoImg from './assets/homepot-chef-logo.jpeg'; 
 import { useLanguage } from './context/LanguageContext';
 import LanguageSelector from './components/LanguageSelector'; 
 

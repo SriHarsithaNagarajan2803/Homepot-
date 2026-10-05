@@ -6,8 +6,10 @@ import Checkout from './pages/Page4_Checkout';
 import OrderTracking from './pages/Page5_OrderTracking';
 import Profile from './pages/Page8_Profile';
 import BottomNav from './components/BottomNav';
+import BuyerSplashScreen from './components/BuyerSplashScreen';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('homepot_buyer_user');
@@ -150,6 +152,10 @@ export default function App() {
 
         {/* Scrollable Content Container with clean bottom margin for BottomNav */}
         <div className={`flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${showBottomNav ? 'pb-14' : ''}`}>
+          {showSplash && (
+            <BuyerSplashScreen onFinish={() => setShowSplash(false)} />
+          )}
+
           {currentPage === 'auth' && (
             <Login onLoginSuccess={handleLoginSuccess} />
           )}
