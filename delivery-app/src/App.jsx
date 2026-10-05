@@ -7,6 +7,8 @@ import OrderRadar from './pages/OrderRadar';
 import RouteMap from './pages/RouteMap';
 import RiderProfile from './pages/RiderProfile';
 import RiderPayout from './pages/RiderPayout';
+import ChefPickup from './pages/ChefPickup';
+import CustomerDrop from './pages/CustomerDrop';
 import { LanguageProvider } from './context/LanguageContext';
 
 export default function App() {
@@ -19,6 +21,8 @@ export default function App() {
             <Route path="/login" element={<RiderLogin />} />
             <Route path="/onboarding" element={<RiderOnboarding />} />
             <Route path="/radar" element={<OrderRadar />} />
+            <Route path="/chef-pickup" element={<ChefPickup />} />
+            <Route path="/customer-drop" element={<CustomerDrop />} />
             <Route path="/route" element={<RouteMap />} />
             <Route path="/profile" element={<RiderProfile />} />
             <Route path="/payout" element={<RiderPayout />} />

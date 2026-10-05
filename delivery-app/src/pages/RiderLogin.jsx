@@ -5,6 +5,7 @@ import HomepotLogo from '../components/HomepotLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
+import { dispatchOtpToPhoneAndEmail } from '../utils/otpService';
 
 export default function RiderLogin() {
   const navigate = useNavigate();
@@ -121,20 +122,13 @@ export default function RiderLogin() {
     const randomOtp = String(Math.floor(1000 + Math.random() * 9000));
     setGeneratedOtp(randomOtp);
 
-    try {
-      // Send text/plain JSON payload so Google Apps Script parses e.postData.contents properly without CORS rejection
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          email: cleanEmail,
-          otp: randomOtp
-        })
-      });
-    } catch (err) {
-      console.log('Webhook dispatch note:', err);
-    }
+    await dispatchOtpToPhoneAndEmail({
+      email: cleanEmail,
+      phone: cleanPhone,
+      otp: randomOtp,
+      title: 'Rider Login Verification Code',
+      purpose: 'Rider Login'
+    });
 
     setIsSending(false);
     setStep('verify');

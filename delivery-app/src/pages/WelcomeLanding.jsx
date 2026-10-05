@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RiderIllustration from '../components/RiderIllustration';
-import HomepotLogo from '../components/HomepotLogo';
+import deliveryLogo from '../assets/homepot-delivery-logo.jpeg';
 import LanguageSelector from '../components/LanguageSelector';
 import TermsAndPrivacyModal from '../components/TermsAndPrivacyModal';
 import { useLanguage } from '../context/LanguageContext';
@@ -12,19 +12,25 @@ export default function WelcomeLanding() {
   const [showTerms, setShowTerms] = useState(false);
 
   return (
-    <div className="relative min-h-[760px] h-full flex flex-col justify-between items-center bg-[#FAF6EE] text-[#2C231E] px-6 py-6 font-sans">
-      {/* Top Header with HomePot Logo and Language Selector */}
-      <div className="w-full flex justify-between items-center pt-2">
-        <HomepotLogo size="md" showText={false} />
+    <div className="relative min-h-[760px] h-full flex flex-col justify-between items-center bg-[#FAF6EE] text-[#2C231E] px-6 py-5 font-sans">
+      {/* Top Header with Language Selector in Top-Right */}
+      <div className="w-full flex justify-end items-center pt-1">
         <LanguageSelector variant="round" />
       </div>
 
-      {/* Main Banner Info */}
-      <div className="flex flex-col items-center text-center mt-4">
+      {/* Main Banner Info with Centered, Bigger Logo */}
+      <div className="flex flex-col items-center text-center mt-1">
+        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white border-2 border-[#EADBCC] shadow-md flex items-center justify-center overflow-hidden mb-3 hover:scale-105 transition-transform duration-200">
+          <img 
+            src={deliveryLogo} 
+            alt="HomePot Delivery Partner Logo" 
+            className="w-full h-full object-cover" 
+          />
+        </div>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#2C231E] tracking-tight">
           {t('start_your_journey')}
         </h1>
-        <p className="text-xs sm:text-sm font-medium text-[#6C645E] mt-2 max-w-xs">
+        <p className="text-xs sm:text-sm font-medium text-[#6C645E] mt-1.5 max-w-xs">
           {t('deliver_fresh_earn')}
         </p>
       </div>
