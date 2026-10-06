@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Navigation, Phone, ShieldCheck, AlertTriangle, Clock, MapPin, CheckCircle2 } from 'lucide-react';
 import HomepotLogo from '../components/HomepotLogo';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function RouteMap() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, language } = useLanguage();
+  const isTamil = language === 'ta';
   const [riderProgress, setRiderProgress] = useState(48); // % along the route
   const [etaMins, setEtaMins] = useState(11);
 
@@ -29,12 +33,17 @@ export default function RouteMap() {
           <ArrowLeft size={20} />
         </button>
 
-        {/* Live ETA Pill */}
-        <div className="pointer-events-auto bg-[#8C4A32] text-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2 border border-white/20">
-          <Clock size={16} className="text-amber-200 animate-pulse" />
-          <div>
-            <p className="text-[10px] text-orange-200 font-bold uppercase tracking-wider">Estimated Drop</p>
-            <p className="text-xs font-bold font-mono">{etaMins} mins • 2.4 km</p>
+        {/* Live ETA Pill + Language Selector */}
+        <div className="pointer-events-auto flex items-center gap-2">
+          <LanguageSelector variant="round" />
+          <div className="bg-[#8C4A32] text-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2 border border-white/20">
+            <Clock size={16} className="text-amber-200 animate-pulse" />
+            <div>
+              <p className="text-[10px] text-orange-200 font-bold uppercase tracking-wider">
+                {isTamil ? 'மதிப்பிடப்பட்ட நேரம்' : 'Estimated Drop'}
+              </p>
+              <p className="text-xs font-bold font-mono">{etaMins} {isTamil ? 'நிமிடம்' : 'mins'} • 2.4 km</p>
+            </div>
           </div>
         </div>
       </div>
@@ -159,8 +168,12 @@ export default function RouteMap() {
             <Navigation size={20} className="rotate-45" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">Next Direction</p>
-            <p className="text-xs font-bold text-[#2C231E] truncate">In 200m, turn left onto 5th Main Road</p>
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">
+              {isTamil ? 'அடுத்த திசை' : 'Next Direction'}
+            </p>
+            <p className="text-xs font-bold text-[#2C231E] truncate">
+              {isTamil ? '200 மீட்டரில், 5வது பிரதான சாலையில் இடதுபுறம் திரும்பவும்' : 'In 200m, turn left onto 5th Main Road'}
+            </p>
           </div>
         </div>
 
@@ -169,10 +182,14 @@ export default function RouteMap() {
           <AlertTriangle className="text-rose-600 shrink-0 mt-0.5" size={18} />
           <div>
             <p className="font-bold text-rose-950 text-xs">
-              Traffic Bottleneck on 2nd Avenue (Marked in Red on Map)
+              {isTamil 
+                ? '2வது அவென்யூவில் போக்குவரத்து நெரிசல் (வரைபடத்தில் சிவப்பு நிறத்தில் குறிக்கப்பட்டுள்ளது)' 
+                : 'Traffic Bottleneck on 2nd Avenue (Marked in Red on Map)'}
             </p>
             <p className="text-[11px] text-rose-800 leading-snug mt-0.5">
-              The customer has been notified with the live red traffic indicator so they know you are waiting at the signal with their food. Tamper-proof food packaging preserves meal heat.
+              {isTamil
+                ? 'நேரலை சிவப்பு போக்குவரத்து அறிகுறி மூலம் வாடிக்கையாளருக்கு தகவல் தெரிவிக்கப்பட்டுள்ளது. எனவே நீங்கள் சிக்னலில் காத்திருப்பதை அவர்கள் அறிவார்கள். சேதமடையாத பேக்கேஜிங் உணவின் சூட்டைப் பாதுகாக்கிறது.'
+                : 'The customer has been notified with the live red traffic indicator so they know you are waiting at the signal with their food. Tamper-proof food packaging preserves meal heat.'}
             </p>
           </div>
         </div>
@@ -184,7 +201,7 @@ export default function RouteMap() {
               KR
             </div>
             <div>
-              <p className="text-xs font-bold text-[#2C231E]">Kavitha R. (Customer)</p>
+              <p className="text-xs font-bold text-[#2C231E]">Kavitha R. ({isTamil ? 'வாடிக்கையாளர்' : 'Customer'})</p>
               <p className="text-[10px] text-[#7C746E]">Door 14, 5th Main Road, Vadapalani</p>
             </div>
           </div>
@@ -203,7 +220,7 @@ export default function RouteMap() {
           onClick={() => navigate('/radar')}
           className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 rounded-full text-xs uppercase tracking-wider transition shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5"
         >
-          <span>Return to Order Actions</span>
+          <span>{isTamil ? 'ஆர்டர் நடவடிக்கைகளுக்குத் திரும்புக' : 'Return to Order Actions'}</span>
           <span>➔</span>
         </button>
 

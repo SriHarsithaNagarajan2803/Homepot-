@@ -20,7 +20,8 @@ import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderPayout() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isTamil = language === 'ta';
 
   // Confidential State: Locked by default
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -38,10 +39,46 @@ export default function RiderPayout() {
     month: 18600.00,
     monthDeliveries: 224,
     recentOrders: [
-      { id: 'ORD-#HP12345-6789', desc: 'Dinner Delivery to Amit S.', amount: 65.00, time: 'Today, 2:30 PM', dist: '4.2 km' },
-      { id: 'ORD-#HP99102-1209', desc: 'Lunch Delivery to Senthil K.', amount: 55.00, time: 'Today, 1:15 PM', dist: '2.4 km' },
-      { id: 'ORD-#HP88201-3312', desc: 'Breakfast Delivery to Priya M.', amount: 75.00, time: 'Today, 9:45 AM', dist: '5.0 km' },
-      { id: 'ORD-#HP77192-5510', desc: 'Dinner Delivery to Rajesh R.', amount: 70.00, time: 'Yesterday, 8:30 PM', dist: '3.6 km' }
+      { 
+        id: 'ORD-#HP12345-6789', 
+        desc: 'Dinner Delivery to Amit S.', 
+        descTa: 'இரவு உணவு டெலிவரி - அமித் எஸ்.',
+        amount: 65.00, 
+        time: 'Today, 2:30 PM', 
+        timeTa: 'இன்று, 2:30 PM',
+        dist: '4.2 km',
+        distTa: '4.2 கி.மீ'
+      },
+      { 
+        id: 'ORD-#HP99102-1209', 
+        desc: 'Lunch Delivery to Senthil K.', 
+        descTa: 'மதிய உணவு டெலிவரி - செந்தில் கே.',
+        amount: 55.00, 
+        time: 'Today, 1:15 PM', 
+        timeTa: 'இன்று, 1:15 PM',
+        dist: '2.4 km',
+        distTa: '2.4 கி.மீ'
+      },
+      { 
+        id: 'ORD-#HP88201-3312', 
+        desc: 'Breakfast Delivery to Priya M.', 
+        descTa: 'காலை உணவு டெலிவரி - பிரியா எம்.',
+        amount: 75.00, 
+        time: 'Today, 9:45 AM', 
+        timeTa: 'இன்று, 9:45 AM',
+        dist: '5.0 km',
+        distTa: '5.0 கி.மீ'
+      },
+      { 
+        id: 'ORD-#HP77192-5510', 
+        desc: 'Dinner Delivery to Rajesh R.', 
+        descTa: 'இரவு உணவு டெலிவரி - ராஜேஷ் ஆர்.',
+        amount: 70.00, 
+        time: 'Yesterday, 8:30 PM', 
+        timeTa: 'நேற்று, 8:30 PM',
+        dist: '3.6 km',
+        distTa: '3.6 கி.மீ'
+      }
     ]
   };
 
@@ -49,38 +86,18 @@ export default function RiderPayout() {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Biometric Authentication using WebAuthn / simulated biometric prompt
+  // Biometric Authentication simulation
   const handleBiometricAuth = async () => {
-    setBiometricStatus('Scanning fingerprint / face...');
-    try {
-      if (window.PublicKeyCredential && navigator.credentials) {
-        // Attempt hardware biometric / passkey prompt
-        try {
-          const challenge = new Uint8Array(32);
-          window.crypto.getRandomValues(challenge);
-          // Quick simulation / check
-        } catch (e) {
-          console.log('Biometric hardware note:', e);
-        }
-      }
-
-      setTimeout(() => {
-        setIsUnlocked(true);
-        setShowAuthModal(false);
-        setBiometricStatus('');
-        setPinError('');
-      }, 700);
-    } catch (err) {
-      setBiometricStatus('Biometrics verified!');
-      setTimeout(() => {
-        setIsUnlocked(true);
-        setShowAuthModal(false);
-        setBiometricStatus('');
-      }, 500);
-    }
+    setBiometricStatus(isTamil ? 'கைரேகை / முகம் சரிபார்க்கப்படுகிறது...' : 'Scanning fingerprint / face...');
+    setTimeout(() => {
+      setIsUnlocked(true);
+      setShowAuthModal(false);
+      setBiometricStatus('');
+      setPinError('');
+    }, 600);
   };
 
-  // PIN / Password Authentication (Default 1234 or user password)
+  // PIN Authentication
   const handlePinAuth = (e) => {
     e.preventDefault();
     if (pinInput === '1234' || pinInput.length >= 4) {
@@ -89,7 +106,7 @@ export default function RiderPayout() {
       setPinInput('');
       setPinError('');
     } else {
-      setPinError('Invalid PIN. Use default 1234 or your 4-digit security PIN.');
+      setPinError(isTamil ? 'தவறான PIN. இயல்புநிலை 1234 ஐப் பயன்படுத்தவும்.' : 'Invalid PIN. Use default 1234 or your security PIN.');
     }
   };
 
@@ -98,30 +115,32 @@ export default function RiderPayout() {
     setIsWithdrawing(true);
 
     setTimeout(() => {
-      const withdrawn = availableToWithdraw;
-      setAvailableToWithdraw(0);
       setIsWithdrawing(false);
-      setSuccessMsg(`Transferred ₹${withdrawn.toFixed(2)} to linked UPI (kumar@okaxis)!`);
-      setTimeout(() => setSuccessMsg(''), 5000);
+      setAvailableToWithdraw(0);
+      setSuccessMsg(isTamil ? 'UPI கணக்கிற்கு உடனடியாக மாற்றப்பட்டது!' : 'Successfully transferred to UPI!');
+      setTimeout(() => setSuccessMsg(''), 4500);
     }, 1200);
   };
 
   return (
-    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans">
+    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans select-none text-[15px]">
+      
       {/* Top Header */}
-      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2">
+      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2.5 border-b border-[#EADBCC] bg-[#FAF6EE]">
         <button
           onClick={() => navigate('/radar')}
-          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-white cursor-pointer"
+          className="w-9 h-9 rounded-full bg-white border border-[#EADBCC] flex items-center justify-center text-[#333C3E] hover:bg-stone-50 transition cursor-pointer"
         >
           <ArrowLeft size={18} />
         </button>
 
-        <div className="flex items-center gap-1.5">
-          <HomepotLogo size="sm" showText={false} />
-          <h2 className="font-serif font-bold text-sm text-[#2C231E]">
-            {t('total_earned')}
+        <div className="flex flex-col items-center">
+          <h2 className="font-serif font-bold text-base text-[#2C231E]">
+            {isTamil ? 'மொத்த வருமானம்' : t('payout')}
           </h2>
+          <span className="text-[10px] text-[#7C746E]">
+            {isTamil ? 'பாதுகாக்கப்பட்ட பணப்பை' : 'Confidential Wallet'}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -135,7 +154,7 @@ export default function RiderPayout() {
               }
             }}
             className="w-9 h-9 rounded-full bg-white border border-[#EADBCC] flex items-center justify-center text-[#8C4A32] shadow-xs cursor-pointer hover:bg-orange-50"
-            title={isUnlocked ? t('lock_again') : t('unlock_earnings_btn')}
+            title={isUnlocked ? (isTamil ? 'மறைக்க' : 'Lock') : (isTamil ? 'திறக்க' : 'Unlock')}
           >
             {isUnlocked ? <Unlock size={17} /> : <Lock size={17} />}
           </button>
@@ -143,16 +162,17 @@ export default function RiderPayout() {
         </div>
       </div>
 
-      <div className="flex-1 px-4 sm:px-6 py-2 max-w-sm mx-auto w-full space-y-4">
+      {/* Main Content - Zoomed Container (max-w-[480px]) */}
+      <div className="flex-1 px-4 sm:px-6 py-3.5 max-w-[480px] mx-auto w-full space-y-4">
         
         {/* Main Earnings Card */}
-        <div className="bg-gradient-to-br from-[#8C4A32] to-[#683220] text-white rounded-3xl p-6 shadow-md relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#8C4A32] to-[#683220] text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
               <span className="text-xs uppercase font-bold tracking-wider text-orange-200">
-                {t('total_earned')} (Day)
+                {isTamil ? 'மொத்த வருமானம் (இன்று)' : `${t('total_earned')} (Day)`}
               </span>
-              <h2 className="font-serif text-3xl font-bold mt-1">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-1">
                 {isUnlocked ? `₹${earningsData.today.toFixed(2)}` : '₹ ••••••'}
               </h2>
             </div>
@@ -166,27 +186,27 @@ export default function RiderPayout() {
                   setShowAuthModal(true);
                 }
               }}
-              className="bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition cursor-pointer"
+              className="bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition cursor-pointer"
             >
               {isUnlocked ? <EyeOff size={13} /> : <Eye size={13} />}
-              <span>{isUnlocked ? t('lock_again') : 'Unlock'}</span>
+              <span>{isUnlocked ? (isTamil ? 'மறை' : t('lock_again')) : (isTamil ? 'திறக்க' : 'Unlock')}</span>
             </button>
           </div>
 
           {/* Locked State Warning / Unlock CTA */}
           {!isUnlocked && (
-            <div className="mt-4 bg-white/10 border border-white/20 rounded-2xl p-3 flex items-center justify-between">
+            <div className="mt-4 bg-white/10 border border-white/20 rounded-2xl p-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Lock size={16} className="text-amber-300 shrink-0" />
                 <p className="text-[11px] text-orange-100 font-medium leading-tight">
-                  {t('confidential_sub')}
+                  {isTamil ? 'வருமானத்தைக் காண கைரேகை அல்லது PIN உள்ளிடவும்.' : t('confidential_sub')}
                 </p>
               </div>
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="bg-amber-300 hover:bg-amber-200 text-stone-900 font-bold text-[10px] px-3 py-1.5 rounded-xl shrink-0 cursor-pointer shadow-xs"
+                className="bg-amber-300 hover:bg-amber-200 text-stone-900 font-bold text-[11px] px-3 py-1.5 rounded-xl shrink-0 cursor-pointer shadow-xs whitespace-nowrap"
               >
-                {t('unlock_earnings_btn')}
+                {isTamil ? 'திறக்க' : t('unlock_earnings_btn')}
               </button>
             </div>
           )}
@@ -202,8 +222,12 @@ export default function RiderPayout() {
           {isUnlocked && (
             <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
               <div>
-                <p className="text-[10px] text-orange-200">Available: ₹{availableToWithdraw.toFixed(2)}</p>
-                <p className="text-[10px] text-white font-bold">Instant UPI Transfer</p>
+                <p className="text-[11px] text-orange-200">
+                  {isTamil ? 'வரவு:' : 'Available:'} ₹{availableToWithdraw.toFixed(2)}
+                </p>
+                <p className="text-xs text-white font-bold">
+                  {isTamil ? 'உடனடி UPI பரிமாற்றம்' : 'Instant UPI Transfer'}
+                </p>
               </div>
 
               <button
@@ -213,68 +237,84 @@ export default function RiderPayout() {
                   availableToWithdraw > 0 ? 'bg-amber-300 text-stone-900 hover:bg-amber-200' : 'bg-stone-600 text-stone-300 cursor-not-allowed'
                 }`}
               >
-                {isWithdrawing ? 'Transferring...' : t('withdraw_instantly')}
+                {isWithdrawing 
+                  ? (isTamil ? 'பரிமாற்றம் செய்யப்படுகிறது...' : 'Transferring...') 
+                  : (isTamil ? 'உடனடியாக பணத்தை எடுக்க' : t('withdraw_instantly'))}
               </button>
             </div>
           )}
         </div>
 
         {/* Multi-Period Total Earned Grid: Today, Week, Month */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2.5">
           {/* Day */}
           <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-2xl p-3 text-center">
-            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{t('per_day_earned')}</p>
-            <p className="text-sm font-serif font-bold text-[#8C4A32] mt-0.5">
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{isTamil ? 'இன்று (நாள்)' : t('per_day_earned')}</p>
+            <p className="text-sm sm:text-base font-serif font-bold text-[#8C4A32] mt-0.5">
               {isUnlocked ? `₹${earningsData.today}` : '₹ •••'}
             </p>
-            <span className="text-[9px] text-[#7C746E]">{earningsData.todayDeliveries} Orders</span>
+            <span className="text-[10px] text-[#7C746E]">
+              {earningsData.todayDeliveries} {isTamil ? 'ஆர்டர்கள்' : 'Orders'}
+            </span>
           </div>
 
           {/* Week */}
           <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-2xl p-3 text-center">
-            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{t('per_week_earned')}</p>
-            <p className="text-sm font-serif font-bold text-[#8C4A32] mt-0.5">
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{isTamil ? 'இந்த வாரம்' : t('per_week_earned')}</p>
+            <p className="text-sm sm:text-base font-serif font-bold text-[#8C4A32] mt-0.5">
               {isUnlocked ? `₹${earningsData.week}` : '₹ ••••'}
             </p>
-            <span className="text-[9px] text-[#7C746E]">{earningsData.weekDeliveries} Orders</span>
+            <span className="text-[10px] text-[#7C746E]">
+              {earningsData.weekDeliveries} {isTamil ? 'ஆர்டர்கள்' : 'Orders'}
+            </span>
           </div>
 
           {/* Month */}
           <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-2xl p-3 text-center">
-            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{t('per_month_earned')}</p>
-            <p className="text-sm font-serif font-bold text-[#8C4A32] mt-0.5">
+            <p className="text-[10px] text-[#7C746E] uppercase font-bold">{isTamil ? 'இந்த மாதம்' : t('per_month_earned')}</p>
+            <p className="text-sm sm:text-base font-serif font-bold text-[#8C4A32] mt-0.5">
               {isUnlocked ? `₹${earningsData.month}` : '₹ •••••'}
             </p>
-            <span className="text-[9px] text-[#7C746E]">{earningsData.monthDeliveries} Orders</span>
+            <span className="text-[10px] text-[#7C746E]">
+              {earningsData.monthDeliveries} {isTamil ? 'ஆர்டர்கள்' : 'Orders'}
+            </span>
           </div>
         </div>
 
         {/* Per-Order Earnings List */}
-        <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-5 shadow-xs space-y-3">
+        <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-4 sm:p-5 shadow-xs space-y-3">
           <div className="flex justify-between items-center">
-            <h3 className="font-bold text-xs text-[#8C4A32] font-serif">{t('recent_earnings')}</h3>
+            <h3 className="font-bold text-xs sm:text-sm text-[#8C4A32] font-serif">
+              {isTamil ? 'சமீபத்திய ஆர்டர் வருமானங்கள்' : t('recent_earnings')}
+            </h3>
             {!isUnlocked && (
               <span className="text-[10px] font-semibold text-[#8C4A32] flex items-center gap-1">
-                <Lock size={11} /> Locked
+                <Lock size={11} /> {isTamil ? 'பூட்டப்பட்டுள்ளது' : 'Locked'}
               </span>
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {earningsData.recentOrders.map((ord, idx) => (
               <div 
                 key={idx} 
-                className="bg-white border border-[#EADBCC] rounded-2xl p-3 flex justify-between items-center text-xs"
+                className="bg-white border border-[#EADBCC] rounded-2xl p-3 sm:p-3.5 flex justify-between items-center text-xs"
               >
                 <div>
-                  <p className="font-bold text-[#2C231E]">{ord.id}</p>
-                  <p className="text-[10px] text-[#7C746E]">{ord.desc} ({ord.dist})</p>
-                  <p className="text-[9px] text-[#A09890]">{ord.time}</p>
+                  <p className="font-bold text-[#2C231E] text-xs sm:text-sm">{ord.id}</p>
+                  <p className="text-[11px] text-[#7C746E] mt-0.5">
+                    {isTamil ? ord.descTa : ord.desc} ({isTamil ? ord.distTa : ord.dist})
+                  </p>
+                  <p className="text-[10px] text-[#A09890] mt-0.5">
+                    {isTamil ? ord.timeTa : ord.time}
+                  </p>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[9px] text-[#7C746E] block">{t('per_order_earned')}</span>
-                  <span className="font-mono font-bold text-sm text-emerald-700">
+                  <span className="text-[10px] text-[#7C746E] block">
+                    {isTamil ? 'இந்த ஆர்டருக்கான வருமானம்' : t('per_order_earned')}
+                  </span>
+                  <span className="font-mono font-bold text-sm sm:text-base text-emerald-700">
                     {isUnlocked ? `+₹${ord.amount.toFixed(2)}` : '+₹ •••'}
                   </span>
                 </div>
@@ -294,7 +334,7 @@ export default function RiderPayout() {
               <div className="flex items-center gap-2 text-[#8C4A32]">
                 <ShieldCheck size={20} />
                 <h3 className="font-serif font-bold text-base text-[#8C4A32]">
-                  {t('confidential_title')}
+                  {isTamil ? 'வருமான பாதுகாப்பு பூட்டு' : t('confidential_title')}
                 </h3>
               </div>
               <button
@@ -309,7 +349,9 @@ export default function RiderPayout() {
             </div>
 
             <p className="text-xs text-[#6C645E]">
-              {t('confidential_sub')}
+              {isTamil 
+                ? 'உங்கள் வருமானத்தைக் காண கைரேகை அல்லது 4-இலக்க பாதுகாப்பு PIN ஐப் பயன்படுத்தவும்.' 
+                : t('confidential_sub')}
             </p>
 
             {/* Biometric Button */}
@@ -318,13 +360,13 @@ export default function RiderPayout() {
               className="w-full bg-[#333C3E] hover:bg-[#22292A] text-white font-bold py-3 px-4 rounded-2xl text-xs flex items-center justify-center gap-2.5 transition shadow-sm cursor-pointer"
             >
               <Fingerprint size={18} className="text-emerald-400" />
-              <span>{biometricStatus || t('biometric_btn')}</span>
+              <span>{biometricStatus || (isTamil ? 'கைரேகை / Face ID சரிபார்ப்பு' : t('biometric_btn'))}</span>
             </button>
 
             <div className="relative flex items-center justify-center">
               <div className="border-t border-[#D2C5B6] w-full"></div>
               <span className="bg-[#FAF6EE] px-2 text-[10px] text-[#7C746E] uppercase font-bold absolute">
-                OR
+                {isTamil ? 'அல்லது' : 'OR'}
               </span>
             </div>
 
@@ -332,41 +374,39 @@ export default function RiderPayout() {
             <form onSubmit={handlePinAuth} className="space-y-3">
               <div>
                 <label className="block text-[11px] font-semibold text-[#6C645E] mb-1">
-                  {t('or_enter_pin')}
+                  {isTamil ? '4-இலக்க PIN ஐ உள்ளிடவும்' : t('or_enter_pin')}
                 </label>
                 <div className="relative flex items-center">
                   <KeyRound size={16} className="absolute left-3 text-[#7C746E]" />
                   <input
                     type="password"
-                    maxLength={10}
+                    maxLength={4}
                     value={pinInput}
-                    onChange={(e) => {
-                      setPinInput(e.target.value);
-                      setPinError('');
-                    }}
-                    placeholder={t('pin_placeholder')}
-                    className="w-full bg-white border border-[#EADBCC] rounded-xl pl-9 pr-3 py-2 text-xs font-mono text-[#2C231E] focus:outline-none focus:border-[#8C4A32]"
+                    onChange={(e) => setPinInput(e.target.value)}
+                    placeholder={isTamil ? 'PIN (இயல்புநிலை: 1234)' : t('pin_placeholder')}
+                    className="w-full bg-white border border-[#D2C5B6] rounded-xl py-2 pl-9 pr-3 text-xs text-center font-mono font-bold tracking-widest focus:outline-none focus:border-[#8C4A32]"
+                    autoFocus
                   />
                 </div>
+                {pinError && (
+                  <p className="text-[10px] text-rose-600 mt-1 font-semibold">{pinError}</p>
+                )}
               </div>
-
-              {pinError && (
-                <p className="text-red-600 text-xs font-semibold text-center">{pinError}</p>
-              )}
 
               <button
                 type="submit"
-                className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs cursor-pointer"
+                className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer"
               >
-                {t('unlock_now')}
+                {isTamil ? 'சரிபார்த்து திறக்கவும்' : t('unlock_now')}
               </button>
             </form>
-
           </div>
         </div>
       )}
 
+      {/* Persistent Bottom Delivery Navigation */}
       <DeliveryNavbar activeTab="payout" />
+
     </div>
   );
 }

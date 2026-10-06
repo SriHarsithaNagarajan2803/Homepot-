@@ -41,7 +41,7 @@ export default function DeliveryNavbar({ activeTab = 'home', onTabChange }) {
   return (
     <nav 
       aria-label="Rider Navigation"
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-40 bg-[#F3ECE0]/95 backdrop-blur-md border border-[#EADBCC] rounded-3xl py-2 px-6 shadow-dock flex items-center justify-around transition-all"
+      className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[94%] max-w-[460px] z-40 bg-[#F3ECE0]/95 backdrop-blur-md border border-[#EADBCC] rounded-3xl py-2 px-6 shadow-dock flex items-center justify-around transition-all"
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;

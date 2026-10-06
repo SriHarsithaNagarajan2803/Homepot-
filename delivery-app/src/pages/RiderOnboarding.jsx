@@ -189,7 +189,7 @@ export default function RiderOnboarding() {
         <LanguageSelector variant="round" />
       </div>
 
-      <form onSubmit={handleComplete} className="flex-1 space-y-4 max-w-sm mx-auto w-full py-2">
+      <form onSubmit={handleComplete} className="flex-1 space-y-4 max-w-[480px] mx-auto w-full py-2">
         {/* 1. Personal & Inclusivity Details */}
         <div className="bg-white/90 border border-[#EADBCC] rounded-3xl p-4 shadow-xs space-y-3">
           <div className="flex items-center gap-2 text-[#8C4A32] font-bold text-xs">

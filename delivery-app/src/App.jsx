@@ -15,7 +15,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-[#FAF6EE] text-[#2C231E] flex flex-col items-center justify-start w-full">
-        <main className="w-full max-w-md min-h-screen bg-[#FAF6EE] flex flex-col relative transition-all shadow-xl">
+        <main className="w-full max-w-[500px] sm:max-w-[520px] min-h-screen bg-[#FAF6EE] flex flex-col relative transition-all shadow-2xl">
           <Routes>
             <Route path="/" element={<WelcomeLanding />} />
             <Route path="/login" element={<RiderLogin />} />

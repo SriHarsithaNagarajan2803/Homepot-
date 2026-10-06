@@ -49,20 +49,23 @@ export default function OrderRadar() {
       distanceBadgeTa: '🛵 இருசக்கர வாகனம் (3 முதல் 7 கி.மீ)',
       chefName: 'Radha Amma',
       chefRoughArea: 'Anna Nagar West',
+      chefRoughAreaTa: 'அண்ணா நகர் மேற்கு',
       chefFullAddress: 'Flat 3B, Plot 42, 2nd Cross Street, Anna Nagar West, Chennai',
       chefPhone: '+91 98765 12345',
       customerName: 'Kavitha R.',
       customerRoughArea: 'Near Vadapalani Metro',
+      customerRoughAreaTa: 'வடபழனி மெட்ரோ அருகில்',
       customerFullAddress: 'Door 14, 5th Main Road, Vadapalani, Chennai',
       customerPhone: '+91 94455 12345',
       distRiderToChef: '1.2 km',
       distChefToCustomer: '3.8 km',
       totalDistance: '5.0 km',
       items: '2 X Authentic Chettinad Chicken Curry + 3 Parottas',
+      itemsTa: '2 X செட்டிநாடு சிக்கன் கறி + 3 பரோட்டா',
       itemList: [
-        { name: 'Authentic Chettinad Chicken Curry', qty: 2, price: '₹220' },
-        { name: 'Fresh Handmade Parottas', qty: 3, price: '₹60' },
-        { name: 'Spicy Gravy & Onion Raita Box', qty: 1, price: '₹30' }
+        { name: 'Authentic Chettinad Chicken Curry', nameTa: 'செட்டிநாடு சிக்கன் கறி', qty: 2, price: '₹220' },
+        { name: 'Fresh Handmade Parottas', nameTa: 'சூடான பரோட்டா', qty: 3, price: '₹60' },
+        { name: 'Spicy Gravy & Onion Raita Box', nameTa: 'கிரேவி & வெங்காய தயிர் பச்சடி', qty: 1, price: '₹30' }
       ],
       mealType: 'Lunch Special',
       amount: '₹310',
@@ -75,19 +78,22 @@ export default function OrderRadar() {
       distanceBadgeTa: '⚡ நீண்ட தூர டெலிவரி (10 முதல் 15 கி.மீ)',
       chefName: "Meenakshi Amma's Kitchen",
       chefRoughArea: 'Anna Nagar East',
+      chefRoughAreaTa: 'அண்ணா நகர் கிழக்கு',
       chefFullAddress: 'Villa 12, 1st Cross, Anna Nagar East, Chennai',
       chefPhone: '+91 98402 11223',
       customerName: 'Karthik Subramanian',
       customerRoughArea: 'Tambaram / Chromepet Area',
+      customerRoughAreaTa: 'தாம்பரம் / குரோம்பேட்டை பகுதி',
       customerFullAddress: 'Tower 4, Flat 602, Grand Residency, Tambaram GST Road, Chennai',
       customerPhone: '+91 97910 88990',
       distRiderToChef: '1.9 km',
       distChefToCustomer: '11.6 km',
       totalDistance: '13.5 km',
       items: '4 X South Indian Traditional Meals + Filter Coffee Flask',
+      itemsTa: '4 X தென்னிந்திய பாரம்பரிய சாப்பாடு + ஃபில்டர் காபி பிளாஸ்க்',
       itemList: [
-        { name: 'Special South Indian Full Meals', qty: 4, price: '₹520' },
-        { name: 'Traditional Filter Coffee Flask', qty: 1, price: '₹100' }
+        { name: 'Special South Indian Full Meals', nameTa: 'தென்னிந்திய முழு சாப்பாடு', qty: 4, price: '₹520' },
+        { name: 'Traditional Filter Coffee Flask', nameTa: 'பாரம்பரிய ஃபில்டர் காபி', qty: 1, price: '₹100' }
       ],
       mealType: 'Lunch Special',
       amount: '₹620',
@@ -100,19 +106,22 @@ export default function OrderRadar() {
       distanceBadgeTa: '🛵 இருசக்கர வாகனம் (3 முதல் 7 கி.மீ)',
       chefName: "Saraswathi Amma's Kitchen",
       chefRoughArea: 'Shanthi Colony',
+      chefRoughAreaTa: 'சாந்தி காலனி',
       chefFullAddress: 'Door 8, 3rd Avenue, Shanthi Colony, Anna Nagar East',
       chefPhone: '+91 98401 23456',
       customerName: 'Senthil Kumar',
       customerRoughArea: 'RS Puram / Vadapalani Signal',
+      customerRoughAreaTa: 'ஆர்.எஸ்.புரம் / வடபழனி சிக்னல்',
       customerFullAddress: 'Plot 18, 2nd Main Road, Vadapalani, Chennai',
       customerPhone: '+91 98409 87654',
       distRiderToChef: '1.4 km',
       distChefToCustomer: '3.1 km',
       totalDistance: '4.5 km',
       items: '3 X Traditional Ghee Podi Idli & Medu Vadai',
+      itemsTa: '3 X நெய் பொடி இட்லி & மொறுமொறு மெது வடை',
       itemList: [
-        { name: 'Traditional Ghee Podi Idli (4 pcs)', qty: 3, price: '₹210' },
-        { name: 'Crispy Medu Vadai (2 pcs)', qty: 2, price: '₹60' }
+        { name: 'Traditional Ghee Podi Idli (4 pcs)', nameTa: 'நெய் பொடி இட்லி (4 துண்டு)', qty: 3, price: '₹210' },
+        { name: 'Crispy Medu Vadai (2 pcs)', nameTa: 'மெது வடை (2 துண்டு)', qty: 2, price: '₹60' }
       ],
       mealType: 'Snack & Dinner',
       amount: '₹270',
@@ -130,6 +139,7 @@ export default function OrderRadar() {
       {
         id: '#HP-99841',
         date: 'Today, 12:45 PM',
+        dateTa: 'இன்று, 12:45 PM',
         chefName: "Radha Amma's Kitchen",
         customerName: 'Suresh V.',
         address: 'Door 19, 4th Avenue, Anna Nagar',
@@ -137,7 +147,8 @@ export default function OrderRadar() {
         earnedForOrder: '₹75.00',
         distance: '4.8 km',
         status: 'DELIVERED',
-        items: '1 X Mutton Sukka + Parotta'
+        items: '1 X Mutton Sukka + Parotta',
+        itemsTa: '1 X மட்டன் சுக்கா + பரோட்டா'
       }
     ];
   });
@@ -176,15 +187,15 @@ export default function OrderRadar() {
   };
 
   return (
-    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans select-none">
+    <div className="relative min-h-[820px] h-full flex flex-col justify-between bg-[#FAF6EE] text-[#333C3E] pb-24 font-sans select-none text-[15px]">
       
       {/* Top Header Bar */}
-      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2 border-b border-[#EADBCC]">
+      <div className="w-full flex items-center justify-between px-5 pt-4 pb-2.5 border-b border-[#EADBCC] bg-[#FAF6EE]">
         <HomepotLogo size="md" showText={false} />
         
         {/* Dynamic Smart Radar Status Badge */}
-        <div className="bg-[#EFE7D8] border border-[#EADBCC] rounded-full py-1 px-3 flex items-center gap-1.5 text-[11px] font-bold text-[#8C4A32] shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+        <div className="bg-[#EFE7D8] border border-[#EADBCC] rounded-full py-1.5 px-3.5 flex items-center gap-1.5 text-xs font-bold text-[#8C4A32] shadow-2xs">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
           <span>{isTamil ? 'ஸ்மார்ட் ரேடார் (3-7 & 10-15 கி.மீ)' : 'Smart Radar (3-7 & 10-15 km)'}</span>
         </div>
 
@@ -202,14 +213,14 @@ export default function OrderRadar() {
 
       {/* Tabs Header */}
       <div className="w-full px-5 pt-2">
-        <div className="flex border-b border-[#D2C5B6] text-sm font-semibold">
+        <div className="flex border-b border-[#D2C5B6] text-sm sm:text-base font-semibold">
           <button
             onClick={() => setActiveTab('in_progress')}
-            className={`flex-1 py-2.5 text-center transition-all cursor-pointer relative ${
+            className={`flex-1 py-3 text-center transition-all cursor-pointer relative ${
               activeTab === 'in_progress' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
             }`}
           >
-            <span>{isTamil ? 'செயலில் உள்ள ஆர்டர்கள்' : 'Available Radar Orders'}</span>
+            <span>{isTamil ? 'காத்திருக்கும் ஆர்டர்கள்' : 'Available Radar Orders'}</span>
             {activeTab === 'in_progress' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8C4A32]"></span>
             )}
@@ -217,11 +228,11 @@ export default function OrderRadar() {
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 py-2.5 text-center transition-all cursor-pointer relative ${
+            className={`flex-1 py-3 text-center transition-all cursor-pointer relative ${
               activeTab === 'history' ? 'text-[#8C4A32] font-bold' : 'text-[#7C746E]'
             }`}
           >
-            <span>{t('history_tab')} ({completedOrders.length})</span>
+            <span>{isTamil ? `வரலாறு (${completedOrders.length})` : `History (${completedOrders.length})`}</span>
             {activeTab === 'history' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8C4A32]"></span>
             )}
@@ -229,22 +240,22 @@ export default function OrderRadar() {
         </div>
       </div>
 
-      {/* Main Tab Content */}
-      <div className="flex-1 px-4 sm:px-5 py-3 max-w-sm mx-auto w-full">
+      {/* Main Tab Content - Comfortably Zoomed Container (max-w-[480px]) */}
+      <div className="flex-1 px-4 sm:px-6 py-3.5 max-w-[480px] mx-auto w-full">
         
         {/* TAB 1: RADAR WAITING ORDERS */}
         {activeTab === 'in_progress' && (
-          <div className="space-y-3.5">
+          <div className="space-y-4">
             
             {/* If an order is already in progress, show resume shortcut */}
             {activeOrder && (
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-[#8C4A32] rounded-3xl p-4 shadow-sm flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-[#8C4A32] uppercase tracking-wider block">
+                  <span className="text-[11px] font-bold text-[#8C4A32] uppercase tracking-wider block">
                     {isTamil ? 'தற்போது செல்லும் ஆர்டர்' : 'Active Delivery In Progress'}
                   </span>
-                  <p className="font-mono font-bold text-sm text-[#2C231E]">{activeOrder.id} • {activeOrder.chefName}</p>
-                  <p className="text-[11px] text-[#6C645E]">
+                  <p className="font-mono font-bold text-base text-[#2C231E]">{activeOrder.id} • {activeOrder.chefName}</p>
+                  <p className="text-xs text-[#6C645E]">
                     {activeOrder.foodPickedUp 
                       ? (isTamil ? 'வாடிக்கையாளருக்கு டெலிவரி' : 'Heading to Customer') 
                       : (isTamil ? 'சமையலறை பிக்அப்' : 'Heading to Kitchen')}
@@ -252,26 +263,26 @@ export default function OrderRadar() {
                 </div>
                 <button
                   onClick={() => navigate(activeOrder.foodPickedUp ? '/customer-drop' : '/chef-pickup')}
-                  className="bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
+                  className="bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
                 >
                   <span>{isTamil ? 'தொடர' : 'Resume'}</span>
-                  <ChevronRight size={14} />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}
 
             {/* RADAR AVAILABLE ORDERS (FIRST THING USER SEES) */}
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <div className="flex items-center justify-between pb-1">
                 <div>
-                  <h3 className="font-serif font-bold text-xs text-[#8C4A32]">
-                    {isTamil ? 'காத்திருக்கும் ஆர்டர்கள் (Waiting Orders)' : 'Active Waiting Orders on Radar'}
+                  <h3 className="font-serif font-bold text-sm text-[#8C4A32]">
+                    {isTamil ? 'காத்திருக்கும் ஆர்டர்கள்' : 'Active Waiting Orders on Radar'}
                   </h3>
-                  <p className="text-[10px] text-[#7C746E]">
+                  <p className="text-[11px] text-[#7C746E]">
                     {isTamil ? 'ஆர்டரை ஏற்றவுடன் சமையலறை முகவரி திறக்கப்படும்' : 'Chef address will reveal once accepted'}
                   </p>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
                   {availableOrders.length} {isTamil ? 'ஆர்டர்கள்' : 'Waiting'}
                 </span>
               </div>
@@ -279,16 +290,14 @@ export default function OrderRadar() {
               {availableOrders.map(order => (
                 <div
                   key={order.id}
-                  className={`bg-white rounded-3xl p-4 shadow-xs flex flex-col gap-3 border-2 transition-all ${
-                    order.isLongDistance ? 'border-amber-400 bg-amber-50/20' : 'border-[#EADBCC]'
-                  }`}
+                  className="bg-white rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col gap-3.5 border-2 border-[#EADBCC] hover:border-[#8C4A32]/60 transition-all"
                 >
                   {/* Card Header: Chef Name, Distance Badge, Payout */}
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <p className="font-bold text-xs text-[#2C231E]">{order.chefName}</p>
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-bold text-sm sm:text-base text-[#2C231E]">{order.chefName}</p>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                           order.isLongDistance 
                             ? 'bg-amber-100 text-amber-900 border border-amber-300' 
                             : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
@@ -296,43 +305,43 @@ export default function OrderRadar() {
                           {isTamil ? order.distanceBadgeTa : order.distanceBadge}
                         </span>
                       </div>
-                      <span className="text-[10px] text-emerald-800 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 mt-1 inline-block">
-                        ✓ {isTamil ? 'சமையல்காரர் ஏற்றுக் கொண்டார்' : 'Chef Accepted & Ready for Pickup'}
+                      <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 mt-1.5 inline-block">
+                        ✓ {isTamil ? 'சமையல்காரர் ஏற்றுக் கொண்டார் & தயார்' : 'Chef Accepted & Ready for Pickup'}
                       </span>
                     </div>
                     
                     <div className="text-right">
-                      <span className="font-mono font-bold text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200 block">
+                      <span className="font-mono font-bold text-sm text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200 block">
                         {order.payout} {isTamil ? 'வருமானம்' : 'Payout'}
                       </span>
                       {order.isLongDistance && (
-                        <span className="text-[9px] font-bold text-amber-700 block mt-0.5">
-                          {isTamil ? 'அதிக கட்டணம்' : 'High Payout'}
+                        <span className="text-[10px] font-bold text-amber-700 block mt-0.5">
+                          {isTamil ? 'அதிக வருமானம்' : 'High Payout'}
                         </span>
                       )}
                     </div>
                   </div>
 
                   {/* Distance Breakdown & Approximate Area */}
-                  <div className="bg-[#FAF6EE] p-3 rounded-2xl border border-[#E8DEC8] space-y-1.5 text-xs">
-                    <div className="flex justify-between items-center text-[11px]">
+                  <div className="bg-[#FAF6EE] p-3.5 rounded-2xl border border-[#E8DEC8] space-y-2 text-xs sm:text-[13px]">
+                    <div className="flex justify-between items-center text-xs">
                       <span className="text-[#6C645E]">🛵 {isTamil ? 'ரைடர் ➔ சமையலறை:' : 'Rider to Kitchen:'} <b>{order.distRiderToChef}</b></span>
-                      <span className="text-[#6C645E]">🍳 {isTamil ? 'சமையலறை ➔ வாடிக்கையாளர்:' : 'Kitchen to Drop:'} <b>{order.distChefToCustomer}</b></span>
+                      <span className="text-[#6C645E]">🍳 {isTamil ? 'சமையலறை ➔ டெலிவரி:' : 'Kitchen to Drop:'} <b>{order.distChefToCustomer}</b></span>
                     </div>
                     
-                    <div className="flex justify-between items-center text-[11px] pt-1 border-t border-[#E8DEC8] font-bold">
+                    <div className="flex justify-between items-center text-xs pt-1.5 border-t border-[#E8DEC8] font-bold">
                       <span>{isTamil ? 'மொத்த தூரம்:' : 'Total Distance:'}</span>
-                      <span className={order.isLongDistance ? 'text-amber-800' : 'text-emerald-700'}>
+                      <span className={order.isLongDistance ? 'text-amber-800 font-bold' : 'text-emerald-700'}>
                         {order.totalDistance}
                       </span>
                     </div>
 
-                    <p className="text-[11px] font-semibold text-[#2C231E]">
-                      📍 {isTamil ? 'தோராயமான பாதை:' : 'Approximate Route:'} {order.chefRoughArea} ➔ {order.customerRoughArea}
+                    <p className="text-xs font-semibold text-[#2C231E]">
+                      📍 {isTamil ? 'தோராயமான பாதை:' : 'Approximate Route:'} {isTamil ? order.chefRoughAreaTa : order.chefRoughArea} ➔ {isTamil ? order.customerRoughAreaTa : order.customerRoughArea}
                     </p>
                     
-                    <p className="text-[9px] text-[#8C4A32] italic flex items-center gap-1">
-                      <Lock size={10} />
+                    <p className="text-[10px] text-[#8C4A32] italic flex items-center gap-1">
+                      <Lock size={11} />
                       <span>
                         {isTamil 
                           ? 'துல்லியமான சமையலறை முகவரி நீங்கள் ஆர்டரை ஏற்றவுடன் அடுத்த பக்கத்தில் திறக்கப்படும்.' 
@@ -341,23 +350,20 @@ export default function OrderRadar() {
                     </p>
                   </div>
 
-                  <div className="text-[11px] text-[#6C645E]">
-                    {order.items}
+                  {/* Items Name (Bilingual) */}
+                  <div className="text-xs font-medium text-[#5C544E] px-1">
+                    {isTamil ? order.itemsTa : order.items}
                   </div>
 
-                  {/* Accept Button -> Navigates to Chef Pickup */}
+                  {/* UNIFORM ACCEPT BUTTON - ALWAYS SIGNATURE TERRACOTTA BRAND COLOR */}
                   <button
                     onClick={() => handleAcceptOrder(order)}
-                    className={`w-full text-white text-xs font-bold py-3 rounded-2xl transition shadow-xs cursor-pointer active:scale-98 flex items-center justify-center gap-2 ${
-                      order.isLongDistance 
-                        ? 'bg-[#B45309] hover:bg-[#92400E]' 
-                        : 'bg-[#8C4A32] hover:bg-[#783D29]'
-                    }`}
+                    className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white text-xs sm:text-sm font-bold py-3.5 rounded-2xl transition shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
                   >
                     <span>
-                      {isTamil ? `ஆர்டரை ஏற்கவும் (${order.payout}) ➔` : `Accept Delivery Order (${order.payout}) ➔`}
+                      {isTamil ? `டெலிவரி ஆர்டரை ஏற்கவும் (${order.payout}) ➔` : `Accept Delivery Order (${order.payout}) ➔`}
                     </span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={15} />
                   </button>
                 </div>
               ))}
@@ -368,7 +374,7 @@ export default function OrderRadar() {
 
         {/* TAB 2: COMPLETED DELIVERIES HISTORY */}
         {activeTab === 'history' && (
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             <div className="flex justify-between items-center px-1 pb-1">
               <h3 className="font-serif font-bold text-sm text-[#8C4A32]">
                 {isTamil ? 'டெலிவரி வருமான வரலாறு' : 'Delivery Earnings History'}
@@ -381,12 +387,14 @@ export default function OrderRadar() {
             {completedOrders.map((order, index) => (
               <div
                 key={order.id || index}
-                className="bg-white border border-[#EADBCC] rounded-3xl p-4 shadow-xs text-xs space-y-2.5"
+                className="bg-white border border-[#EADBCC] rounded-3xl p-4 sm:p-5 shadow-xs text-xs space-y-2.5"
               >
                 <div className="flex justify-between items-start border-b border-[#F0E6D8] pb-2">
                   <div>
-                    <span className="font-mono font-bold text-[#2C231E] text-xs">{order.id}</span>
-                    <p className="text-[10px] text-[#7C746E]">{order.date} • {order.distance || '4.0 km'}</p>
+                    <span className="font-mono font-bold text-[#2C231E] text-xs sm:text-sm">{order.id}</span>
+                    <p className="text-[11px] text-[#7C746E]">
+                      {isTamil ? (order.dateTa || order.date) : order.date} • {order.distance || '4.0 km'}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     <Check size={12} />
@@ -394,15 +402,15 @@ export default function OrderRadar() {
                   </div>
                 </div>
 
-                <div className="space-y-1 text-[11px]">
+                <div className="space-y-1 text-xs">
                   <p><b>{isTamil ? 'சமையலறை:' : 'Kitchen:'}</b> {order.chefName}</p>
                   <p><b>{isTamil ? 'வாடிக்கையாளர்:' : 'Customer:'}</b> {order.customerName} ({order.address})</p>
-                  <p className="text-[10px] text-[#7C746E]">{order.items}</p>
+                  <p className="text-[11px] text-[#7C746E]">{isTamil ? (order.itemsTa || order.items) : order.items}</p>
                 </div>
 
                 <div className="flex justify-between items-center pt-2 border-t border-[#F0E6D8] text-xs">
                   <span className="text-[#6C645E]">{isTamil ? 'பெறப்பட்ட ரொக்கம்:' : 'Cash Collected:'} <b>{order.amountCollected}</b></span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-xl">
+                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl">
                     +{order.earnedForOrder} {isTamil ? 'வரவு' : 'Earned'}
                   </span>
                 </div>

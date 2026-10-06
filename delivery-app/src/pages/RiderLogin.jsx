@@ -9,7 +9,8 @@ import { dispatchOtpToPhoneAndEmail } from '../utils/otpService';
 
 export default function RiderLogin() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isTamil = language === 'ta';
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') || 'login';
 
@@ -186,17 +187,17 @@ export default function RiderLogin() {
         <LanguageSelector variant="round" />
       </div>
 
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full py-4">
+      <div className="flex-1 flex flex-col justify-center max-w-[460px] mx-auto w-full py-4">
         
         {/* Title */}
         <div className="text-center mb-4">
           <h2 className="font-serif text-2xl font-bold text-[#8C4A32]">
-            {step === 'details' ? t('enter_details_title') : 'Verify Delivery OTP'}
+            {step === 'details' ? t('enter_details_title') : (isTamil ? 'டெலிவரி OTP சரிபார்க்கவும்' : 'Verify Delivery OTP')}
           </h2>
           <p className="text-xs text-[#6C645E] mt-1 font-medium">
             {step === 'details' 
               ? (t('delivery_partner_login_subtitle') || 'HomePot Delivery Partner Portal')
-              : `Enter 4-digit code sent to +91 ${phone} & ${email}`}
+              : (isTamil ? `+91 ${phone} & ${email} க்கு அனுப்பப்பட்ட 4-இலக்க OTP ஐ உள்ளிடவும்` : `Enter 4-digit code sent to +91 ${phone} & ${email}`)}
           </p>
         </div>
 

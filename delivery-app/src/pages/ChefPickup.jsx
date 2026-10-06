@@ -195,7 +195,7 @@ export default function ChefPickup() {
         </button>
 
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-bold text-[#8C4A32] uppercase tracking-wider">Step 1 of 2</span>
+          <span className="text-[10px] font-bold text-[#8C4A32] uppercase tracking-wider">{isTamil ? 'படி 1 / 2' : 'Step 1 of 2'}</span>
           <h2 className="font-serif font-bold text-sm text-[#2C231E]">
             {isTamil ? 'சமையலறை பிக்அப்' : 'Kitchen Pickup'}
           </h2>
@@ -205,7 +205,7 @@ export default function ChefPickup() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-4 sm:px-5 py-3 max-w-sm mx-auto w-full space-y-3.5">
+      <div className="flex-1 px-4 sm:px-5 py-3 max-w-[480px] mx-auto w-full space-y-3.5">
         
         {/* Banner Alert */}
         {alertBanner && (
@@ -259,7 +259,7 @@ export default function ChefPickup() {
         <div className="bg-[#FAF4EB] border border-[#EADBCC] rounded-3xl p-4 shadow-xs space-y-3">
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">Order ID</span>
+              <span className="text-[10px] text-[#7C746E] uppercase font-bold tracking-wider">{isTamil ? 'ஆர்டர் எண்' : 'Order ID'}</span>
               <p className="font-mono font-bold text-sm text-[#2C231E]">{order.id}</p>
             </div>
             
@@ -301,7 +301,7 @@ export default function ChefPickup() {
               {isTamil ? 'சமையல்காரரிடம் OTP கேட்கவும்' : 'Ask Chef for Pickup Handover OTP'}
             </h3>
             <p className="text-[11px] text-[#6C645E] mt-0.5">
-              Customer: <b>{order.customerName}</b> • Order: <b>{order.id}</b>
+              {isTamil ? 'வாடிக்கையாளர்' : 'Customer'}: <b>{order.customerName}</b> • {isTamil ? 'ஆர்டர்' : 'Order'}: <b>{order.id}</b>
             </p>
           </div>
 
@@ -385,7 +385,7 @@ export default function ChefPickup() {
       {/* Orders List Modal */}
       {showOrderListModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans animate-fadeIn">
-          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-sm max-h-[80vh] shadow-2xl flex flex-col overflow-hidden text-[#2C231E]">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-[460px] max-h-[80vh] shadow-2xl flex flex-col overflow-hidden text-[#2C231E]">
             <div className="px-5 py-3.5 border-b border-[#EADBCC] bg-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Package size={18} className="text-[#8C4A32]" />
@@ -403,7 +403,7 @@ export default function ChefPickup() {
 
             <div className="p-4 overflow-y-auto space-y-3 flex-1 text-xs">
               <div className="flex justify-between items-center text-[11px] pb-2 border-b border-[#EADBCC]">
-                <span>Customer: <b>{order.customerName}</b></span>
+                <span>{isTamil ? 'வாடிக்கையாளர்' : 'Customer'}: <b>{order.customerName}</b></span>
                 <span className="font-mono font-bold text-[#8C4A32]">{order.id}</span>
               </div>
 
@@ -412,7 +412,7 @@ export default function ChefPickup() {
                   <div key={idx} className="bg-white p-3 rounded-2xl border border-[#EADBCC] flex justify-between items-center">
                     <div>
                       <p className="font-bold text-[#2C231E]">{item.name}</p>
-                      <span className="text-[10px] text-[#7C746E]">Quantity: {item.qty}</span>
+                      <span className="text-[10px] text-[#7C746E]">{isTamil ? 'அளவு' : 'Quantity'}: {item.qty}</span>
                     </div>
                     <span className="font-mono font-bold text-[#8C4A32]">{item.price}</span>
                   </div>
@@ -420,7 +420,11 @@ export default function ChefPickup() {
               </div>
 
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-[10px] text-amber-900 leading-snug">
-                🔒 <b>Tamper-Proof Disposable Packaging:</b> All containers are hygienically sealed by Amma. Ensure the seal is unbroken before leaving the kitchen.
+                {isTamil ? (
+                  <>🔒 <b>சேதமடையாத பேக்கேஜிங்:</b> அனைத்து உணவுப் பாத்திரங்களும் அம்மாவால் சுகாதாரமாக சீல் வைக்கப்பட்டுள்ளன. சமையலறையை விட்டுச் செல்லும் முன் சீல் உடையாமல் உள்ளதை உறுதி செய்யவும்.</>
+                ) : (
+                  <>🔒 <b>Tamper-Proof Disposable Packaging:</b> All containers are hygienically sealed by Amma. Ensure the seal is unbroken before leaving the kitchen.</>
+                )}
               </div>
             </div>
 

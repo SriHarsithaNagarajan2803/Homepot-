@@ -24,7 +24,8 @@ import { useLanguage } from '../context/LanguageContext';
 
 export default function RiderProfile() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isTamil = language === 'ta';
 
   // Load rider details from localStorage
   const [profile, setProfile] = useState(() => {
@@ -95,17 +96,20 @@ export default function RiderProfile() {
 
         <HomepotLogo size="md" showText={false} />
 
-        <button
-          onClick={() => alert('Support helpline: 1800-HOMEPOT-HELP (Available 24/7)')}
-          className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#6C645E] hover:text-[#8C4A32] hover:bg-white transition-colors cursor-pointer"
-          title="Help & Support"
-        >
-          <HelpCircle size={18} />
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSelector variant="round" />
+          <button
+            onClick={() => alert('Support helpline: 1800-HOMEPOT-HELP (Available 24/7)')}
+            className="w-9 h-9 rounded-full bg-white/80 border border-[#EADBCC] flex items-center justify-center text-[#6C645E] hover:text-[#8C4A32] hover:bg-white transition-colors cursor-pointer"
+            title="Help & Support"
+          >
+            <HelpCircle size={18} />
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area matching Image 1 */}
-      <div className="flex-1 px-4 sm:px-6 py-2 max-w-sm mx-auto w-full space-y-4">
+      <div className="flex-1 px-4 sm:px-6 py-2 max-w-[480px] mx-auto w-full space-y-4">
         
         {/* Rider Profile Card Header matching Image 1 */}
         <div className="flex flex-col items-center">
@@ -122,7 +126,7 @@ export default function RiderProfile() {
             <span>/</span>
             <span className="text-[#16A34A] font-semibold flex items-center gap-1">
               <CheckCircle2 size={12} />
-              <span>Verified</span>
+              <span>{isTamil ? 'சரிபார்க்கப்பட்டது' : 'Verified'}</span>
             </span>
           </div>
         </div>
@@ -139,15 +143,15 @@ export default function RiderProfile() {
               {profile.phone} • {profile.email}
             </p>
             <p className="text-[11px] text-[#7C746E] mt-0.5">
-              Vehicle: {profile.vehicle || 'Vehicle Registered'}
+              {isTamil ? 'வாகனம்' : 'Vehicle'}: {profile.vehicle || (isTamil ? 'பதிவு செய்யப்பட்ட வாகனம்' : 'Vehicle Registered')}
             </p>
             <div className="flex flex-wrap items-center gap-1.5 mt-2">
               <span className="bg-white border border-[#EADBCC] text-[#6C645E] text-[10px] font-semibold px-2.5 py-0.5 rounded-full capitalize">
-                Gender: {profile.gender === 'other_prefer_not_to_say' ? 'Other' : (profile.gender || 'Not specified')}
+                {isTamil ? 'பாலினம்' : 'Gender'}: {profile.gender === 'other_prefer_not_to_say' ? (isTamil ? 'மற்றவை' : 'Other') : (profile.gender === 'female' ? (isTamil ? 'பெண்' : 'Female') : (profile.gender === 'male' ? (isTamil ? 'ஆண்' : 'Male') : (profile.gender || (isTamil ? 'குறிப்பிடப்படவில்லை' : 'Not specified'))))}
               </span>
               {profile.isPwd && (
                 <span className="bg-emerald-50 border border-emerald-300 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <span>♿ Differently-Abled (PwD)</span>
+                  <span>{isTamil ? '♿ மாற்றுத்திறனாளி (PwD)' : '♿ Differently-Abled (PwD)'}</span>
                 </span>
               )}
             </div>
@@ -173,7 +177,7 @@ export default function RiderProfile() {
                 </span>
                 {profile.isPwd && (
                   <span className="flex items-center gap-1 font-semibold text-[#16A34A]">
-                    <span>UDID Certificate</span>
+                    <span>{isTamil ? 'UDID சான்றிதழ்' : 'UDID Certificate'}</span>
                     <CheckCircle2 size={13} />
                   </span>
                 )}
@@ -261,7 +265,7 @@ export default function RiderProfile() {
       {/* SOS EMERGENCY MODAL */}
       {showSOS && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
-          <div className="bg-white border-2 border-rose-300 rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-4 text-[#2C231E]">
+          <div className="bg-white border-2 border-rose-300 rounded-3xl w-full max-w-[420px] shadow-2xl p-5 flex flex-col gap-4 text-[#2C231E]">
             <div className="flex justify-between items-center border-b border-rose-100 pb-2">
               <div className="flex items-center gap-2 text-rose-600 font-bold">
                 <AlertTriangle size={20} />
@@ -295,7 +299,7 @@ export default function RiderProfile() {
       {/* BANK DETAILS MODAL */}
       {showBankModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
-          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-[420px] shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
             <div className="flex justify-between items-center border-b border-[#EADBCC] pb-2">
               <h3 className="font-serif font-bold text-sm text-[#8C4A32]">{t('bank_details')}</h3>
               <button onClick={() => setShowBankModal(false)} className="w-7 h-7 rounded-full bg-white flex items-center justify-center cursor-pointer">
@@ -351,7 +355,7 @@ export default function RiderProfile() {
       {/* DOCUMENTS MODAL */}
       {showDocumentsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
-          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-xs shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-[420px] shadow-2xl p-5 flex flex-col gap-3 text-[#2C231E]">
             <div className="flex justify-between items-center border-b border-[#EADBCC] pb-2">
               <h3 className="font-serif font-bold text-sm text-[#8C4A32]">{t('documents')}</h3>
               <button onClick={() => setShowDocumentsModal(false)} className="w-7 h-7 rounded-full bg-white flex items-center justify-center cursor-pointer">

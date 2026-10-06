@@ -36,12 +36,12 @@ export default function WelcomeLanding() {
       </div>
 
       {/* 3D Scooter Rider Illustration */}
-      <div className="w-full my-4 flex items-center justify-center">
-        <RiderIllustration className="w-full max-w-[280px]" />
+      <div className="w-full my-3 flex items-center justify-center">
+        <RiderIllustration className="w-full max-w-[300px]" />
       </div>
 
       {/* Action Buttons */}
-      <div className="w-full max-w-xs space-y-3 pb-4">
+      <div className="w-full max-w-[360px] space-y-3.5 pb-4">
         <button
           onClick={() => navigate('/login?mode=login')}
           className="w-full bg-[#8C4A32] hover:bg-[#783D29] text-white font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center"

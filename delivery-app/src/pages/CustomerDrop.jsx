@@ -206,7 +206,7 @@ export default function CustomerDrop() {
         </button>
 
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-bold text-[#8C4A32] uppercase tracking-wider">Step 2 of 2</span>
+          <span className="text-[10px] font-bold text-[#8C4A32] uppercase tracking-wider">{isTamil ? 'படி 2 / 2' : 'Step 2 of 2'}</span>
           <h2 className="font-serif font-bold text-sm text-[#2C231E]">
             {isTamil ? 'வாடிக்கையாளர் டெலிவரி' : 'Customer Delivery'}
           </h2>
@@ -216,7 +216,7 @@ export default function CustomerDrop() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 px-4 sm:px-5 py-3 max-w-sm mx-auto w-full space-y-3.5">
+      <div className="flex-1 px-4 sm:px-5 py-3 max-w-[480px] mx-auto w-full space-y-3.5">
         
         {/* Banner Alert */}
         {alertBanner && (
@@ -248,7 +248,7 @@ export default function CustomerDrop() {
             {/* Payout & Earnings Card */}
             <div className="bg-[#FAF6EE] p-3.5 rounded-2xl border border-[#DFCBB5] space-y-1 text-xs">
               <div className="flex justify-between font-bold">
-                <span className="text-[#6C645E]">Order ID:</span>
+                <span className="text-[#6C645E]">{isTamil ? 'ஆர்டர் எண்:' : 'Order ID:'}</span>
                 <span className="font-mono text-[#2C231E]">{order.id}</span>
               </div>
               <div className="flex justify-between font-bold">
@@ -353,7 +353,7 @@ export default function CustomerDrop() {
               <div className="bg-white p-3 rounded-2xl border border-[#EADBCC] flex justify-between items-center text-xs">
                 <div>
                   <span className="text-[10px] text-[#7C746E] uppercase font-bold block">{isTamil ? 'கட்டண முறை' : 'Payment Mode'}</span>
-                  <span className="font-bold text-emerald-800">Cash on Delivery (COD)</span>
+                  <span className="font-bold text-emerald-800">{isTamil ? 'ரொக்கம் செலுத்துதல் (COD)' : 'Cash on Delivery (COD)'}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-[#7C746E] uppercase font-bold block">{isTamil ? 'பெறவேண்டிய தொகை' : 'Collect at Doorstep'}</span>
@@ -383,7 +383,7 @@ export default function CustomerDrop() {
       {/* Customer Handover OTP Modal (Pops up when clicking "Order Reached to Home Side") */}
       {showOtpModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans animate-fadeIn">
-          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl p-5 w-full max-w-xs shadow-2xl text-center space-y-3 text-[#2C231E]">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl p-5 w-full max-w-[420px] shadow-2xl text-center space-y-3 text-[#2C231E]">
             <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto text-xl">
               <ShieldCheck size={24} />
             </div>
@@ -393,7 +393,7 @@ export default function CustomerDrop() {
                 {isTamil ? 'வாடிக்கையாளர் OTP சரிபார்ப்பு' : 'Verify Customer Delivery OTP'}
               </h3>
               <p className="text-[11px] text-[#6C645E] mt-0.5">
-                Customer: <b>{order.customerName}</b> • Order: <b>{order.id}</b>
+                {isTamil ? 'வாடிக்கையாளர்' : 'Customer'}: <b>{order.customerName}</b> • {isTamil ? 'ஆர்டர்' : 'Order'}: <b>{order.id}</b>
               </p>
               <p className="text-[10px] text-[#8C4A32] mt-1 italic">
                 {isTamil 
@@ -428,7 +428,7 @@ export default function CustomerDrop() {
               )}
 
               <div className="flex justify-between items-center text-[10px] pt-1 text-[#7C746E]">
-                <span>Backup: <b>{generatedCustomerOtp || '4821'}</b></span>
+                <span>{isTamil ? 'காப்பு குறியீடு:' : 'Backup:'} <b>{generatedCustomerOtp || '4821'}</b></span>
                 <button
                   type="button"
                   onClick={handleReachedHomeSide}
@@ -436,7 +436,7 @@ export default function CustomerDrop() {
                   className="text-[#8C4A32] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw size={10} className={isSendingOtp ? 'animate-spin' : ''} />
-                  <span>Resend OTP</span>
+                  <span>{isTamil ? 'மீண்டும் OTP' : 'Resend OTP'}</span>
                 </button>
               </div>
 
@@ -463,7 +463,7 @@ export default function CustomerDrop() {
       {/* Orders List Modal */}
       {showOrderListModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans animate-fadeIn">
-          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-sm max-h-[80vh] shadow-2xl flex flex-col overflow-hidden text-[#2C231E]">
+          <div className="bg-[#FAF6EE] border border-[#EADBCC] rounded-3xl w-full max-w-[460px] max-h-[80vh] shadow-2xl flex flex-col overflow-hidden text-[#2C231E]">
             <div className="px-5 py-3.5 border-b border-[#EADBCC] bg-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Package size={18} className="text-[#8C4A32]" />
@@ -481,7 +481,7 @@ export default function CustomerDrop() {
 
             <div className="p-4 overflow-y-auto space-y-3 flex-1 text-xs">
               <div className="flex justify-between items-center text-[11px] pb-2 border-b border-[#EADBCC]">
-                <span>Customer: <b>{order.customerName}</b></span>
+                <span>{isTamil ? 'வாடிக்கையாளர்' : 'Customer'}: <b>{order.customerName}</b></span>
                 <span className="font-mono font-bold text-[#8C4A32]">{order.id}</span>
               </div>
 
@@ -490,7 +490,7 @@ export default function CustomerDrop() {
                   <div key={idx} className="bg-white p-3 rounded-2xl border border-[#EADBCC] flex justify-between items-center">
                     <div>
                       <p className="font-bold text-[#2C231E]">{item.name}</p>
-                      <span className="text-[10px] text-[#7C746E]">Quantity: {item.qty}</span>
+                      <span className="text-[10px] text-[#7C746E]">{isTamil ? 'அளவு' : 'Quantity'}: {item.qty}</span>
                     </div>
                     <span className="font-mono font-bold text-[#8C4A32]">{item.price}</span>
                   </div>
@@ -498,7 +498,11 @@ export default function CustomerDrop() {
               </div>
 
               <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-[10px] text-emerald-900 leading-snug">
-                ✓ <b>Collect Cash:</b> Please collect exact amount <b>{order.amount}</b> from the customer before completing delivery.
+                {isTamil ? (
+                  <>✓ <b>ரொக்கம் பெறவும்:</b> டெலிவரியை முடிப்பதற்கு முன் வாடிக்கையாளரிடமிருந்து சரியான தொகை <b>{order.amount}</b> பெறவும்.</>
+                ) : (
+                  <>✓ <b>Collect Cash:</b> Please collect exact amount <b>{order.amount}</b> from the customer before completing delivery.</>
+                )}
               </div>
             </div>
 
