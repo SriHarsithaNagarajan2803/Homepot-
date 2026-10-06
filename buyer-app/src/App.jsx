@@ -134,21 +134,8 @@ export default function App() {
   const showBottomNav = currentUser && currentPage !== 'auth';
 
   return (
-    <div 
-      className="min-h-screen w-full flex justify-center items-center py-0 sm:py-4 px-0 sm:px-4"
-      style={{ backgroundColor: '#EFE9DF', colorScheme: 'light' }}
-    >
-      <div 
-        className="w-full max-w-md h-screen sm:h-[92vh] sm:max-h-[850px] sm:border sm:border-[#E8DEC8] sm:rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden relative text-stone-900"
-        style={{ backgroundColor: '#FAF6EE', colorScheme: 'light' }}
-      >
-        <div 
-          className="absolute inset-0 z-0 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(#D6C7B2 1.2px, transparent 1.2px)',
-            backgroundSize: '20px 20px'
-          }}
-        ></div>
+    <div className="min-h-screen bg-[#FAF6EE] text-stone-900 flex flex-col items-center justify-start w-full">
+      <main className="w-full max-w-[500px] sm:max-w-[520px] min-h-screen bg-[#FAF6EE] flex flex-col justify-between relative shadow-2xl overflow-hidden">
 
         {/* Scrollable Content Container with clean bottom margin for BottomNav */}
         <div className={`flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${showBottomNav ? 'pb-14' : ''}`}>
@@ -220,7 +207,7 @@ export default function App() {
           />
         )}
 
-      </div>
+      </main>
     </div>
   );
 }
