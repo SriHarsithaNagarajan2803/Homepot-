@@ -133,13 +133,18 @@ export default function App() {
   // BottomNav is ALWAYS visible for logged-in buyers across Menu, My Tiffin, Profile, Detail, etc.
   const showBottomNav = currentUser && currentPage !== 'auth';
 
+  // If splash is active, render exclusively in an unscrollable full-screen viewport
+  if (showSplash) {
+    return (
+      <div className="fixed inset-0 w-screen h-screen bg-[#FAF6EE] flex items-center justify-center overflow-hidden select-none z-50">
+        <BuyerSplashScreen onFinish={() => setShowSplash(false)} />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF6EE] text-stone-900 flex flex-col items-center justify-start w-full">
       <main className="w-full max-w-[500px] sm:max-w-[520px] min-h-screen bg-[#FAF6EE] flex flex-col justify-between relative shadow-2xl overflow-hidden">
-
-        {showSplash && (
-          <BuyerSplashScreen onFinish={() => setShowSplash(false)} />
-        )}
 
         {/* Scrollable Content Container with clean bottom margin for BottomNav */}
         <div className={`flex flex-col flex-1 relative z-10 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${showBottomNav ? 'pb-14' : ''}`}>
