@@ -133,10 +133,10 @@ export default function App() {
   // BottomNav is ALWAYS visible for logged-in buyers across Menu, My Tiffin, Profile, Detail, etc.
   const showBottomNav = currentUser && currentPage !== 'auth';
 
-  // If splash is active, render exclusively in an unscrollable full-screen viewport
+  // If splash is active, render exclusively in an unscrollable full-screen viewport on plain white
   if (showSplash) {
     return (
-      <div className="fixed inset-0 w-screen h-screen bg-[#FAF6EE] flex items-center justify-center overflow-hidden select-none z-50">
+      <div className="fixed inset-0 w-screen h-screen bg-white flex items-center justify-center overflow-hidden select-none z-50">
         <BuyerSplashScreen onFinish={() => setShowSplash(false)} />
       </div>
     );

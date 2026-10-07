@@ -41,7 +41,7 @@ export default function BuyerSplashScreen({ onFinish }) {
     }
   }, []);
 
-  // 4-second natural auto-transition (no skip button needed)
+  // 4-second natural auto-transition
   useEffect(() => {
     const timer = setTimeout(() => {
       handleFinish();
@@ -52,18 +52,18 @@ export default function BuyerSplashScreen({ onFinish }) {
 
   return (
     <div 
-      className={`w-full max-w-[500px] h-full max-h-screen bg-[#FAF6EE] flex flex-col items-center justify-between px-6 py-6 sm:py-8 select-none overflow-hidden transition-all duration-500 ease-out ${
+      className={`w-full max-w-[500px] h-full max-h-screen bg-white flex flex-col items-center justify-between px-6 py-6 sm:py-8 select-none overflow-hidden transition-all duration-500 ease-out ${
         isFadingOut ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100 animate-fadeIn'
       }`}
     >
-      {/* Top Header: Clean Centered Branding (No Skip Button) */}
+      {/* Top Header: Clean Centered Branding on Plain White Background */}
       <div className="w-full flex justify-center items-center pt-1 z-20">
         <span className="font-serif font-bold text-sm tracking-[0.25em] text-[#8C4A32] opacity-85 uppercase">
           HOMEPOT
         </span>
       </div>
 
-      {/* DEAD-CENTER CONTAINER: Large, Neat & Live Animated Logo */}
+      {/* DEAD-CENTER CONTAINER: Large, Crisp, Borderless Animated Video on Pure White */}
       <div className="flex-1 flex flex-col items-center justify-center w-full my-auto z-10 overflow-hidden">
         <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 max-w-[85vw] max-h-[46vh] aspect-square flex items-center justify-center relative overflow-hidden">
           <video
@@ -74,7 +74,11 @@ export default function BuyerSplashScreen({ onFinish }) {
             playsInline
             loop
             preload="auto"
-            className="w-full h-full object-cover mix-blend-multiply pointer-events-none"
+            style={{
+              WebkitMaskImage: 'radial-gradient(circle at center, black 0%, black 80.8%, transparent 82.4%)',
+              maskImage: 'radial-gradient(circle at center, black 0%, black 80.8%, transparent 82.4%)'
+            }}
+            className="w-full h-full object-cover pointer-events-none"
           />
         </div>
       </div>
@@ -91,7 +95,7 @@ export default function BuyerSplashScreen({ onFinish }) {
         </div>
 
         {/* 4-Second Smooth Progress Line */}
-        <div className="w-40 sm:w-48 h-1 bg-[#E8DEC8] rounded-full overflow-hidden mx-auto mt-1">
+        <div className="w-40 sm:w-48 h-1 bg-stone-100 rounded-full overflow-hidden mx-auto mt-1 border border-stone-200/50">
           <div 
             className="h-full bg-[#8C4A32] rounded-full"
             style={{
